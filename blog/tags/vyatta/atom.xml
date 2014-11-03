@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: vyatta | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/vyatta/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2014-11-04T03:22:17+09:00</updated>
+  <updated>2014-11-04T03:28:42+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -23,14 +23,15 @@
   <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
 </ul>
 
-<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> を試みる。</p>
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> を試みる。
+利用している環境は、SoftLayer上の仮想サーバ(Vyatta6.5導入済み）を利用しています。</p>
 
 <h1 id="add-system-images">add system images</h1>
 
 <p>VyOSへのアップデートの方法は、公式サイトの以下のリンクに記載されています。</p>
 
 <ul>
-  <li>http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C</li>
+  <li><a href="http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C">vyos-users.jp</a></li>
 </ul>
 
 <p>今回はVersion1.1を試してみたいと思います。</p>
