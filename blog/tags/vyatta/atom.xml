@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: vyatta | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/vyatta/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2014-11-04T03:19:51+09:00</updated>
+  <updated>2014-11-04T03:22:17+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -23,9 +23,7 @@
   <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
 </ul>
 
-<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート [^1] を試みる。</p>
-
-<p>[^1] SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。</p>
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> を試みる。</p>
 
 <h1 id="add-system-images">add system images</h1>
 
@@ -154,6 +152,13 @@ rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
 
 <p>ということで問題なく疎通が出来ています。</p>
 
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。 <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 ]]></content>
   </entry>
   
