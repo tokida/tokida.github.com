@@ -4,7 +4,7 @@
   <title><![CDATA[なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2014-11-04T02:08:59+09:00</updated>
+  <updated>2014-11-04T03:19:51+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -12,6 +12,150 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Vyatta を VyOS にアップデートして Vxlan を利用する]]></title>
+    <link href="http://stepxstep.org/blog/2014/11/04/vyatta2vyos/"/>
+    <updated>2014-11-04T02:29:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/11/04/vyatta2vyos</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#add-system-images">add system images</a></li>
+  <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
+</ul>
+
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート [^1] を試みる。</p>
+
+<p>[^1] SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。</p>
+
+<h1 id="add-system-images">add system images</h1>
+
+<p>VyOSへのアップデートの方法は、公式サイトの以下のリンクに記載されています。</p>
+
+<ul>
+  <li>http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C</li>
+</ul>
+
+<p>今回はVersion1.1を試してみたいと思います。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: Old-non-image-installation (default boot)
+
+vyatta@vyatta-dal01:~$ add system image http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+Trying to fetch ISO file from http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  231M  100  231M    0     0  5687k      0  0:00:41  0:00:41 --:--:-- 8782k
+ISO download succeeded.
+Checking for digital signature file...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   836  100   836    0     0    540      0  0:00:01  0:00:01 --:--:--  2229
+Found it.  Checking digital signature...
+gpg: directory `/root/.gnupg' created
+gpg: new configuration file `/root/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/root/.gnupg/pubring.gpg' created
+gpg: Signature made Thu Oct  9 17:42:59 2014 CDT using RSA key ID A442E6E9
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "SO3 Group Maintainers &lt;maintainers@so3group.net&gt;"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: DD5B B405 35E7 F6E3 4278  1ABF B744 E25A A442 E6E9
+Digital signature is valid.
+Checking MD5 checksums of files on the ISO image...OK.
+Done!
+What would you like to name this image? [1.1.0]:
+OK.  This image will be named: 1.1.0
+Installing "1.1.0" image.
+Copying new release files...
+Would you like to save the current configuration
+directory and config file? (Yes/No) [Yes]:
+Copying current configuration...
+Would you like to save the SSH host keys from your
+current configuration? (Yes/No) [Yes]:
+Copying SSH keys...
+Setting up grub configuration...
+Done.
+vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: 1.1.0 (default boot)
+   2: Old-non-image-installation
+</code></pre>
+
+<p>この状態で<code>reboot</code>をすると新しいイメージで起動をしてきます。</p>
+
+<pre><code>Welcome to VyOS
+vyatta@67.228.185.132's password:
+Linux vyatta 3.13.11-1-amd64-vyos #1 SMP Wed Sep 3 20:04:22 UTC 2014 x86_64
+Welcome to VyOS.
+This system is open-source software. The exact distribution terms for
+each module comprising the full system are described in the individual
+files in /usr/share/doc/*/copyright.
+</code></pre>
+
+<h1 id="vxlan-on-vyos-">vxlan on VyOS を試す</h1>
+
+<p>少し前に vxlan on Softlayer ということで同一データセンター内ではマルチキャストが通信できるのでvlanが使えたという事を書きました。VyOSの最新版ではvxlanがサポートされているとのことなので試します。</p>
+
+<pre><code>vyatta@vyatta-dal01# configure
+[edit]
+vyatta@vyatta-dal01# set interfaces  vxlan vxlan0
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 group 239.1.1.1
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 address '192.168.42.254/24'
+[edit]
+vyatta@vyatta-dal01# commit
+[edit]
+vyatta@vyatta-dal01# save
+Saving configuration to '/config/config.boot'...
+Done
+[edit]
+vyatta@vyatta-dal01#   show interfaces vxlan vxlan0
+ address 192.168.42.254/24
+ group 239.1.1.1
+ vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN group default
+    link/ether b6:37:f4:fa:30:d0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.42.254/24 brd 192.168.42.255 scope global vxlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b437:f4ff:fefa:30d0/64 scope link
+[edit]	
+</code></pre>
+
+<p>他のサーバの設定は <a href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer - なんでもやってみるのが良いと思う</a> として行います。現状でこの構成に今回の VyOS が追加されている形になります。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_req=1 ttl=64 time=0.635 ms
+64 bytes from 192.168.42.2: icmp_req=2 ttl=64 time=0.402 ms
+^C
+--- 192.168.42.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.402/0.518/0.635/0.118 ms
+vyatta@vyatta-dal01:~$ ping 192.168.42.3
+PING 192.168.42.3 (192.168.42.3) 56(84) bytes of data.
+64 bytes from 192.168.42.3: icmp_req=1 ttl=64 time=1.52 ms
+64 bytes from 192.168.42.3: icmp_req=2 ttl=64 time=0.303 ms
+^C
+--- 192.168.42.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
+</code></pre>
+
+<p>ということで問題なく疎通が出来ています。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SoftlayerのslコマンドのDocker化]]></title>
@@ -162,21 +306,25 @@ From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた]]></title>
+    <title type="html"><![CDATA[SoftLayerに性能保証型iSCSI/NASが登場したので試してみた]]></title>
     <link href="http://stepxstep.org/blog/2014/09/17/consistentstorage/"/>
     <updated>2014-09-17T20:40:00+09:00</updated>
     <id>http://stepxstep.org/blog/2014/09/17/consistentstorage</id>
-    <content type="html"><![CDATA[<p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
+    <content type="html"><![CDATA[
+<pre><code>2014/11/04 追記: [帯域]保証型と書いていましたが、帯域は保証されていないとご指摘を（確かにその通り）受けたので[性能]保証型にしました。さらに言えば性能も保証されていないのですが。
+</code></pre>
+
+<p>SoftLayerでの新機能で「性能保証型ブロックデバイス」が登場しました。
 1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
 
 <h1 id="section">これは何？</h1>
 
-<p>SoftLayerの帯域保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
+<p>SoftLayerの性能保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
 対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
 
 <ul>
   <li>容量 20Gから12TByteまで</li>
-  <li>帯域保証 100IOPS から 6000IOPSまで</li>
+  <li>性能保証 100IOPS から 6000IOPSまで</li>
   <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
 </ul>
 
@@ -2434,133 +2582,6 @@ let g:startify_bookmarks = [
 
 <ul>
   <li><a href="http://deris.hatenablog.jp/entry/2013/12/15/235606">Vimmerなら2013年中に試しておきたい海外産Vim plugin 8選 - derisの日記</a>  </li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Markdownの文章をHTMLに変換する]]></title>
-    <link href="http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/"/>
-    <updated>2014-05-31T05:52:00+09:00</updated>
-    <id>http://stepxstep.org/blog/2014/05/31/markdownの文章をhtmlに変換する</id>
-    <content type="html"><![CDATA[<ul id="markdown-toc">
-  <li><a href="#section">はじめに</a></li>
-  <li><a href="#pandoc">Pandocを導入する</a>    <ul>
-      <li><a href="#section-1">インストール</a></li>
-      <li><a href="#githubcss">githubのCSSで変換してみる</a>        <ul>
-          <li><a href="#section-2">導入・設定</a></li>
-          <li><a href="#section-3">変換する</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><a href="#section-4">まとめ</a>    <ul>
-      <li><a href="#section-5">参考文献</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h1 id="section">はじめに</h1>
-
-<p>ここの所、文章は全てMakrdownで書くようにしています。仕事でも <a href="http://qiita.com/">Qiita</a> などのサービスを利用しており身の回りで徐々に markdown を使う環境を広げているところです。 まさにこのサイトも makrdown で書かれており色々と捗ります。
-先日、だいぶ長い文章を markdown で書いたのですが最終的に清書して出す必要がありその際にフォーマット変換（HTMLやPDF）に変換したくなりました。
-その際には時間切れだったのですが改めて環境を作ったので書いておきます。</p>
-
-<h1 id="pandoc">Pandocを導入する</h1>
-
-<p>最近ちょっと入れてみたいと言う時にはDockerとかVagrantで簡単に環境を作っています。なのでMacbookで書いているのですが以後の処理はUbuntuで行った場合の対応になります。色々なファイルフォーマットを変換してもらうことの出来る <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> を利用します。</p>
-
-<h2 id="section-1">インストール</h2>
-
-<p>PandcoはHaskellの上で動くのでHaskel Platformの上で導入することも出来ますが今回は簡単にパッケージマネージャーから導入することにします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install pandoc</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>導入の確認</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">vagrant@ubuntu1404:/vagrant_data/files$ pandoc -v
-</span><span class="line">pandoc 1.12.2.1
-</span><span class="line">Compiled with texmath 0.6.5.2, highlighting-kate 0.5.5.1.
-</span><span class="line">Syntax highlighting is supported for the following languages:
-</span><span class="line">    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
-</span><span class="line">    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
-</span><span class="line">    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
-</span><span class="line">    fortran, fsharp, gnuassembler, go, haskell, haxe, html, ini, java, javadoc,
-</span><span class="line">    javascript, json, jsp, julia, latex, lex, literatecurry, literatehaskell,
-</span><span class="line">    lua, makefile, mandoc, markdown, matlab, maxima, metafont, mips, modelines,
-</span><span class="line">    modula2, modula3, monobasic, nasm, noweb, objectivec, objectivecpp, ocaml,
-</span><span class="line">    octave, pascal, perl, php, pike, postscript, prolog, python, r,
-</span><span class="line">    relaxngcompact, rhtml, roff, ruby, rust, scala, scheme, sci, sed, sgml, sql,
-</span><span class="line">    sqlmysql, sqlpostgresql, tcl, texinfo, verilog, vhdl, xml, xorg, xslt, xul,
-</span><span class="line">    yacc, yaml
-</span><span class="line">Default user data directory: /home/vagrant/.pandoc
-</span><span class="line">Copyright (C) 2006-2013 John MacFarlane
-</span><span class="line">Web:  http://johnmacfarlane.net/pandoc
-</span><span class="line">This is free software; see the source for copying conditions.  There is no
-</span><span class="line">warranty, not even for merchantability or fitness for a particular purpose.</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>変換してみる</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">% pandoc input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>オプションの説明などは日本語のリファレンスもあるのでそちらを参考にします。</p>
-
-<h2 id="githubcss">githubのCSSで変換してみる</h2>
-
-<p>実際にHTMLにした際にも見た目、Github風に慣れ親しんでいるのでCSSを指定してHTMLに変換することが出来ます。またオプションを指定することにより toc(目次）も入れること出来ます。目次はHTMLの場合にはキチンとHyperlinkになってくれるのでありがたい。</p>
-
-<h3 id="section-2">導入・設定</h3>
-
-<p>markdownファイルがある場所にCSSをダウンロードします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ wget https://gist.github.com/andyferra/2554919</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-3">変換する</h3>
-
-<p>変換には、cssファイルを指定する方法がありますがこの場合には生成されたHTMLファイルがCSSファイルを利用するようになります。
-単体の一つのHTMLにしたい場合にはテンプレートをコピーしてその中にCSSを埋め込んだほうが良いです。テンプレートはubuntuの場合には、<code>/usr/share/pandoc/data/templates</code> に導入されています。
-今回はCSSファイルを個別にしてして見ます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ pandoc --toc --toc-depth=1 -t html -c github.css input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>こうするとmarkdownの書式に合わせて目次を生成してくれます。
-自動でこういう風になってくれるとすごく便利です。</p>
-
-<h1 id="section-4">まとめ</h1>
-
-<p>簡単に変換できるツールなので他にもコンバージョンを試してみたいと思います。PDFの変換も気になるところですがChromeブラウザのPDF出力もある程度代用可能なので暫くはそちらでも良いかなと思っています。それよりも SLIDES 利用したスライド作れる方が興味があります。
-簡単にテキスト(markdown)で書いておいてさっと発表に使えるとなると色々捗りそうです。</p>
-
-<h2 id="section-5">参考文献</h2>
-
-<ul>
-  <li><a href="http://qiita.com/sky_y/items/80bcd0f353ef5b8980ee">HTML - 多様なフォーマットに対応！ドキュメント変換ツールPandocを知ろう - Qiita</a></li>
-  <li><a href="http://sky-y.github.io/site-pandoc-jp/users-guide/">Pandoc ユーザーズガイド 日本語版 - Japanese Pandoc User&#8217;s Association</a></li>
 </ul>
 
 ]]></content>

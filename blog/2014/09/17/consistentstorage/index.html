@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた - なんでもやってみるのが良いと思う</title>
+  <title>SoftLayerに性能保証型iSCSI/NASが登場したので試してみた - なんでもやってみるのが良いと思う</title>
   <meta name="author" content="H.Tokida">
 
   
@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
   <meta property="og:url" content="http://stepxstep.org/blog/2014/09/17/consistentstorage">
-  <meta property="og:title" content="SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた - なんでもやってみるのが良いと思う">
+  <meta property="og:title" content="SoftLayerに性能保証型iSCSI/NASが登場したので試してみた - なんでもやってみるのが良いと思う">
   
 
   <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
@@ -134,24 +134,28 @@
     
     
     <h1 class="entry-title" itemprop="name headline">
-        SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた
+        SoftLayerに性能保証型iSCSI/NASが登場したので試してみた
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix" itemprop="articleBody description"><p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
+<div class="entry-content clearfix" itemprop="articleBody description">
+<pre><code>2014/11/04 追記: [帯域]保証型と書いていましたが、帯域は保証されていないとご指摘を（確かにその通り）受けたので[性能]保証型にしました。さらに言えば性能も保証されていないのですが。
+</code></pre>
+
+<p>SoftLayerでの新機能で「性能保証型ブロックデバイス」が登場しました。
 1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
 
 <h1 id="section">これは何？</h1>
 
-<p>SoftLayerの帯域保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
+<p>SoftLayerの性能保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
 対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
 
 <ul>
   <li>容量 20Gから12TByteまで</li>
-  <li>帯域保証 100IOPS から 6000IOPSまで</li>
+  <li>性能保証 100IOPS から 6000IOPSまで</li>
   <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
 </ul>
 
@@ -525,15 +529,15 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
+    
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
-    <a class="list-group-item active" href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
+    <a class="list-group-item active" href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
     
     <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
     
   </div>
 </section>
@@ -565,7 +569,7 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">20</span>
+        <span class="badge">21</span>
         review
       </a>
     
@@ -609,7 +613,7 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
     
     
     <a class="list-group-item " href="/blog/tags/softlayer/index.html">
-        <span class="badge">8</span>
+        <span class="badge">9</span>
         softlayer
       </a>
     
@@ -689,6 +693,12 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
     <a class="list-group-item " href="/blog/tags/wordpress/index.html">
         <span class="badge">1</span>
         wordpress
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/vyatta/index.html">
+        <span class="badge">1</span>
+        vyatta
       </a>
     
   </div>

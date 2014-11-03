@@ -132,6 +132,178 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T02:29:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/11/04/vyatta2vyos/" itemprop="url">Vyatta を VyOS にアップデートして Vxlan を利用する</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#add-system-images">add system images</a></li>
+  <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
+</ul>
+
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート [^1] を試みる。</p>
+
+<p>[^1] SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。</p>
+
+<h1 id="add-system-images">add system images</h1>
+
+<p>VyOSへのアップデートの方法は、公式サイトの以下のリンクに記載されています。</p>
+
+<ul>
+  <li>http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C</li>
+</ul>
+
+<p>今回はVersion1.1を試してみたいと思います。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: Old-non-image-installation (default boot)
+
+vyatta@vyatta-dal01:~$ add system image http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+Trying to fetch ISO file from http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  231M  100  231M    0     0  5687k      0  0:00:41  0:00:41 --:--:-- 8782k
+ISO download succeeded.
+Checking for digital signature file...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   836  100   836    0     0    540      0  0:00:01  0:00:01 --:--:--  2229
+Found it.  Checking digital signature...
+gpg: directory `/root/.gnupg' created
+gpg: new configuration file `/root/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/root/.gnupg/pubring.gpg' created
+gpg: Signature made Thu Oct  9 17:42:59 2014 CDT using RSA key ID A442E6E9
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "SO3 Group Maintainers &lt;maintainers@so3group.net&gt;"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: DD5B B405 35E7 F6E3 4278  1ABF B744 E25A A442 E6E9
+Digital signature is valid.
+Checking MD5 checksums of files on the ISO image...OK.
+Done!
+What would you like to name this image? [1.1.0]:
+OK.  This image will be named: 1.1.0
+Installing "1.1.0" image.
+Copying new release files...
+Would you like to save the current configuration
+directory and config file? (Yes/No) [Yes]:
+Copying current configuration...
+Would you like to save the SSH host keys from your
+current configuration? (Yes/No) [Yes]:
+Copying SSH keys...
+Setting up grub configuration...
+Done.
+vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: 1.1.0 (default boot)
+   2: Old-non-image-installation
+</code></pre>
+
+<p>この状態で<code>reboot</code>をすると新しいイメージで起動をしてきます。</p>
+
+<pre><code>Welcome to VyOS
+vyatta@67.228.185.132's password:
+Linux vyatta 3.13.11-1-amd64-vyos #1 SMP Wed Sep 3 20:04:22 UTC 2014 x86_64
+Welcome to VyOS.
+This system is open-source software. The exact distribution terms for
+each module comprising the full system are described in the individual
+files in /usr/share/doc/*/copyright.
+</code></pre>
+
+<h1 id="vxlan-on-vyos-">vxlan on VyOS を試す</h1>
+
+<p>少し前に vxlan on Softlayer ということで同一データセンター内ではマルチキャストが通信できるのでvlanが使えたという事を書きました。VyOSの最新版ではvxlanがサポートされているとのことなので試します。</p>
+
+<pre><code>vyatta@vyatta-dal01# configure
+[edit]
+vyatta@vyatta-dal01# set interfaces  vxlan vxlan0
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 group 239.1.1.1
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 address '192.168.42.254/24'
+[edit]
+vyatta@vyatta-dal01# commit
+[edit]
+vyatta@vyatta-dal01# save
+Saving configuration to '/config/config.boot'...
+Done
+[edit]
+vyatta@vyatta-dal01#   show interfaces vxlan vxlan0
+ address 192.168.42.254/24
+ group 239.1.1.1
+ vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN group default
+    link/ether b6:37:f4:fa:30:d0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.42.254/24 brd 192.168.42.255 scope global vxlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b437:f4ff:fefa:30d0/64 scope link
+[edit]	
+</code></pre>
+
+<p>他のサーバの設定は <a href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer - なんでもやってみるのが良いと思う</a> として行います。現状でこの構成に今回の VyOS が追加されている形になります。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_req=1 ttl=64 time=0.635 ms
+64 bytes from 192.168.42.2: icmp_req=2 ttl=64 time=0.402 ms
+^C
+--- 192.168.42.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.402/0.518/0.635/0.118 ms
+vyatta@vyatta-dal01:~$ ping 192.168.42.3
+PING 192.168.42.3 (192.168.42.3) 56(84) bytes of data.
+64 bytes from 192.168.42.3: icmp_req=1 ttl=64 time=1.52 ms
+64 bytes from 192.168.42.3: icmp_req=2 ttl=64 time=0.303 ms
+^C
+--- 192.168.42.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
+</code></pre>
+
+<p>ということで問題なく疎通が出来ています。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T01:46:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
         
       </p>
@@ -341,22 +513,26 @@ From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
       </p>
     
     
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/09/17/consistentstorage/" itemprop="url">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a></h2>
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/09/17/consistentstorage/" itemprop="url">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a></h2>
     
   </header>
 
 
-  <div class="entry-content clearfix" itemprop="articleBody description"><p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
+  <div class="entry-content clearfix" itemprop="articleBody description">
+<pre><code>2014/11/04 追記: [帯域]保証型と書いていましたが、帯域は保証されていないとご指摘を（確かにその通り）受けたので[性能]保証型にしました。さらに言えば性能も保証されていないのですが。
+</code></pre>
+
+<p>SoftLayerでの新機能で「性能保証型ブロックデバイス」が登場しました。
 1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
 
 <h1 id="section">これは何？</h1>
 
-<p>SoftLayerの帯域保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
+<p>SoftLayerの性能保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
 対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
 
 <ul>
   <li>容量 20Gから12TByteまで</li>
-  <li>帯域保証 100IOPS から 6000IOPSまで</li>
+  <li>性能保証 100IOPS から 6000IOPSまで</li>
   <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
 </ul>
 
@@ -1745,209 +1921,6 @@ Git commit (server): d84a070
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T02:17:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/08/09/ansible-softlayer/" itemprop="url">Ansible 1.7 External Inventory SoftLayerを試してみる</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
-  <li><a href="#section">何が出来るの？</a></li>
-  <li><a href="#section-1">準備</a></li>
-  <li><a href="#section-2">プラグインの実行</a></li>
-  <li><a href="#section-3">使ってみる</a>    <ul>
-      <li><a href="#tips">Tips</a></li>
-    </ul>
-  </li>
-  <li><a href="#section-4">まとめ</a></li>
-</ul>
-
-<h1 id="section">何が出来るの？</h1>
-
-<p>Ansible 1.7 より 外部インベントリ（Dynamic Inventory）に SoftLayerのプラグインがCommitされていました。外部インベントリとして利用できるため Ansible の hosts を記載しなくても動的に SoftLayerの管理ポータル上からサーバのリスト等が取得できるはずです。どのような感じで利用できるのか試してみます。</p>
-
-<h1 id="section-1">準備</h1>
-
-<p>古いバージョンの場合には Ansible 1.7 にアップデートします。今回はUbuntu上の環境でpipで過去のバージョンを導入している場合です。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo pip install ansible --upgrade</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>不勉強なので分かっていないですが pip で入れると pluginが入らないので（何かどこかに入るのかもしれませんが）自分でダウンロードしておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ git clone https://github.com/ansible/ansible.git
-</span><span class="line">$ cd ansible/plugins/inventory
-</span><span class="line">$ ls -l softlayer.py
-</span><span class="line">-rwxrwxr-x 1 vagrant vagrant 6112 Aug  8 03:03 softlayer.py</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>また、SoftLayer CLIが利用可能になっている必要があるので導入をしておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo pip install softlayer
-</span><span class="line">$ sl config setup</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>SoftLayerの管理ポータルから、USER名、APIキーを控えておきセットアップします。slコマンドが利用できるようになっている必要があります。</p>
-
-<h1 id="section-2">プラグインの実行</h1>
-
-<p>プラグインを単体で実行してみます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ ./softlayer.py --list
-</span><span class="line">{
-</span><span class="line">  "_meta": {
-</span><span class="line">    "hostvars": {
-</span><span class="line">      "119.81.131.10": {
-</span><span class="line">        "datacenter": {
-</span><span class="line">          "id": 352494,
-</span><span class="line">          "longName": "Hong Kong 2",
-</span><span class="line">          "name": "hkg02"
-</span><span class="line">        },
-</span><span class="line">        "domain": "niandc.co.jp",
-</span><span class="line">        "fullyQualifiedDomainName": "kensyu05.niandc.co.jp",
-</span><span class="line">        "globalIdentifier": "461a86f4-3e4f-4b78-90df-9207d2337ee4",
-</span><span class="line">        "hostname": "kensyu05",
-</span><span class="line">        "id": 5509848,
-</span><span class="line">        "maxCpu": 1,
-</span><span class="line">        "maxMemory": 1024,
-</span><span class="line">        "powerState": {
-</span><span class="line">          "keyName": "RUNNING",
-</span><span class="line">          "name": "Running"
-</span><span class="line">        },
-</span><span class="line">        "primaryBackendIpAddress": "10.x.x.x",
-</span><span class="line">        "primaryIpAddress": "119.81.x.x",
-</span><span class="line">        "status": {
-</span><span class="line">          "keyName": "ACTIVE",
-</span><span class="line">          "name": "Active"
-</span><span class="line">        }
-</span><span class="line">      },</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>という形でホストの情報が出てくるとともに以下のグルーピングでもJSONが返ってきています。</p>
-
-<ul>
-  <li>cpu_“数”</li>
-  <li>datacenter_“DC名”</li>
-  <li>“HOSTNAME”</li>
-  <li>“HOSTNAME”.”DOMAINNAME”&gt;</li>
-  <li>hardware</li>
-  <li>virtual</li>
-  <li>memory_“サイズ”</li>
-  <li>“DOMAINNAME”</li>
-</ul>
-
-<p>などです。これらはいずれも</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class=""><span class="line"> "datacenter_sng01": [
-</span><span class="line">    "119.81.xx.x",
-</span><span class="line">    "119.81.xx.x",
-</span><span class="line">    "119.81.xx.x",
-</span><span class="line">    "119.81.xx.x"
-</span><span class="line">  ],</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>のような形でIPアドレスが応答されます。</p>
-
-<h1 id="section-3">使ってみる</h1>
-
-<p>先ほどのJSON形式が渡されるためどうもIPアドレスで sshの設定が必要になりそうです。したがって ~/.ssh/confg内にてIPアドレスでログイン出来るように設定しておきます。パスワードありで接続する場合、<code>-k</code>または<code>--ask-pass --ask-sudo-pass</code>などを引数につけます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">ansible -i `pwd`/softlayer.py docker02 -u root -m ping -k
-</span><span class="line">SSH password:
-</span><span class="line">119.81.x.x | success &gt;&gt; {
-</span><span class="line">    "changed": false,
-</span><span class="line">    "ping": "pong"
-</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>このようにPingが実行できました。同様に <code>all</code> や <code>datacenter_hkg02</code> 等の括りで制御する事が出来ます。</p>
-
-<h2 id="tips">Tips</h2>
-
-<p>常にこの <code>softlayer.py</code> を指定するには</p>
-
-<ul>
-  <li>softlayer.py を <code>/etc/ansible/hosts</code>に上書き</li>
-  <li>環境変数ANSIBLE_HOSTSに softlayer.py を指定</li>
-</ul>
-
-<p>の2通りの方法があります。</p>
-
-<h1 id="section-4">まとめ</h1>
-
-<p>台数が多くなると便利な Ansible の External Inventory ですが、SoftLayerのプラグインが出ていることでより簡単に利用することが出来るように成りました。 データセンター単位やドメイン単位で変更が発生する際などは特に便利そうですね。</p>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1971,15 +1944,15 @@ Git commit (server): d84a070
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
+    
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
-    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
+    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
     
     <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
     
   </div>
 </section>
@@ -2011,7 +1984,7 @@ Git commit (server): d84a070
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">20</span>
+        <span class="badge">21</span>
         review
       </a>
     
@@ -2055,7 +2028,7 @@ Git commit (server): d84a070
     
     
     <a class="list-group-item " href="/blog/tags/softlayer/index.html">
-        <span class="badge">8</span>
+        <span class="badge">9</span>
         softlayer
       </a>
     
@@ -2135,6 +2108,12 @@ Git commit (server): d84a070
     <a class="list-group-item " href="/blog/tags/wordpress/index.html">
         <span class="badge">1</span>
         wordpress
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/vyatta/index.html">
+        <span class="badge">1</span>
+        vyatta
       </a>
     
   </div>

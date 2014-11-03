@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: vyatta | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://stepxstep.org/blog/tags/vyatta/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T03:19:51+09:00</updated>
+  <id>http://stepxstep.org/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Vyatta を VyOS にアップデートして vxlan を利用する]]></title>
+    <link href="http://stepxstep.org/blog/2014/11/04/vyatta2vyos/"/>
+    <updated>2014-11-04T02:29:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/11/04/vyatta2vyos</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#add-system-images">add system images</a></li>
+  <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
+</ul>
+
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート [^1] を試みる。</p>
+
+<p>[^1] SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。</p>
+
+<h1 id="add-system-images">add system images</h1>
+
+<p>VyOSへのアップデートの方法は、公式サイトの以下のリンクに記載されています。</p>
+
+<ul>
+  <li>http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C</li>
+</ul>
+
+<p>今回はVersion1.1を試してみたいと思います。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: Old-non-image-installation (default boot)
+
+vyatta@vyatta-dal01:~$ add system image http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+Trying to fetch ISO file from http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  231M  100  231M    0     0  5687k      0  0:00:41  0:00:41 --:--:-- 8782k
+ISO download succeeded.
+Checking for digital signature file...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   836  100   836    0     0    540      0  0:00:01  0:00:01 --:--:--  2229
+Found it.  Checking digital signature...
+gpg: directory `/root/.gnupg' created
+gpg: new configuration file `/root/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/root/.gnupg/pubring.gpg' created
+gpg: Signature made Thu Oct  9 17:42:59 2014 CDT using RSA key ID A442E6E9
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "SO3 Group Maintainers &lt;maintainers@so3group.net&gt;"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: DD5B B405 35E7 F6E3 4278  1ABF B744 E25A A442 E6E9
+Digital signature is valid.
+Checking MD5 checksums of files on the ISO image...OK.
+Done!
+What would you like to name this image? [1.1.0]:
+OK.  This image will be named: 1.1.0
+Installing "1.1.0" image.
+Copying new release files...
+Would you like to save the current configuration
+directory and config file? (Yes/No) [Yes]:
+Copying current configuration...
+Would you like to save the SSH host keys from your
+current configuration? (Yes/No) [Yes]:
+Copying SSH keys...
+Setting up grub configuration...
+Done.
+vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: 1.1.0 (default boot)
+   2: Old-non-image-installation
+</code></pre>
+
+<p>この状態で<code>reboot</code>をすると新しいイメージで起動をしてきます。</p>
+
+<pre><code>Welcome to VyOS
+vyatta@67.228.185.132's password:
+Linux vyatta 3.13.11-1-amd64-vyos #1 SMP Wed Sep 3 20:04:22 UTC 2014 x86_64
+Welcome to VyOS.
+This system is open-source software. The exact distribution terms for
+each module comprising the full system are described in the individual
+files in /usr/share/doc/*/copyright.
+</code></pre>
+
+<h1 id="vxlan-on-vyos-">vxlan on VyOS を試す</h1>
+
+<p>少し前に vxlan on Softlayer ということで同一データセンター内ではマルチキャストが通信できるのでvlanが使えたという事を書きました。VyOSの最新版ではvxlanがサポートされているとのことなので試します。</p>
+
+<pre><code>vyatta@vyatta-dal01# configure
+[edit]
+vyatta@vyatta-dal01# set interfaces  vxlan vxlan0
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 group 239.1.1.1
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 address '192.168.42.254/24'
+[edit]
+vyatta@vyatta-dal01# commit
+[edit]
+vyatta@vyatta-dal01# save
+Saving configuration to '/config/config.boot'...
+Done
+[edit]
+vyatta@vyatta-dal01#   show interfaces vxlan vxlan0
+ address 192.168.42.254/24
+ group 239.1.1.1
+ vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN group default
+    link/ether b6:37:f4:fa:30:d0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.42.254/24 brd 192.168.42.255 scope global vxlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b437:f4ff:fefa:30d0/64 scope link
+[edit]	
+</code></pre>
+
+<p>他のサーバの設定は <a href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer - なんでもやってみるのが良いと思う</a> として行います。現状でこの構成に今回の VyOS が追加されている形になります。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_req=1 ttl=64 time=0.635 ms
+64 bytes from 192.168.42.2: icmp_req=2 ttl=64 time=0.402 ms
+^C
+--- 192.168.42.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.402/0.518/0.635/0.118 ms
+vyatta@vyatta-dal01:~$ ping 192.168.42.3
+PING 192.168.42.3 (192.168.42.3) 56(84) bytes of data.
+64 bytes from 192.168.42.3: icmp_req=1 ttl=64 time=1.52 ms
+64 bytes from 192.168.42.3: icmp_req=2 ttl=64 time=0.303 ms
+^C
+--- 192.168.42.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
+</code></pre>
+
+<p>ということで問題なく疎通が出来ています。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

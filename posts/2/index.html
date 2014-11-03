@@ -132,6 +132,209 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T02:17:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/08/09/ansible-softlayer/" itemprop="url">Ansible 1.7 External Inventory SoftLayerを試してみる</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#section">何が出来るの？</a></li>
+  <li><a href="#section-1">準備</a></li>
+  <li><a href="#section-2">プラグインの実行</a></li>
+  <li><a href="#section-3">使ってみる</a>    <ul>
+      <li><a href="#tips">Tips</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-4">まとめ</a></li>
+</ul>
+
+<h1 id="section">何が出来るの？</h1>
+
+<p>Ansible 1.7 より 外部インベントリ（Dynamic Inventory）に SoftLayerのプラグインがCommitされていました。外部インベントリとして利用できるため Ansible の hosts を記載しなくても動的に SoftLayerの管理ポータル上からサーバのリスト等が取得できるはずです。どのような感じで利用できるのか試してみます。</p>
+
+<h1 id="section-1">準備</h1>
+
+<p>古いバージョンの場合には Ansible 1.7 にアップデートします。今回はUbuntu上の環境でpipで過去のバージョンを導入している場合です。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo pip install ansible --upgrade</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>不勉強なので分かっていないですが pip で入れると pluginが入らないので（何かどこかに入るのかもしれませんが）自分でダウンロードしておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ git clone https://github.com/ansible/ansible.git
+</span><span class="line">$ cd ansible/plugins/inventory
+</span><span class="line">$ ls -l softlayer.py
+</span><span class="line">-rwxrwxr-x 1 vagrant vagrant 6112 Aug  8 03:03 softlayer.py</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>また、SoftLayer CLIが利用可能になっている必要があるので導入をしておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo pip install softlayer
+</span><span class="line">$ sl config setup</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>SoftLayerの管理ポータルから、USER名、APIキーを控えておきセットアップします。slコマンドが利用できるようになっている必要があります。</p>
+
+<h1 id="section-2">プラグインの実行</h1>
+
+<p>プラグインを単体で実行してみます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./softlayer.py --list
+</span><span class="line">{
+</span><span class="line">  "_meta": {
+</span><span class="line">    "hostvars": {
+</span><span class="line">      "119.81.131.10": {
+</span><span class="line">        "datacenter": {
+</span><span class="line">          "id": 352494,
+</span><span class="line">          "longName": "Hong Kong 2",
+</span><span class="line">          "name": "hkg02"
+</span><span class="line">        },
+</span><span class="line">        "domain": "niandc.co.jp",
+</span><span class="line">        "fullyQualifiedDomainName": "kensyu05.niandc.co.jp",
+</span><span class="line">        "globalIdentifier": "461a86f4-3e4f-4b78-90df-9207d2337ee4",
+</span><span class="line">        "hostname": "kensyu05",
+</span><span class="line">        "id": 5509848,
+</span><span class="line">        "maxCpu": 1,
+</span><span class="line">        "maxMemory": 1024,
+</span><span class="line">        "powerState": {
+</span><span class="line">          "keyName": "RUNNING",
+</span><span class="line">          "name": "Running"
+</span><span class="line">        },
+</span><span class="line">        "primaryBackendIpAddress": "10.x.x.x",
+</span><span class="line">        "primaryIpAddress": "119.81.x.x",
+</span><span class="line">        "status": {
+</span><span class="line">          "keyName": "ACTIVE",
+</span><span class="line">          "name": "Active"
+</span><span class="line">        }
+</span><span class="line">      },</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>という形でホストの情報が出てくるとともに以下のグルーピングでもJSONが返ってきています。</p>
+
+<ul>
+  <li>cpu_“数”</li>
+  <li>datacenter_“DC名”</li>
+  <li>“HOSTNAME”</li>
+  <li>“HOSTNAME”.”DOMAINNAME”&gt;</li>
+  <li>hardware</li>
+  <li>virtual</li>
+  <li>memory_“サイズ”</li>
+  <li>“DOMAINNAME”</li>
+</ul>
+
+<p>などです。これらはいずれも</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line"> "datacenter_sng01": [
+</span><span class="line">    "119.81.xx.x",
+</span><span class="line">    "119.81.xx.x",
+</span><span class="line">    "119.81.xx.x",
+</span><span class="line">    "119.81.xx.x"
+</span><span class="line">  ],</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>のような形でIPアドレスが応答されます。</p>
+
+<h1 id="section-3">使ってみる</h1>
+
+<p>先ほどのJSON形式が渡されるためどうもIPアドレスで sshの設定が必要になりそうです。したがって ~/.ssh/confg内にてIPアドレスでログイン出来るように設定しておきます。パスワードありで接続する場合、<code>-k</code>または<code>--ask-pass --ask-sudo-pass</code>などを引数につけます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">ansible -i `pwd`/softlayer.py docker02 -u root -m ping -k
+</span><span class="line">SSH password:
+</span><span class="line">119.81.x.x | success &gt;&gt; {
+</span><span class="line">    "changed": false,
+</span><span class="line">    "ping": "pong"
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>このようにPingが実行できました。同様に <code>all</code> や <code>datacenter_hkg02</code> 等の括りで制御する事が出来ます。</p>
+
+<h2 id="tips">Tips</h2>
+
+<p>常にこの <code>softlayer.py</code> を指定するには</p>
+
+<ul>
+  <li>softlayer.py を <code>/etc/ansible/hosts</code>に上書き</li>
+  <li>環境変数ANSIBLE_HOSTSに softlayer.py を指定</li>
+</ul>
+
+<p>の2通りの方法があります。</p>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>台数が多くなると便利な Ansible の External Inventory ですが、SoftLayerのプラグインが出ていることでより簡単に利用することが出来るように成りました。 データセンター単位やドメイン単位で変更が発生する際などは特に便利そうですね。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-06T00:53:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年7月6日</time>
         
       </p>
@@ -1236,161 +1439,6 @@ let g:startify_bookmarks = [
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T05:52:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/" itemprop="url">Markdownの文章をHTMLに変換する</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
-  <li><a href="#section">はじめに</a></li>
-  <li><a href="#pandoc">Pandocを導入する</a>    <ul>
-      <li><a href="#section-1">インストール</a></li>
-      <li><a href="#githubcss">githubのCSSで変換してみる</a>        <ul>
-          <li><a href="#section-2">導入・設定</a></li>
-          <li><a href="#section-3">変換する</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><a href="#section-4">まとめ</a>    <ul>
-      <li><a href="#section-5">参考文献</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h1 id="section">はじめに</h1>
-
-<p>ここの所、文章は全てMakrdownで書くようにしています。仕事でも <a href="http://qiita.com/">Qiita</a> などのサービスを利用しており身の回りで徐々に markdown を使う環境を広げているところです。 まさにこのサイトも makrdown で書かれており色々と捗ります。
-先日、だいぶ長い文章を markdown で書いたのですが最終的に清書して出す必要がありその際にフォーマット変換（HTMLやPDF）に変換したくなりました。
-その際には時間切れだったのですが改めて環境を作ったので書いておきます。</p>
-
-<h1 id="pandoc">Pandocを導入する</h1>
-
-<p>最近ちょっと入れてみたいと言う時にはDockerとかVagrantで簡単に環境を作っています。なのでMacbookで書いているのですが以後の処理はUbuntuで行った場合の対応になります。色々なファイルフォーマットを変換してもらうことの出来る <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> を利用します。</p>
-
-<h2 id="section-1">インストール</h2>
-
-<p>PandcoはHaskellの上で動くのでHaskel Platformの上で導入することも出来ますが今回は簡単にパッケージマネージャーから導入することにします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install pandoc</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>導入の確認</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">vagrant@ubuntu1404:/vagrant_data/files$ pandoc -v
-</span><span class="line">pandoc 1.12.2.1
-</span><span class="line">Compiled with texmath 0.6.5.2, highlighting-kate 0.5.5.1.
-</span><span class="line">Syntax highlighting is supported for the following languages:
-</span><span class="line">    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
-</span><span class="line">    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
-</span><span class="line">    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
-</span><span class="line">    fortran, fsharp, gnuassembler, go, haskell, haxe, html, ini, java, javadoc,
-</span><span class="line">    javascript, json, jsp, julia, latex, lex, literatecurry, literatehaskell,
-</span><span class="line">    lua, makefile, mandoc, markdown, matlab, maxima, metafont, mips, modelines,
-</span><span class="line">    modula2, modula3, monobasic, nasm, noweb, objectivec, objectivecpp, ocaml,
-</span><span class="line">    octave, pascal, perl, php, pike, postscript, prolog, python, r,
-</span><span class="line">    relaxngcompact, rhtml, roff, ruby, rust, scala, scheme, sci, sed, sgml, sql,
-</span><span class="line">    sqlmysql, sqlpostgresql, tcl, texinfo, verilog, vhdl, xml, xorg, xslt, xul,
-</span><span class="line">    yacc, yaml
-</span><span class="line">Default user data directory: /home/vagrant/.pandoc
-</span><span class="line">Copyright (C) 2006-2013 John MacFarlane
-</span><span class="line">Web:  http://johnmacfarlane.net/pandoc
-</span><span class="line">This is free software; see the source for copying conditions.  There is no
-</span><span class="line">warranty, not even for merchantability or fitness for a particular purpose.</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>変換してみる</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">% pandoc input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>オプションの説明などは日本語のリファレンスもあるのでそちらを参考にします。</p>
-
-<h2 id="githubcss">githubのCSSで変換してみる</h2>
-
-<p>実際にHTMLにした際にも見た目、Github風に慣れ親しんでいるのでCSSを指定してHTMLに変換することが出来ます。またオプションを指定することにより toc(目次）も入れること出来ます。目次はHTMLの場合にはキチンとHyperlinkになってくれるのでありがたい。</p>
-
-<h3 id="section-2">導入・設定</h3>
-
-<p>markdownファイルがある場所にCSSをダウンロードします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ wget https://gist.github.com/andyferra/2554919</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-3">変換する</h3>
-
-<p>変換には、cssファイルを指定する方法がありますがこの場合には生成されたHTMLファイルがCSSファイルを利用するようになります。
-単体の一つのHTMLにしたい場合にはテンプレートをコピーしてその中にCSSを埋め込んだほうが良いです。テンプレートはubuntuの場合には、<code>/usr/share/pandoc/data/templates</code> に導入されています。
-今回はCSSファイルを個別にしてして見ます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ pandoc --toc --toc-depth=1 -t html -c github.css input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>こうするとmarkdownの書式に合わせて目次を生成してくれます。
-自動でこういう風になってくれるとすごく便利です。</p>
-
-<h1 id="section-4">まとめ</h1>
-
-<p>簡単に変換できるツールなので他にもコンバージョンを試してみたいと思います。PDFの変換も気になるところですがChromeブラウザのPDF出力もある程度代用可能なので暫くはそちらでも良いかなと思っています。それよりも SLIDES 利用したスライド作れる方が興味があります。
-簡単にテキスト(markdown)で書いておいてさっと発表に使えるとなると色々捗りそうです。</p>
-
-<h2 id="section-5">参考文献</h2>
-
-<ul>
-  <li><a href="http://qiita.com/sky_y/items/80bcd0f353ef5b8980ee">HTML - 多様なフォーマットに対応！ドキュメント変換ツールPandocを知ろう - Qiita</a></li>
-  <li><a href="http://sky-y.github.io/site-pandoc-jp/users-guide/">Pandoc ユーザーズガイド 日本語版 - Japanese Pandoc User&#8217;s Association</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1414,15 +1462,15 @@ let g:startify_bookmarks = [
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
+    
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
-    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
+    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
     
     <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
     
   </div>
 </section>
@@ -1454,7 +1502,7 @@ let g:startify_bookmarks = [
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">20</span>
+        <span class="badge">21</span>
         review
       </a>
     
@@ -1498,7 +1546,7 @@ let g:startify_bookmarks = [
     
     
     <a class="list-group-item " href="/blog/tags/softlayer/index.html">
-        <span class="badge">8</span>
+        <span class="badge">9</span>
         softlayer
       </a>
     
@@ -1578,6 +1626,12 @@ let g:startify_bookmarks = [
     <a class="list-group-item " href="/blog/tags/wordpress/index.html">
         <span class="badge">1</span>
         wordpress
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/vyatta/index.html">
+        <span class="badge">1</span>
+        vyatta
       </a>
     
   </div>

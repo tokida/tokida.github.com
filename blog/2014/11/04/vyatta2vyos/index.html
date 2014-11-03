@@ -2,10 +2,10 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Tag: Wordpress - なんでもやってみるのが良いと思う</title>
+  <title>Vyatta を VyOS にアップデートして Vxlan を利用する - なんでもやってみるのが良いと思う</title>
   <meta name="author" content="H.Tokida">
 
-  <meta name="description" content="Tag: wordpress">
+  
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://stepxstep.org/blog/tags/wordpress">
+  <link rel="canonical" href="http://stepxstep.org/blog/2014/11/04/vyatta2vyos">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="なんでもやってみるのが良いと思う" type="application/atom+xml">
 
@@ -25,9 +25,9 @@
   <!-- http://opengraphprotocol.org/ -->
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="http://stepxstep.org/blog/tags/wordpress">
-  <meta property="og:title" content="Tag: Wordpress - なんでもやってみるのが良いと思う">
-  <meta property="og:description" content="Tag: wordpress">
+  <meta property="og:url" content="http://stepxstep.org/blog/2014/11/04/vyatta2vyos">
+  <meta property="og:title" content="Vyatta を VyOS にアップデートして Vxlan を利用する - なんでもやってみるのが良いと思う">
+  
 
   <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
 
@@ -70,10 +70,10 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li >
+                <li class="active">
                     <a href="/">Blog</a>
                 </li>
-                <li class="active">
+                <li >
                     <a href="/blog/archives">Archives</a>
                 </li>
                 <li >
@@ -106,49 +106,202 @@
       <div id="main" role="main" class="container">
         <div id="content">
           <div class="row">
-  <div class="page-content col-md-9">
-    <article role="article">
+  <div class="page-content col-md-9" itemscope itemtype="http://schema.org/Blog">
+    <meta itemprop="name" content="なんでもやってみるのが良いと思う" />
+    <meta itemprop="description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。" />
+    <meta itemprop="url" content="http://stepxstep.org" />
+    <article class="hentry" role="article" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
       
-        <header class="page-header">
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T02:29:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title" itemprop="name headline">
+        Vyatta を VyOS にアップデートして Vxlan を利用する
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#add-system-images">add system images</a></li>
+  <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
+</ul>
+
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート [^1] を試みる。</p>
+
+<p>[^1] SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。</p>
+
+<h1 id="add-system-images">add system images</h1>
+
+<p>VyOSへのアップデートの方法は、公式サイトの以下のリンクに記載されています。</p>
+
+<ul>
+  <li>http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C</li>
+</ul>
+
+<p>今回はVersion1.1を試してみたいと思います。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: Old-non-image-installation (default boot)
+
+vyatta@vyatta-dal01:~$ add system image http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+Trying to fetch ISO file from http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  231M  100  231M    0     0  5687k      0  0:00:41  0:00:41 --:--:-- 8782k
+ISO download succeeded.
+Checking for digital signature file...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   836  100   836    0     0    540      0  0:00:01  0:00:01 --:--:--  2229
+Found it.  Checking digital signature...
+gpg: directory `/root/.gnupg' created
+gpg: new configuration file `/root/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/root/.gnupg/pubring.gpg' created
+gpg: Signature made Thu Oct  9 17:42:59 2014 CDT using RSA key ID A442E6E9
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "SO3 Group Maintainers &lt;maintainers@so3group.net&gt;"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: DD5B B405 35E7 F6E3 4278  1ABF B744 E25A A442 E6E9
+Digital signature is valid.
+Checking MD5 checksums of files on the ISO image...OK.
+Done!
+What would you like to name this image? [1.1.0]:
+OK.  This image will be named: 1.1.0
+Installing "1.1.0" image.
+Copying new release files...
+Would you like to save the current configuration
+directory and config file? (Yes/No) [Yes]:
+Copying current configuration...
+Would you like to save the SSH host keys from your
+current configuration? (Yes/No) [Yes]:
+Copying SSH keys...
+Setting up grub configuration...
+Done.
+vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: 1.1.0 (default boot)
+   2: Old-non-image-installation
+</code></pre>
+
+<p>この状態で<code>reboot</code>をすると新しいイメージで起動をしてきます。</p>
+
+<pre><code>Welcome to VyOS
+vyatta@67.228.185.132's password:
+Linux vyatta 3.13.11-1-amd64-vyos #1 SMP Wed Sep 3 20:04:22 UTC 2014 x86_64
+Welcome to VyOS.
+This system is open-source software. The exact distribution terms for
+each module comprising the full system are described in the individual
+files in /usr/share/doc/*/copyright.
+</code></pre>
+
+<h1 id="vxlan-on-vyos-">vxlan on VyOS を試す</h1>
+
+<p>少し前に vxlan on Softlayer ということで同一データセンター内ではマルチキャストが通信できるのでvlanが使えたという事を書きました。VyOSの最新版ではvxlanがサポートされているとのことなので試します。</p>
+
+<pre><code>vyatta@vyatta-dal01# configure
+[edit]
+vyatta@vyatta-dal01# set interfaces  vxlan vxlan0
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 group 239.1.1.1
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 address '192.168.42.254/24'
+[edit]
+vyatta@vyatta-dal01# commit
+[edit]
+vyatta@vyatta-dal01# save
+Saving configuration to '/config/config.boot'...
+Done
+[edit]
+vyatta@vyatta-dal01#   show interfaces vxlan vxlan0
+ address 192.168.42.254/24
+ group 239.1.1.1
+ vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN group default
+    link/ether b6:37:f4:fa:30:d0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.42.254/24 brd 192.168.42.255 scope global vxlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b437:f4ff:fefa:30d0/64 scope link
+[edit]	
+</code></pre>
+
+<p>他のサーバの設定は <a href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer - なんでもやってみるのが良いと思う</a> として行います。現状でこの構成に今回の VyOS が追加されている形になります。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_req=1 ttl=64 time=0.635 ms
+64 bytes from 192.168.42.2: icmp_req=2 ttl=64 time=0.402 ms
+^C
+--- 192.168.42.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.402/0.518/0.635/0.118 ms
+vyatta@vyatta-dal01:~$ ping 192.168.42.3
+PING 192.168.42.3 (192.168.42.3) 56(84) bytes of data.
+64 bytes from 192.168.42.3: icmp_req=1 ttl=64 time=1.52 ms
+64 bytes from 192.168.42.3: icmp_req=2 ttl=64 time=0.303 ms
+^C
+--- 192.168.42.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
+</code></pre>
+
+<p>ということで問題なく疎通が出来ています。</p>
+
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
           
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard" itemprop="author" itemscope itemtype="http://schema.org/Person">Posted by <span class="fn" itemprop="name">H.Tokida</span></span>
+
           
-            <h1 class="entry-title">
-              Tag: Wordpress
-              
-            </h1>
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T02:29:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
           
-        </header>
-      
-      <div class="entry-content">
-        <div id="blog-archives" class="tag" itemscope itemtype="http://schema.org/Blog">
-<meta itemprop="name" content="なんでもやってみるのが良いと思う" />
-<meta itemprop="description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。" />
-<meta itemprop="url" content="http://stepxstep.org" />
-
-
-
-  
-  <h2 class="year">2014</h2>
-
-<article class="page-header" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-  
-<h2 class="post-title" itemprop="name headline"><a href="/blog/2014/08/25/xml-rpc-ddos/" itemprop="url">XMLRPCに大量にアクセスされている場合の回避策</a></h2>
-<p class="meta text-muted">
-  
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-25T11:28:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月25日</time>
-  
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
@@ -158,40 +311,52 @@
 </span>
 
 
-  
+		  
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="tags">
   Tagged as
   
-    <a class='tag label label-primary' href='/blog/tags/wordpress/'>wordpress</a>
+    <a class='tag label label-primary' href='/blog/tags/softlayer/'>softlayer</a> <a class='tag label label-primary' href='/blog/tags/vyatta/'>vyatta</a>
   
 </span>
 
 
-</p>
-
-</article>
-
+        </p>
+        
+          <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stepxstep.org/blog/2014/11/04/vyatta2vyos/" data-via="" data-counturl="http://stepxstep.org/blog/2014/11/04/vyatta2vyos/" >Tweet</a>
+  
+  
+  
 </div>
 
-      </div>
-      
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/11/04/sl-docker/" title="Previous Post: SoftlayerのslコマンドのDocker化">&laquo; SoftlayerのslコマンドのDocker化</a></li>
+            
+            
+          </ul>
+        
+      </footer>
     </article>
     
   </div>
 
   
-    <aside class="sidebar col-md-3">
-      
-        <section class="panel panel-default">
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Recent Posts</h3>
   </div>
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
+    <a class="list-group-item active" href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
@@ -367,8 +532,8 @@
 </section>
 
 
-      
-    </aside>
+    
+  </aside>
   
 </div>
 
@@ -387,19 +552,6 @@
 </div>
 </footer>
     
-
-<script type="text/javascript">
-      var disqus_shortname = 'roguer';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
 
 

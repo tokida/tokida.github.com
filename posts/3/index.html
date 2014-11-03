@@ -132,6 +132,161 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T05:52:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/" itemprop="url">Markdownの文章をHTMLに変換する</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#section">はじめに</a></li>
+  <li><a href="#pandoc">Pandocを導入する</a>    <ul>
+      <li><a href="#section-1">インストール</a></li>
+      <li><a href="#githubcss">githubのCSSで変換してみる</a>        <ul>
+          <li><a href="#section-2">導入・設定</a></li>
+          <li><a href="#section-3">変換する</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#section-4">まとめ</a>    <ul>
+      <li><a href="#section-5">参考文献</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="section">はじめに</h1>
+
+<p>ここの所、文章は全てMakrdownで書くようにしています。仕事でも <a href="http://qiita.com/">Qiita</a> などのサービスを利用しており身の回りで徐々に markdown を使う環境を広げているところです。 まさにこのサイトも makrdown で書かれており色々と捗ります。
+先日、だいぶ長い文章を markdown で書いたのですが最終的に清書して出す必要がありその際にフォーマット変換（HTMLやPDF）に変換したくなりました。
+その際には時間切れだったのですが改めて環境を作ったので書いておきます。</p>
+
+<h1 id="pandoc">Pandocを導入する</h1>
+
+<p>最近ちょっと入れてみたいと言う時にはDockerとかVagrantで簡単に環境を作っています。なのでMacbookで書いているのですが以後の処理はUbuntuで行った場合の対応になります。色々なファイルフォーマットを変換してもらうことの出来る <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> を利用します。</p>
+
+<h2 id="section-1">インストール</h2>
+
+<p>PandcoはHaskellの上で動くのでHaskel Platformの上で導入することも出来ますが今回は簡単にパッケージマネージャーから導入することにします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install pandoc</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>導入の確認</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">vagrant@ubuntu1404:/vagrant_data/files$ pandoc -v
+</span><span class="line">pandoc 1.12.2.1
+</span><span class="line">Compiled with texmath 0.6.5.2, highlighting-kate 0.5.5.1.
+</span><span class="line">Syntax highlighting is supported for the following languages:
+</span><span class="line">    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
+</span><span class="line">    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
+</span><span class="line">    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
+</span><span class="line">    fortran, fsharp, gnuassembler, go, haskell, haxe, html, ini, java, javadoc,
+</span><span class="line">    javascript, json, jsp, julia, latex, lex, literatecurry, literatehaskell,
+</span><span class="line">    lua, makefile, mandoc, markdown, matlab, maxima, metafont, mips, modelines,
+</span><span class="line">    modula2, modula3, monobasic, nasm, noweb, objectivec, objectivecpp, ocaml,
+</span><span class="line">    octave, pascal, perl, php, pike, postscript, prolog, python, r,
+</span><span class="line">    relaxngcompact, rhtml, roff, ruby, rust, scala, scheme, sci, sed, sgml, sql,
+</span><span class="line">    sqlmysql, sqlpostgresql, tcl, texinfo, verilog, vhdl, xml, xorg, xslt, xul,
+</span><span class="line">    yacc, yaml
+</span><span class="line">Default user data directory: /home/vagrant/.pandoc
+</span><span class="line">Copyright (C) 2006-2013 John MacFarlane
+</span><span class="line">Web:  http://johnmacfarlane.net/pandoc
+</span><span class="line">This is free software; see the source for copying conditions.  There is no
+</span><span class="line">warranty, not even for merchantability or fitness for a particular purpose.</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>変換してみる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">% pandoc input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>オプションの説明などは日本語のリファレンスもあるのでそちらを参考にします。</p>
+
+<h2 id="githubcss">githubのCSSで変換してみる</h2>
+
+<p>実際にHTMLにした際にも見た目、Github風に慣れ親しんでいるのでCSSを指定してHTMLに変換することが出来ます。またオプションを指定することにより toc(目次）も入れること出来ます。目次はHTMLの場合にはキチンとHyperlinkになってくれるのでありがたい。</p>
+
+<h3 id="section-2">導入・設定</h3>
+
+<p>markdownファイルがある場所にCSSをダウンロードします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ wget https://gist.github.com/andyferra/2554919</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-3">変換する</h3>
+
+<p>変換には、cssファイルを指定する方法がありますがこの場合には生成されたHTMLファイルがCSSファイルを利用するようになります。
+単体の一つのHTMLにしたい場合にはテンプレートをコピーしてその中にCSSを埋め込んだほうが良いです。テンプレートはubuntuの場合には、<code>/usr/share/pandoc/data/templates</code> に導入されています。
+今回はCSSファイルを個別にしてして見ます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ pandoc --toc --toc-depth=1 -t html -c github.css input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こうするとmarkdownの書式に合わせて目次を生成してくれます。
+自動でこういう風になってくれるとすごく便利です。</p>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>簡単に変換できるツールなので他にもコンバージョンを試してみたいと思います。PDFの変換も気になるところですがChromeブラウザのPDF出力もある程度代用可能なので暫くはそちらでも良いかなと思っています。それよりも SLIDES 利用したスライド作れる方が興味があります。
+簡単にテキスト(markdown)で書いておいてさっと発表に使えるとなると色々捗りそうです。</p>
+
+<h2 id="section-5">参考文献</h2>
+
+<ul>
+  <li><a href="http://qiita.com/sky_y/items/80bcd0f353ef5b8980ee">HTML - 多様なフォーマットに対応！ドキュメント変換ツールPandocを知ろう - Qiita</a></li>
+  <li><a href="http://sky-y.github.io/site-pandoc-jp/users-guide/">Pandoc ユーザーズガイド 日本語版 - Japanese Pandoc User&#8217;s Association</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-30T12:00:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月30日</time>
         
       </p>
@@ -232,15 +387,15 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
+    
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
-    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
+    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
     
     <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
     
   </div>
 </section>
@@ -272,7 +427,7 @@
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">20</span>
+        <span class="badge">21</span>
         review
       </a>
     
@@ -316,7 +471,7 @@
     
     
     <a class="list-group-item " href="/blog/tags/softlayer/index.html">
-        <span class="badge">8</span>
+        <span class="badge">9</span>
         softlayer
       </a>
     
@@ -396,6 +551,12 @@
     <a class="list-group-item " href="/blog/tags/wordpress/index.html">
         <span class="badge">1</span>
         wordpress
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/vyatta/index.html">
+        <span class="badge">1</span>
+        vyatta
       </a>
     
   </div>
