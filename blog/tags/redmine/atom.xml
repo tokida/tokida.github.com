@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: redmine | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/redmine/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/redmine/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Redmine の 「Local_Avatar_Plugin」 の画像表示を修正（仮想ホスト運用すると画像のURLがlocalhostに）]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/05/redminelocalavatar/"/>
+    <link href="http://stepxstep.org/blog/2014/06/05/redminelocalavatar/"/>
     <updated>2014-06-05T06:41:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/05/redminelocalavatar</id>
+    <id>http://stepxstep.org/blog/2014/06/05/redminelocalavatar</id>
     <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
 
 <p>仮想ホスト環境で運用していると、ローカルのIPアドレス:ポート番号（今回のケースでは http://localhost:10000 )がURLに入ってしまっていることがあります。多分理由は場所場所で絶対パスで入ってしまうせいだと思います。
@@ -51,9 +51,9 @@
   
   <entry>
     <title type="html"><![CDATA[Redmineのプラグインをアンインストールする]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin/"/>
+    <link href="http://stepxstep.org/blog/2014/06/05/redmienuninstallplugin/"/>
     <updated>2014-06-05T05:29:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin</id>
+    <id>http://stepxstep.org/blog/2014/06/05/redmienuninstallplugin</id>
     <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
 
 <p>Redmine のプラグインの削除</p>

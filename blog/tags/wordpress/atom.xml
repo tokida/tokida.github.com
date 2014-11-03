@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: wordpress | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/wordpress/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/wordpress/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[XMLRPCに大量にアクセスされている場合の回避策]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos/"/>
+    <link href="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos/"/>
     <updated>2014-08-25T11:28:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos</id>
+    <id>http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos</id>
     <content type="html"><![CDATA[<p>さてCPU使用率が100%になったりApacheのデーモンが大量に発生したりした場合どんな原因が考えられますか？
 最近担当しているサーバからMemoryがいっぱいだよ、CPUがいっぱいだよとNew Relic経由でメールが届いたと思ったら触れなくなっていました。</p>
 

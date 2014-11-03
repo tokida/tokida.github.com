@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: mailman | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/mailman/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/mailman/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Mailman + Postfix + Nginx on Ubuntu SoftLayer]]></title>
-    <link href="http://tokida.github.io/blog/2014/07/04/mailman/"/>
+    <link href="http://stepxstep.org/blog/2014/07/04/mailman/"/>
     <updated>2014-07-04T16:34:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/07/04/mailman</id>
+    <id>http://stepxstep.org/blog/2014/07/04/mailman</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#goal">Goal</a></li>
   <li><a href="#install">Install</a>    <ul>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Vxlan on Softlayer]]></title>
-    <link href="http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer/"/>
+    <link href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/"/>
     <updated>2014-11-01T00:44:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer</id>
+    <id>http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">これは何？</a></li>
   <li><a href="#section-1">環境</a></li>
@@ -112,9 +112,9 @@ From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
   
   <entry>
     <title type="html"><![CDATA[SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた]]></title>
-    <link href="http://tokida.github.io/blog/2014/09/17/consistentstorage/"/>
+    <link href="http://stepxstep.org/blog/2014/09/17/consistentstorage/"/>
     <updated>2014-09-17T20:40:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/09/17/consistentstorage</id>
+    <id>http://stepxstep.org/blog/2014/09/17/consistentstorage</id>
     <content type="html"><![CDATA[<p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
 1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
 
@@ -136,7 +136,7 @@ From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
 <p>オーダ時のオプションで利用OSを選択するようになっていますね。
 管理ポータルから、<code>Storage</code>→<code>Block Storage</code>→<code>Order Consistent Performance</code>を選択しましょう。</p>
 
-<p><img src="http://tokida.github.io/images/2014-09-17-iscsi.png" alt="iscsi" /></p>
+<p><img src="http://stepxstep.org/images/2014-09-17-iscsi.png" alt="iscsi" /></p>
 
 <p>ここでの費用は、「ディスクサイズ」＋「IOPS」となるようです。この画像の場合、<code>20 GB 100 to 1000 IOPS</code>というは20GのiSCSIディスクはIOPS
 として100から1000までが指定可能ということになります。一番安い、20G 100IOPSをオーダしてみたいと思います。</p>
@@ -405,7 +405,7 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
 
 <p>良かった点は、iSCSIがMultipathになった点でしょうか、とはいえ手軽さはNFS(FileStorage)での利用ですかね。また帯域が保証されているので6000IOPSを複数束ねてRaid0構成も出来るかもしれませんね。ただし結構費用が高いのが辛いかもしれないですが。12TByte(6000IOPS)の場合 $1,200+$720になるので $0.16/GByte となりますね。</p>
 
-<p><img src="http://tokida.github.io/images/2014-09-17-iscsi02.png" alt="os" /></p>
+<p><img src="http://stepxstep.org/images/2014-09-17-iscsi02.png" alt="os" /></p>
 
 <p>このパラメータが何を意味しているのか調べていないのですが<code>AIX</code>とかありますね！</p>
 
@@ -423,9 +423,9 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
   
   <entry>
     <title type="html"><![CDATA[XMLRPCに大量にアクセスされている場合の回避策]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos/"/>
+    <link href="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos/"/>
     <updated>2014-08-25T11:28:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos</id>
+    <id>http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos</id>
     <content type="html"><![CDATA[<p>さてCPU使用率が100%になったりApacheのデーモンが大量に発生したりした場合どんな原因が考えられますか？
 最近担当しているサーバからMemoryがいっぱいだよ、CPUがいっぱいだよとNew Relic経由でメールが届いたと思ったら触れなくなっていました。</p>
 
@@ -523,9 +523,9 @@ iSCSIデバイスらしく<code>Authorized Hosts</code>という項目がある�
   
   <entry>
     <title type="html"><![CDATA[Serfを試してみる]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/22/first_serf/"/>
+    <link href="http://stepxstep.org/blog/2014/08/22/first_serf/"/>
     <updated>2014-08-22T01:30:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/22/first_serf</id>
+    <id>http://stepxstep.org/blog/2014/08/22/first_serf</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">はじめに</a></li>
   <li><a href="#section-1">導入</a></li>
@@ -824,9 +824,9 @@ SERF_USER_EVENT=TEST
   
   <entry>
     <title type="html"><![CDATA[SoftLayerでのAutoScale機能がリリース]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/"/>
+    <link href="http://stepxstep.org/blog/2014/08/20/softlayer-autoscale/"/>
     <updated>2014-08-20T22:45:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/20/softlayer-autoscale</id>
+    <id>http://stepxstep.org/blog/2014/08/20/softlayer-autoscale</id>
     <content type="html"><![CDATA[<p>SoftLayerにAutoScaleが発表されました。
 先日からAPIにはScale関数が登場していたのですがようやく管理ポータル側から設定ができるようになっていました。</p>
 
@@ -1105,9 +1105,9 @@ SERF_USER_EVENT=TEST
   
   <entry>
     <title type="html"><![CDATA[Software Desing 2014年9月号に寄稿しました]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/17/write-first/"/>
+    <link href="http://stepxstep.org/blog/2014/08/17/write-first/"/>
     <updated>2014-08-17T07:50:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/17/write-first</id>
+    <id>http://stepxstep.org/blog/2014/08/17/write-first</id>
     <content type="html"><![CDATA[<h1 id="section">はじめに</h1>
 
 <p>IT系で仕事をしていて若い時にずっと読んでいた「Software Design」に寄稿する機会を得ました。
@@ -1149,9 +1149,9 @@ SERF_USER_EVENT=TEST
   
   <entry>
     <title type="html"><![CDATA[1分でDocker環境を構築する Docker on DigitalOcean]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/09/firstdocker/"/>
+    <link href="http://stepxstep.org/blog/2014/08/09/firstdocker/"/>
     <updated>2014-08-09T23:49:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/09/firstdocker</id>
+    <id>http://stepxstep.org/blog/2014/08/09/firstdocker</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#docker">素早くDocker環境を用意する</a></li>
   <li><a href="#section">はじめに</a></li>
@@ -1290,9 +1290,9 @@ Git commit (server): d84a070
   
   <entry>
     <title type="html"><![CDATA[SoftLayerのObjecｔStorageへファイルバックアップを行う slbackup.py を試す]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/09/softlayerobjectstoragebackup/"/>
+    <link href="http://stepxstep.org/blog/2014/08/09/softlayerobjectstoragebackup/"/>
     <updated>2014-08-09T07:39:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/09/softlayerobjectstoragebackup</id>
+    <id>http://stepxstep.org/blog/2014/08/09/softlayerobjectstoragebackup</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">これは何？</a></li>
   <li><a href="#section-1">使い方</a></li>
@@ -1344,9 +1344,9 @@ Git commit (server): d84a070
   
   <entry>
     <title type="html"><![CDATA[Ansible 1.7 External Inventory SoftLayerを試してみる]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/09/ansible-softlayer/"/>
+    <link href="http://stepxstep.org/blog/2014/08/09/ansible-softlayer/"/>
     <updated>2014-08-09T02:17:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/09/ansible-softlayer</id>
+    <id>http://stepxstep.org/blog/2014/08/09/ansible-softlayer</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">何が出来るの？</a></li>
   <li><a href="#section-1">準備</a></li>
@@ -1519,9 +1519,9 @@ Git commit (server): d84a070
   
   <entry>
     <title type="html"><![CDATA[iTerm(2バイトオプション)+Tmuxでステータスがズレるのを修正しbrewでInstallする]]></title>
-    <link href="http://tokida.github.io/blog/2014/07/06/iterm+tmux/"/>
+    <link href="http://stepxstep.org/blog/2014/07/06/iterm+tmux/"/>
     <updated>2014-07-06T00:53:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/07/06/iterm+tmux</id>
+    <id>http://stepxstep.org/blog/2014/07/06/iterm+tmux</id>
     <content type="html"><![CDATA[<p>iTermを利用していて「Treat ambiguous-width characters as double width」をONにしているとTmux+Powerlineのステータスがズレてしまう問題がありました。
 チェックをOFFにしていると問題がないのですが日本語を多様していることもありググってみました。</p>
 
@@ -1579,9 +1579,9 @@ Git commit (server): d84a070
   
   <entry>
     <title type="html"><![CDATA[Mailman + Postfix + Nginx on Ubuntu SoftLayer]]></title>
-    <link href="http://tokida.github.io/blog/2014/07/04/mailman/"/>
+    <link href="http://stepxstep.org/blog/2014/07/04/mailman/"/>
     <updated>2014-07-04T16:34:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/07/04/mailman</id>
+    <id>http://stepxstep.org/blog/2014/07/04/mailman</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#goal">Goal</a></li>
   <li><a href="#install">Install</a>    <ul>
@@ -1918,9 +1918,9 @@ Git commit (server): d84a070
   
   <entry>
     <title type="html"><![CDATA[AWS Workspaces における日本語切替の問題]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/14/aws_workspaces_change_input/"/>
+    <link href="http://stepxstep.org/blog/2014/06/14/aws_workspaces_change_input/"/>
     <updated>2014-06-14T08:32:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/14/aws_workspaces_change_input</id>
+    <id>http://stepxstep.org/blog/2014/06/14/aws_workspaces_change_input</id>
     <content type="html"><![CDATA[<p>Amazon Web Service の Daas である「Workspaces」を利用していて日本語の切替にハマったので設定方法を書いておきます。</p>
 
 <h1 id="goal">Goal</h1>
@@ -1955,9 +1955,9 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
   
   <entry>
     <title type="html"><![CDATA[Markdownで簡単にサイトが構築できる「mkdocs」]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/12/mkdocs/"/>
+    <link href="http://stepxstep.org/blog/2014/06/12/mkdocs/"/>
     <updated>2014-06-12T01:06:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/12/mkdocs</id>
+    <id>http://stepxstep.org/blog/2014/06/12/mkdocs</id>
     <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
 
 <p>先日Dockerのサイトを見ているとgithubにリンクが張ってありたどっていってmkdocsというMarkdown形式の文章を整形するツールが有ることを知りました。結構良さそうな感じなので使ってみました。</p>
@@ -2015,7 +2015,7 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ mkdocs serve</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p><img src="http://tokida.github.io/images/mkdocs01.png" alt="images" /></p>
+<p><img src="http://stepxstep.org/images/mkdocs01.png" alt="images" /></p>
 
 <p>のような形で出力されます。</p>
 
@@ -2042,9 +2042,9 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
   
   <entry>
     <title type="html"><![CDATA[Redmine の 「Local_Avatar_Plugin」 の画像表示を修正（仮想ホスト運用すると画像のURLがlocalhostに）]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/05/redminelocalavatar/"/>
+    <link href="http://stepxstep.org/blog/2014/06/05/redminelocalavatar/"/>
     <updated>2014-06-05T06:41:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/05/redminelocalavatar</id>
+    <id>http://stepxstep.org/blog/2014/06/05/redminelocalavatar</id>
     <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
 
 <p>仮想ホスト環境で運用していると、ローカルのIPアドレス:ポート番号（今回のケースでは http://localhost:10000 )がURLに入ってしまっていることがあります。多分理由は場所場所で絶対パスで入ってしまうせいだと思います。
@@ -2077,9 +2077,9 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
   
   <entry>
     <title type="html"><![CDATA[Redmineのプラグインをアンインストールする]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin/"/>
+    <link href="http://stepxstep.org/blog/2014/06/05/redmienuninstallplugin/"/>
     <updated>2014-06-05T05:29:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin</id>
+    <id>http://stepxstep.org/blog/2014/06/05/redmienuninstallplugin</id>
     <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
 
 <p>Redmine のプラグインの削除</p>
@@ -2098,9 +2098,9 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
   
   <entry>
     <title type="html"><![CDATA[[SoftLayer]ベアメタルサーバの構成検索 sl_config_finder.rb を使ってみる]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/01/sldn_configuration_finder/"/>
+    <link href="http://stepxstep.org/blog/2014/06/01/sldn_configuration_finder/"/>
     <updated>2014-06-01T22:02:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/01/sldn_configuration_finder</id>
+    <id>http://stepxstep.org/blog/2014/06/01/sldn_configuration_finder</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">何が出来るの？</a></li>
   <li><a href="#install">Install</a></li>
@@ -2225,9 +2225,9 @@ SoftLayerではAPIが色々あり導入出来るOSのリストとか簡単に取
   
   <entry>
     <title type="html"><![CDATA[Github Page で独自ドメインを使う]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/01/useoriginaldomain/"/>
+    <link href="http://stepxstep.org/blog/2014/06/01/useoriginaldomain/"/>
     <updated>2014-06-01T21:25:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/01/useoriginaldomain</id>
+    <id>http://stepxstep.org/blog/2014/06/01/useoriginaldomain</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#goal">Goal</a></li>
   <li><a href="#github-page">Github page側の設定</a></li>
@@ -2302,9 +2302,9 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
   
   <entry>
     <title type="html"><![CDATA[Vimの起動画面で履歴を表示できるStartifyを入れてみる]]></title>
-    <link href="http://tokida.github.io/blog/2014/05/31/02/"/>
+    <link href="http://stepxstep.org/blog/2014/05/31/02/"/>
     <updated>2014-05-31T23:02:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/05/31/02</id>
+    <id>http://stepxstep.org/blog/2014/05/31/02</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#startify-">Startify プラグイン</a>    <ul>
       <li><a href="#install">Install</a></li>
@@ -2331,7 +2331,7 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
 
 <p>起動した時の画面が変わります。</p>
 
-<p><img src="http://tokida.github.io/images/2014_06_01_am0_00.png" alt="images" /></p>
+<p><img src="http://stepxstep.org/images/2014_06_01_am0_00.png" alt="images" /></p>
 
 <p>こんな感じで起動時に履歴が選択できるようになります。
 また <code>:startify</code>でいつでもこの画面を呼び出す事ができます。</p>
@@ -2390,9 +2390,9 @@ let g:startify_bookmarks = [
   
   <entry>
     <title type="html"><![CDATA[Markdownの文章をHTMLに変換する]]></title>
-    <link href="http://tokida.github.io/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/"/>
+    <link href="http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/"/>
     <updated>2014-05-31T05:52:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/05/31/markdownの文章をhtmlに変換する</id>
+    <id>http://stepxstep.org/blog/2014/05/31/markdownの文章をhtmlに変換する</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">はじめに</a></li>
   <li><a href="#pandoc">Pandocを導入する</a>    <ul>
@@ -2517,9 +2517,9 @@ let g:startify_bookmarks = [
   
   <entry>
     <title type="html"><![CDATA[Octopressの記事の消し方]]></title>
-    <link href="http://tokida.github.io/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/"/>
+    <link href="http://stepxstep.org/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/"/>
     <updated>2014-05-30T12:00:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/05/30/octopressの記事の消し方</id>
+    <id>http://stepxstep.org/blog/2014/05/30/octopressの記事の消し方</id>
     <content type="html"><![CDATA[<p>早速、Octopressに投稿してみて最初に方法がわからなかったのは「投稿した記事の削除」の方法。
 変な文章あげちまったよ。と思ったところで消せずに悩んで10分。
 そう</p>

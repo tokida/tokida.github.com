@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Review | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/categories/review/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/categories/review/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Vxlan on Softlayer]]></title>
-    <link href="http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer/"/>
+    <link href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/"/>
     <updated>2014-11-01T00:44:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer</id>
+    <id>http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">これは何？</a></li>
   <li><a href="#section-1">環境</a></li>
@@ -112,9 +112,9 @@ From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
   
   <entry>
     <title type="html"><![CDATA[SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた]]></title>
-    <link href="http://tokida.github.io/blog/2014/09/17/consistentstorage/"/>
+    <link href="http://stepxstep.org/blog/2014/09/17/consistentstorage/"/>
     <updated>2014-09-17T20:40:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/09/17/consistentstorage</id>
+    <id>http://stepxstep.org/blog/2014/09/17/consistentstorage</id>
     <content type="html"><![CDATA[<p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
 1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
 
@@ -380,9 +380,9 @@ $ export DISK=/mnt/data1 ; curl -s https://gist.githubusercontent.com/tokida/090
   
   <entry>
     <title type="html"><![CDATA[XMLRPCに大量にアクセスされている場合の回避策]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos/"/>
+    <link href="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos/"/>
     <updated>2014-08-25T11:28:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos</id>
+    <id>http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos</id>
     <content type="html"><![CDATA[<p>さてCPU使用率が100%になったりApacheのデーモンが大量に発生したりした場合どんな原因が考えられますか？
 最近担当しているサーバからMemoryがいっぱいだよ、CPUがいっぱいだよとNew Relic経由でメールが届いたと思ったら触れなくなっていました。</p>
 
@@ -458,9 +458,9 @@ $ export DISK=/mnt/data1 ; curl -s https://gist.githubusercontent.com/tokida/090
   
   <entry>
     <title type="html"><![CDATA[Serfを試してみる]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/22/first_serf/"/>
+    <link href="http://stepxstep.org/blog/2014/08/22/first_serf/"/>
     <updated>2014-08-22T01:30:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/22/first_serf</id>
+    <id>http://stepxstep.org/blog/2014/08/22/first_serf</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">はじめに</a></li>
   <li><a href="#section-1">導入</a></li>
@@ -759,9 +759,9 @@ SERF_USER_EVENT=TEST
   
   <entry>
     <title type="html"><![CDATA[SoftLayerでのAutoScale機能がリリース]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/"/>
+    <link href="http://stepxstep.org/blog/2014/08/20/softlayer-autoscale/"/>
     <updated>2014-08-20T22:45:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/20/softlayer-autoscale</id>
+    <id>http://stepxstep.org/blog/2014/08/20/softlayer-autoscale</id>
     <content type="html"><![CDATA[<p>SoftLayerにAutoScaleが発表されました。
 先日からAPIにはScale関数が登場していたのですがようやく管理ポータル側から設定ができるようになっていました。</p>
 

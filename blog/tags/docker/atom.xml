@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: docker | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/docker/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/docker/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[1分でDocker環境を構築する Docker on DigitalOcean]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/09/firstdocker/"/>
+    <link href="http://stepxstep.org/blog/2014/08/09/firstdocker/"/>
     <updated>2014-08-09T23:49:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/09/firstdocker</id>
+    <id>http://stepxstep.org/blog/2014/08/09/firstdocker</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#docker">素早くDocker環境を用意する</a></li>
   <li><a href="#section">はじめに</a></li>

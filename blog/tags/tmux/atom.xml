@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: tmux | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/tmux/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/tmux/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[iTerm(2バイトオプション)+Tmuxでステータスがズレるのを修正しbrewでInstallする]]></title>
-    <link href="http://tokida.github.io/blog/2014/07/06/iterm+tmux/"/>
+    <link href="http://stepxstep.org/blog/2014/07/06/iterm+tmux/"/>
     <updated>2014-07-06T00:53:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/07/06/iterm+tmux</id>
+    <id>http://stepxstep.org/blog/2014/07/06/iterm+tmux</id>
     <content type="html"><![CDATA[<p>iTermを利用していて「Treat ambiguous-width characters as double width」をONにしているとTmux+Powerlineのステータスがズレてしまう問題がありました。
 チェックをOFFにしていると問題がないのですが日本語を多様していることもありググってみました。</p>
 

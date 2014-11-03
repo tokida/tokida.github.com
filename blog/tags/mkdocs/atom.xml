@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: mkdocs | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/mkdocs/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/mkdocs/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Markdownで簡単にサイトが構築できる「mkdocs」]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/12/mkdocs/"/>
+    <link href="http://stepxstep.org/blog/2014/06/12/mkdocs/"/>
     <updated>2014-06-12T01:06:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/12/mkdocs</id>
+    <id>http://stepxstep.org/blog/2014/06/12/mkdocs</id>
     <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
 
 <p>先日Dockerのサイトを見ているとgithubにリンクが張ってありたどっていってmkdocsというMarkdown形式の文章を整形するツールが有ることを知りました。結構良さそうな感じなので使ってみました。</p>

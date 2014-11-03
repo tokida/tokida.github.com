@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: github | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/github/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/github/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Github page で独自ドメインを使う]]></title>
-    <link href="http://tokida.github.io/blog/2014/06/01/useoriginaldomain/"/>
+    <link href="http://stepxstep.org/blog/2014/06/01/useoriginaldomain/"/>
     <updated>2014-06-01T21:25:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/06/01/useoriginaldomain</id>
+    <id>http://stepxstep.org/blog/2014/06/01/useoriginaldomain</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#goal">Goal</a></li>
   <li><a href="#github-page">Github page側の設定</a></li>

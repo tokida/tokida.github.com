@@ -1,125 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer/</loc>
+    <loc>http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/</loc>
     <lastmod>2014-11-01T00:44:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/09/17/consistentstorage/</loc>
+    <loc>http://stepxstep.org/blog/2014/09/17/consistentstorage/</loc>
     <lastmod>2014-09-17T20:40:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos/</loc>
     <lastmod>2014-08-25T11:28:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/22/first_serf/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/22/first_serf/</loc>
     <lastmod>2014-08-22T01:30:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/20/softlayer-autoscale/</loc>
     <lastmod>2014-08-20T22:45:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/17/write-first/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/17/write-first/</loc>
     <lastmod>2014-08-17T07:50:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/09/firstdocker/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/09/firstdocker/</loc>
     <lastmod>2014-08-09T23:49:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/09/softlayerobjectstoragebackup/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/09/softlayerobjectstoragebackup/</loc>
     <lastmod>2014-08-09T07:39:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/08/09/ansible-softlayer/</loc>
+    <loc>http://stepxstep.org/blog/2014/08/09/ansible-softlayer/</loc>
     <lastmod>2014-08-09T02:17:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/07/06/iterm+tmux/</loc>
+    <loc>http://stepxstep.org/blog/2014/07/06/iterm+tmux/</loc>
     <lastmod>2014-07-06T00:53:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/07/04/mailman/</loc>
+    <loc>http://stepxstep.org/blog/2014/07/04/mailman/</loc>
     <lastmod>2014-07-04T16:34:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/06/14/aws_workspaces_change_input/</loc>
+    <loc>http://stepxstep.org/blog/2014/06/14/aws_workspaces_change_input/</loc>
     <lastmod>2014-06-14T08:32:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/06/12/mkdocs/</loc>
+    <loc>http://stepxstep.org/blog/2014/06/12/mkdocs/</loc>
     <lastmod>2014-06-12T01:06:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/06/05/redminelocalavatar/</loc>
+    <loc>http://stepxstep.org/blog/2014/06/05/redminelocalavatar/</loc>
     <lastmod>2014-06-05T06:41:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin/</loc>
+    <loc>http://stepxstep.org/blog/2014/06/05/redmienuninstallplugin/</loc>
     <lastmod>2014-06-05T05:29:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/06/01/sldn_configuration_finder/</loc>
+    <loc>http://stepxstep.org/blog/2014/06/01/sldn_configuration_finder/</loc>
     <lastmod>2014-06-01T22:02:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/06/01/useoriginaldomain/</loc>
+    <loc>http://stepxstep.org/blog/2014/06/01/useoriginaldomain/</loc>
     <lastmod>2014-06-01T21:25:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/05/31/02/</loc>
+    <loc>http://stepxstep.org/blog/2014/05/31/02/</loc>
     <lastmod>2014-05-31T23:02:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/</loc>
+    <loc>http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/</loc>
     <lastmod>2014-05-31T05:52:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/</loc>
+    <loc>http://stepxstep.org/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/</loc>
     <lastmod>2014-05-30T12:00:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/2014/05/20/firstpost/</loc>
+    <loc>http://stepxstep.org/blog/2014/05/20/firstpost/</loc>
     <lastmod>2014-05-20T12:47:00+09:00</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/blog/archives/</loc>
-    <lastmod>2014-11-04T01:33:12+09:00</lastmod>
+    <loc>http://stepxstep.org/blog/archives/</loc>
+    <lastmod>2014-11-04T02:07:41+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/</loc>
-    <lastmod>2014-11-04T01:33:12+09:00</lastmod>
+    <loc>http://stepxstep.org/</loc>
+    <lastmod>2014-11-04T02:07:41+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://tokida.github.io/about/</loc>
-    <lastmod>2014-11-04T01:33:12+09:00</lastmod>
+    <loc>http://stepxstep.org/about/</loc>
+    <lastmod>2014-11-04T02:07:41+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Think | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/categories/think/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/categories/think/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Software Desing 2014年9月号に寄稿しました]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/17/write-first/"/>
+    <link href="http://stepxstep.org/blog/2014/08/17/write-first/"/>
     <updated>2014-08-17T07:50:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/17/write-first</id>
+    <id>http://stepxstep.org/blog/2014/08/17/write-first</id>
     <content type="html"><![CDATA[<h1 id="section">はじめに</h1>
 
 <p>IT系で仕事をしていて若い時にずっと読んでいた「Software Design」に寄稿する機会を得ました。

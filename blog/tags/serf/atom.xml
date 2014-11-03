@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: serf | なんでもやってみるのが良いと思う]]></title>
-  <link href="http://tokida.github.io/blog/tags/serf/atom.xml" rel="self"/>
-  <link href="http://tokida.github.io/"/>
-  <updated>2014-11-04T01:33:12+09:00</updated>
-  <id>http://tokida.github.io/</id>
+  <link href="http://stepxstep.org/blog/tags/serf/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2014-11-04T02:07:41+09:00</updated>
+  <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Serfを試してみる]]></title>
-    <link href="http://tokida.github.io/blog/2014/08/22/first_serf/"/>
+    <link href="http://stepxstep.org/blog/2014/08/22/first_serf/"/>
     <updated>2014-08-22T01:30:00+09:00</updated>
-    <id>http://tokida.github.io/blog/2014/08/22/first_serf</id>
+    <id>http://stepxstep.org/blog/2014/08/22/first_serf</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#section">はじめに</a></li>
   <li><a href="#section-1">導入</a></li>

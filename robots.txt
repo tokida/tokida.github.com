@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://tokida.github.io/sitemap.xml 
+Sitemap: http://stepxstep.org/sitemap.xml 
