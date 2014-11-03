@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>XMLRPCに大量にアクセスされている場合の回避策 - なんでもやってみるのが良いと思う</title>
+  <title>SoftlayerのslコマンドのDocker化 - なんでもやってみるのが良いと思う</title>
   <meta name="author" content="H.Tokida">
 
   
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos">
+  <link rel="canonical" href="http://stepxstep.org/blog/2014/11/04/sl-docker">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="なんでもやってみるのが良いと思う" type="application/atom+xml">
 
@@ -25,8 +25,8 @@
   <!-- http://opengraphprotocol.org/ -->
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos">
-  <meta property="og:title" content="XMLRPCに大量にアクセスされている場合の回避策 - なんでもやってみるのが良いと思う">
+  <meta property="og:url" content="http://stepxstep.org/blog/2014/11/04/sl-docker">
+  <meta property="og:title" content="SoftlayerのslコマンドのDocker化 - なんでもやってみるのが良いと思う">
   
 
   <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
@@ -128,110 +128,61 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-25T11:28:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月25日</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T01:46:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
         
       </p>
     
     
     <h1 class="entry-title" itemprop="name headline">
-        XMLRPCに大量にアクセスされている場合の回避策
+        SoftlayerのslコマンドのDocker化
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix" itemprop="articleBody description"><p>さてCPU使用率が100%になったりApacheのデーモンが大量に発生したりした場合どんな原因が考えられますか？
-最近担当しているサーバからMemoryがいっぱいだよ、CPUがいっぱいだよとNew Relic経由でメールが届いたと思ったら触れなくなっていました。</p>
+<div class="entry-content clearfix" itemprop="articleBody description"><p>SoftLayerのSLコマンドをDocker化しました。
+単にDockerhubのAutomated Buildで遊んでみたかっただけなのですが・・</p>
 
-<p>調べてみるとhttpdが大量に起動してメモリがなくなりフォークしたプロセスがKillされている状態でした。標準の設定でhttpd.confを書いているのでそもそも大量にコネクションがあった場合（今回のようなケース）はメモリが足りないなという状態だったので計算をしみたところ一つあたり57MByteもメモリを使っているという富豪な設定になっていました。ApacheでLoadModuleされすぎです。（CentOSの標準パッケージの問題だと思いますが）</p>
+<p>特に理由ないのですが各Linuxサーバに Python + SoftLayer-Cli 入れるのと Docker 入れるのとどっちがいいかなと思った場合にアプリケーションに影響なく利用できそうなのはDockerかなと。</p>
 
-<p>さて、そのようなことは横においておくとして今回の原因は xml-rpc.php に対して不特定の大量のアクセスが発生指定していることから起こっています。</p>
+<p>作ってみてローカルのMacbookで利用しているのですが便利です。
+これまでVagrant経由でVM起動してそのなかでゴニョゴニョしていました。今回のDockerにしてもboot2dockerで結局のところ似たような感じなのですが<code>config setup</code>で複数のSoftLayer環境を用意する際や、VersionUpをした際に簡単に分離して管理できるのは楽でした。 (まあ.dotfile切り替えるだけなら別の手段もあるかと思いますが)</p>
 
-<p>以下の例は暫定で<code>xmlrpc.php</code>を削除しています。</p>
+<h1 id="section">利用方法</h1>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">88.150.160.81 - - [23/Aug/2014:11:24:30 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">172.245.37.220 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">96.8.126.60 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">109.104.118.82 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">88.150.160.82 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">172.245.221.237 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">185.17.151.106 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">217.78.5.180 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">192.3.43.160 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">96.8.123.95 - - [23/Aug/2014:11:24:34 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">217.78.5.165 - - [23/Aug/2014:11:24:37 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
-</span><span class="line">^C</span></code></pre></td></tr></table></div></figure></notextile></div>
+<h2 id="section-1">想定</h2>
 
-<h3 id="section">対策</h3>
+<p>このツールは、IBM社のクラウドサービス「SoftLayer」のCLIコマンドである sl コマンドを利用することが出来ます。
+本番機などであまりslコマンド及び前提であるpythonを導入したくない場合。Dockerを利用うすることでOS側に影響なくコマンドを利用することが出来ます。 このDockerのImageは470MByte前後のサイズに成ります。</p>
 
-<p>幾つかの対策が考えられます。</p>
+<h2 id="section-2">設定</h2>
 
-<ul>
-  <li>XMLRPCの機能を無効化する（Wordpress3.5以降はディフォルトで有効になっているためソースを変更する必要がありそうです／VersionUp等の際にまた忘れる可能性があるので今回は選択しません）。</li>
-  <li>プラグインで無効化（プラグインで無効化してもPHPが動くためCPUリソースは食べそうです）／これはこれで導入しておきましょう。</li>
-  <li>接続可能なIPアドレスを制限する（今回はこれ）</li>
-</ul>
+<p>以下のコマンドで設定ファイルをコンテナ内部に作ります。</p>
 
-<p>今回はこの3番目のアドレスで制限をしてみたいと思います。このサーバは、Public側とPrivate側に2つのネットワークインターフェースを持っているサーバとなっています。また設定についてはApacheだったので以下のようなディレクティブを追加することで対応が出来ます。</p>
+<p><code>$ docker run  -ti tokida/softlayer-cli config setup</code></p>
 
-<h3 id="section-1">設定内容</h3>
+<p>通常のslコマンド同様にUsernameとAPIキーを設定して下さい。
+次に、コンテナを自分用としてローカルにcommitしておきます。</p>
 
-<ul>
-  <li><code>httpd.conf</code>に以下を追記する。xmlrpc.php　は 10.0.0.0　からのアクセスのみ許可にする。</li>
-</ul>
+<p><code>$ docker restart 993ae5495011</code></p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">&lt;Files xmlrpc.php&gt;
-</span><span class="line">    order deny,allow
-</span><span class="line">    deny from all
-</span><span class="line">    allow from 10.0.0.0/255.0.0.0
-</span><span class="line">&lt;/Files&gt;</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>一度コンテナをRestartします。</p>
 
-<p>これでPrivateNetworki(10.0.0.0)側のみになりそれ以外は403でエラーになります。</p>
+<p><code>$ docker commit -m "my account" 993ae5495011 tokida/softlayer-cli:my</code></p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">172.245.37.225 - - [23/Aug/2014:11:35:55 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">109.104.118.117 - - [23/Aug/2014:11:35:56 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">109.104.118.82 - - [23/Aug/2014:11:35:56 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">198.23.154.30 - - [23/Aug/2014:11:35:57 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">109.104.118.117 - - [23/Aug/2014:11:35:57 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">217.78.5.166 - - [23/Aug/2014:11:35:58 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">109.104.118.131 - - [23/Aug/2014:11:35:58 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">96.8.125.21 - - [23/Aug/2014:11:35:59 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">217.78.5.165 - - [23/Aug/2014:11:35:59 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">109.104.118.77 - - [23/Aug/2014:11:36:00 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
-</span><span class="line">^C</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>(数字はコンテナIDで <code>docker ps -a</code>で参照すること)
+ここではTagに<code>my</code>をつけています。</p>
 
-<h3 id="section-2">まとめ</h3>
+<h2 id="section-3">利用方法</h2>
 
-<p>今回リソースはNewRelicで見ていましたがログまでは保管していなかったため問題が発生している際に状況を調べるのが面倒でした。というかCPU100%の状態を解消しないと見ることが出来ませんでした。キチンとFluentd等で別のログサーバにデータを転送しておきたいと思います。</p>
+<p><code>$ docker run  -ti tokida/softlayer-cli:my  vs list</code></p>
+
+<p>という形で利用することが出来ます。長いのでシェルでエリアス等をしておくと良いかと思います。</p>
+
+<p><code>$ alias sl="docker run  -ti tokida/softlayer-cli:my"</code></p>
+
+<p>こうしておくと普段通り <code>sl</code> コマンドが利用できます。</p>
 
 </div>
 
@@ -256,7 +207,7 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-25T11:28:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月25日</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T01:46:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
@@ -273,7 +224,7 @@
 <span class="tags">
   Tagged as
   
-    <a class='tag label label-primary' href='/blog/tags/wordpress/'>wordpress</a>
+    <a class='tag label label-primary' href='/blog/tags/softlayer/'>softlayer</a>
   
 </span>
 
@@ -282,7 +233,7 @@
         
           <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos/" data-via="" data-counturl="http://stepxstep.org/blog/2014/08/25/xml-rpc-ddos/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stepxstep.org/blog/2014/11/04/sl-docker/" data-via="" data-counturl="http://stepxstep.org/blog/2014/11/04/sl-docker/" >Tweet</a>
   
   
   
@@ -292,10 +243,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2014/08/22/first_serf/" title="Previous Post: Serfを試してみる">&laquo; Serfを試してみる</a></li>
+            <li class="previous"><a href="/blog/2014/11/01/vxlan-on-softlayer/" title="Previous Post: vxlan on Softlayer">&laquo; vxlan on Softlayer</a></li>
             
-            
-            <li class="next"><a href="/blog/2014/09/17/consistentstorage/" title="Next Post: SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた &raquo;</a></li>
             
           </ul>
         
@@ -314,13 +263,13 @@
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
+    <a class="list-group-item active" href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
     <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
     
-    <a class="list-group-item active" href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
+    <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
     
     <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
     

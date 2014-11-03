@@ -132,6 +132,85 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T01:46:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/11/04/sl-docker/" itemprop="url">SoftlayerのslコマンドのDocker化</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><p>SoftLayerのSLコマンドをDocker化しました。
+単にDockerhubのAutomated Buildで遊んでみたかっただけなのですが・・</p>
+
+<p>特に理由ないのですが各Linuxサーバに Python + SoftLayer-Cli 入れるのと Docker 入れるのとどっちがいいかなと思った場合にアプリケーションに影響なく利用できそうなのはDockerかなと。</p>
+
+<p>作ってみてローカルのMacbookで利用しているのですが便利です。
+これまでVagrant経由でVM起動してそのなかでゴニョゴニョしていました。今回のDockerにしてもboot2dockerで結局のところ似たような感じなのですが<code>config setup</code>で複数のSoftLayer環境を用意する際や、VersionUpをした際に簡単に分離して管理できるのは楽でした。 (まあ.dotfile切り替えるだけなら別の手段もあるかと思いますが)</p>
+
+<h1 id="section">利用方法</h1>
+
+<h2 id="section-1">想定</h2>
+
+<p>このツールは、IBM社のクラウドサービス「SoftLayer」のCLIコマンドである sl コマンドを利用することが出来ます。
+本番機などであまりslコマンド及び前提であるpythonを導入したくない場合。Dockerを利用うすることでOS側に影響なくコマンドを利用することが出来ます。 このDockerのImageは470MByte前後のサイズに成ります。</p>
+
+<h2 id="section-2">設定</h2>
+
+<p>以下のコマンドで設定ファイルをコンテナ内部に作ります。</p>
+
+<p><code>$ docker run  -ti tokida/softlayer-cli config setup</code></p>
+
+<p>通常のslコマンド同様にUsernameとAPIキーを設定して下さい。
+次に、コンテナを自分用としてローカルにcommitしておきます。</p>
+
+<p><code>$ docker restart 993ae5495011</code></p>
+
+<p>一度コンテナをRestartします。</p>
+
+<p><code>$ docker commit -m "my account" 993ae5495011 tokida/softlayer-cli:my</code></p>
+
+<p>(数字はコンテナIDで <code>docker ps -a</code>で参照すること)
+ここではTagに<code>my</code>をつけています。</p>
+
+<h2 id="section-3">利用方法</h2>
+
+<p><code>$ docker run  -ti tokida/softlayer-cli:my  vs list</code></p>
+
+<p>という形で利用することが出来ます。長いのでシェルでエリアス等をしておくと良いかと思います。</p>
+
+<p><code>$ alias sl="docker run  -ti tokida/softlayer-cli:my"</code></p>
+
+<p>こうしておくと普段通り <code>sl</code> コマンドが利用できます。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-01T00:44:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月1日</time>
         
       </p>
@@ -1869,94 +1948,6 @@ Git commit (server): d84a070
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-06T00:53:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年7月6日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/07/06/iterm+tmux/" itemprop="url">iTerm(2バイトオプション)+Tmuxでステータスがズレるのを修正しbrewでInstallする</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><p>iTermを利用していて「Treat ambiguous-width characters as double width」をONにしているとTmux+Powerlineのステータスがズレてしまう問題がありました。
-チェックをOFFにしていると問題がないのですが日本語を多様していることもありググってみました。</p>
-
-<ul>
-  <li>http://ta.ps.st/d/1350718711.html</li>
-</ul>
-
-<p>こちらは少し古いのですがこれで解消が出来ました。</p>
-
-<ul>
-  <li><a href="https://gist.github.com/tokida/997cf6b608d93ccbefef#file-tmux_utf8-patch">tmux_utf8.patch</a></li>
-</ul>
-
-<p>Tmux1.9に対してのpatch形式にしたのをgistにあげておきます。</p>
-
-<p>さて、tmuxはhomebrewで導入しているのでこちらから修正して導入できるようにしておきます。brewコマンドはsourceからのコンパイルする際にpatchなどの適応ができるので追記してみます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ brew edit tmux</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>これで以下のように修正します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">23   depends_on 'pkg-config' =&gt; :build
-</span><span class="line">24   depends_on 'libevent'
-</span><span class="line">25
-</span><span class="line">26   def patches
-</span><span class="line">27     [
-</span><span class="line">28         "https://gist.githubusercontent.com/tokida/997cf6b608d93ccbefef/raw/63219743ec84b255a975f230593895dbdad9f364/tmux_utf8.patch"
-</span><span class="line">29     ]
-</span><span class="line">30   end
-</span><span class="line">31
-</span><span class="line">32   def install
-</span><span class="line">33     system "sh", "autogen.sh" if build.head?</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>先ほどのパッチを指定しておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">brew install --build-from-source tmux</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上記のコマンドオプションを実行することによりsourceからリビルドされます。
-最近これでズレまくって嫌になっていたのですがまたtmuxに戻って見たいと思います。</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1980,6 +1971,8 @@ Git commit (server): d84a070
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
+    
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
     <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
@@ -1987,8 +1980,6 @@ Git commit (server): d84a070
     <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
     
     <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/20/softlayer-autoscale/">SoftLayerでのAutoScale機能がリリース</a>
     
   </div>
 </section>
@@ -2020,7 +2011,7 @@ Git commit (server): d84a070
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">19</span>
+        <span class="badge">20</span>
         review
       </a>
     
@@ -2064,7 +2055,7 @@ Git commit (server): d84a070
     
     
     <a class="list-group-item " href="/blog/tags/softlayer/index.html">
-        <span class="badge">7</span>
+        <span class="badge">8</span>
         softlayer
       </a>
     

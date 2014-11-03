@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Review | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/categories/review/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2014-11-04T02:07:41+09:00</updated>
+  <updated>2014-11-04T02:08:59+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[SoftlayerのslコマンドのDocker化]]></title>
+    <link href="http://stepxstep.org/blog/2014/11/04/sl-docker/"/>
+    <updated>2014-11-04T01:46:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/11/04/sl-docker</id>
+    <content type="html"><![CDATA[<p>SoftLayerのSLコマンドをDocker化しました。
+単にDockerhubのAutomated Buildで遊んでみたかっただけなのですが・・</p>
+
+<p>特に理由ないのですが各Linuxサーバに Python + SoftLayer-Cli 入れるのと Docker 入れるのとどっちがいいかなと思った場合にアプリケーションに影響なく利用できそうなのはDockerかなと。</p>
+
+<p>作ってみてローカルのMacbookで利用しているのですが便利です。
+これまでVagrant経由でVM起動してそのなかでゴニョゴニョしていました。今回のDockerにしてもboot2dockerで結局のところ似たような感じなのですが<code>config setup</code>で複数のSoftLayer環境を用意する際や、VersionUpをした際に簡単に分離して管理できるのは楽でした。 (まあ.dotfile切り替えるだけなら別の手段もあるかと思いますが)</p>
+
+<h1 id="section">利用方法</h1>
+
+<h2 id="section-1">想定</h2>
+
+<p>このツールは、IBM社のクラウドサービス「SoftLayer」のCLIコマンドである sl コマンドを利用することが出来ます。
+本番機などであまりslコマンド及び前提であるpythonを導入したくない場合。Dockerを利用うすることでOS側に影響なくコマンドを利用することが出来ます。 このDockerのImageは470MByte前後のサイズに成ります。</p>
+
+<h2 id="section-2">設定</h2>
+
+<p>以下のコマンドで設定ファイルをコンテナ内部に作ります。</p>
+
+<p><code>$ docker run  -ti tokida/softlayer-cli config setup</code></p>
+
+<p>通常のslコマンド同様にUsernameとAPIキーを設定して下さい。
+次に、コンテナを自分用としてローカルにcommitしておきます。</p>
+
+<p><code>$ docker restart 993ae5495011</code></p>
+
+<p>一度コンテナをRestartします。</p>
+
+<p><code>$ docker commit -m "my account" 993ae5495011 tokida/softlayer-cli:my</code></p>
+
+<p>(数字はコンテナIDで <code>docker ps -a</code>で参照すること)
+ここではTagに<code>my</code>をつけています。</p>
+
+<h2 id="section-3">利用方法</h2>
+
+<p><code>$ docker run  -ti tokida/softlayer-cli:my  vs list</code></p>
+
+<p>という形で利用することが出来ます。長いのでシェルでエリアス等をしておくと良いかと思います。</p>
+
+<p><code>$ alias sl="docker run  -ti tokida/softlayer-cli:my"</code></p>
+
+<p>こうしておくと普段通り <code>sl</code> コマンドが利用できます。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Vxlan on Softlayer]]></title>
@@ -752,287 +803,6 @@ SERF_USER_EVENT=TEST
 <ul>
   <li><a href="http://pocketstudio.jp/log3/2014/04/01/serf_event_handlers/">イベントハンドラを整理してみる</a></li>
   <li><a href="http://blog.livedoor.jp/sonots/archives/35397486.html">正月休みだし Serf 触ってみた - sonots:blog</a></li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[SoftLayerでのAutoScale機能がリリース]]></title>
-    <link href="http://stepxstep.org/blog/2014/08/20/softlayer-autoscale/"/>
-    <updated>2014-08-20T22:45:00+09:00</updated>
-    <id>http://stepxstep.org/blog/2014/08/20/softlayer-autoscale</id>
-    <content type="html"><![CDATA[<p>SoftLayerにAutoScaleが発表されました。
-先日からAPIにはScale関数が登場していたのですがようやく管理ポータル側から設定ができるようになっていました。</p>
-
-<ul>
-  <li>この文章はRelease後の検証のため誤りが含まれている可能性がありますのでご注意下さい。</li>
-</ul>
-
-<h1 id="section">これは何？</h1>
-
-<p>SoftLayerのAutoScale機能についての説明</p>
-
-<p>AutoScaleでは、トリガーの条件を元にサーバの台数を自動的に増やすことが出来る機能です。</p>
-
-<p>トリガーには</p>
-
-<ul>
-  <li>CPU%の値</li>
-  <li>毎日の時間</li>
-  <li>特定の日時</li>
-</ul>
-
-<p>を選択することが出来ます。
-またその際に実行できるアクションは</p>
-
-<ul>
-  <li>相対的にサーバを増やす（追加台数指定）</li>
-  <li>指定の台数にする（固定）</li>
-  <li>CPU%を指定する</li>
-</ul>
-
-<p>が選択できます。
-これによって、朝6時に10台へ夜8時に1台に変更などという事が出来ます。またトリガーは複数選択できるためこの間もCPUに応じてAutoScaleを取ることが出来ます。</p>
-
-<p>またAutoScaleの際には、Local Load Balancer（DataCenter内で利用可能なロードバランサーオプションの名前）に自動的に追加することが可能です。
-これ意外にも、「Auto」ではなく「Manual」でスケールさせることも出来ます、これは便利そうです。</p>
-
-<h1 id="section-1">使い方</h1>
-
-<p>管理ポータル上から、<code>Devices</code> → <code>Auto Scale</code> を選択します。なにも設定がないので右上の <code>Add Auto Scale Group</code>より追加を行います。</p>
-
-<p>設定値を記載しておきます。まだ全ての動作を見ていないので不明な箇所は※で記載しておきます。以下の設定をした後に右下の <code>Add Group</code>から構成を追加します。</p>
-
-<h2 id="group-configuration">Group Configuration</h2>
-
-<p>参考 <a href="http://knowledgelayer.softlayer.com/articles/auto-scale-terms">Auto Scale Terms</a></p>
-
-<h3 id="group-details">Group Details</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">分類</th>
-      <th style="text-align: left">設定値</th>
-      <th style="text-align: left">値</th>
-      <th style="text-align: left">補足</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Group Details</td>
-      <td style="text-align: left">Group Name</td>
-      <td style="text-align: left">グループの名前</td>
-      <td style="text-align: left">ユニークになっていれば何でも良いみたい</td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">Region</td>
-      <td style="text-align: left">地域の選択</td>
-      <td style="text-align: left"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">DataCenter</td>
-      <td style="text-align: left">サーバを置くデータセンターを選択</td>
-      <td style="text-align: left"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">Termination Policy</td>
-      <td style="text-align: left">Closest to next Charge, Newest , Oldest</td>
-      <td style="text-align: left">サーバをRemoveする際にどのサーバから消すかの指定</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Network</td>
-      <td style="text-align: left">Private Network Only</td>
-      <td style="text-align: left">ON/OFF</td>
-      <td style="text-align: left">プライベートのネットワークのみ利用</td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">Private (VLAN)</td>
-      <td style="text-align: left">VLAN名</td>
-      <td style="text-align: left"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">Public (VLAN)</td>
-      <td style="text-align: left">VLAN名</td>
-      <td style="text-align: left"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Group Setting</td>
-      <td style="text-align: left">Minimum Member Count</td>
-      <td style="text-align: left">最小の起動数</td>
-      <td style="text-align: left"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">Maximum Member Count</td>
-      <td style="text-align: left">最大の起動数</td>
-      <td style="text-align: left"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">CloodDown Prelod</td>
-      <td style="text-align: left">時間(min),Max 10day</td>
-      <td style="text-align: left">AutoScale動作後の非監視期間（だと思う）</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3 id="member-configuraion">Member Configuraion</h3>
-
-<p>| 分類 | 設定値 | 値 | 補足 |
-|:—-|:——|:–|:—-|</p>
-
-<p>ここは一般的な仮想サーバのパラメータが指定可能、ホスト名とドメイン名が仮に<code>web</code>と<code>autoscale.com</code>だとすると実際にプロビジョニングされる際には<code>web-xxxxxx.autoscale.com</code>のような名称が割り振られる。ここでは <code>Provision Scirpt</code>が指定可能。</p>
-
-<h3 id="policies">Policies</h3>
-
-<p>Policyは何個でも作ることが出来る</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">分類</th>
-      <th style="text-align: left">設定値</th>
-      <th style="text-align: left">値</th>
-      <th style="text-align: left">補足</th>
-      <th> </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Policy Details</td>
-      <td style="text-align: left">PolicyName</td>
-      <td style="text-align: left">必須</td>
-      <td style="text-align: left"> </td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left"> </td>
-      <td style="text-align: left">Cooldown Preiod</td>
-      <td style="text-align: left">0(min)-10(day)</td>
-      <td style="text-align: left">全体の設定を利用するか、個別に作るか</td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Triggers</td>
-      <td style="text-align: left">指定</td>
-      <td style="text-align: left">CPU%を指定可能( 30%以上や10%以下等,複数組みあせ可能）,特定の曜日, 特定の期間</td>
-      <td style="text-align: left"> </td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Action</td>
-      <td style="text-align: left">Scale By</td>
-      <td style="text-align: left">Exact(固定) , Relative(相対的に), Percentage(%)</td>
-      <td style="text-align: left">値は符号なしの場合「増加」、マイナス符号の場合「削減」となる</td>
-      <td> </td>
-    </tr>
-  </tbody>
-</table>
-
-<h3 id="local-load-balancers">Local Load Balancers</h3>
-
-<p>| 分類 | 設定値 | 値 | 補足 |
-|:—-|:——|:–|:—-|</p>
-
-<ul>
-  <li>あとで時間が有る時に追記する</li>
-</ul>
-
-<hr />
-
-<p>Policiesでは、どの様に増やすのかが指定可能です。設定できるLoadBalancersは<code>Local Load Balancers</code>のみですが基本的には問題無いと思います。指定したLBに自動的に組み込みが行われます。</p>
-
-<h1 id="section-2">実験</h1>
-
-<h2 id="section-3">その1</h2>
-
-<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
-
-<ul>
-  <li>Termination Policy : Newest</li>
-  <li>Cooldown Period : 3min</li>
-  <li>指定したポリシー：80%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
-  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
-</ul>
-
-<p>この状態でCPUを100%にすることで1台が追加されます。
-合計にすると追加後は全体で平均CPU使用率50%(100%+0%)になっているはずです。したがって動きとしては3分後に1台追加 ~~ 、その後 3分で Cooldown し新しい方が消える（Terminate）予定です。 ~~ この設定の場合全体で80%以下になるまで1台づつAutoscaleで増加</p>
-
-<p>結果</p>
-
-<ul>
-  <li>3分後に1台が追加</li>
-  <li>6分後特に変化なし（2台のまま継続)</li>
-  <li>その後経か無いため1台目のCPUを0%に変更</li>
-  <li>~~ 30分放置したが結果変わらず ~~ これで正しい</li>
-  <li>~~ LogにもCooldownしたとかそういう結果は出てこない（事が正しのか不明だ） ~~ 正しいCooldown経過後の数値はログに出て欲しいが出ない</li>
-</ul>
-
-<p>そもそもTerminateの指定は削除の指定であるのか、CPUの使用率は台数分の平均値なのか等が不明。</p>
-
-<h2 id="section-4">その2</h2>
-
-<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
-
-<ul>
-  <li>Termination Policy : oldest</li>
-  <li>Cooldown Period : 3min</li>
-  <li>指定したポリシー：30%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
-  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
-</ul>
-
-<p>この状態でCPUを100%に1:することで1台が追加されます。</p>
-
-<p>結果</p>
-
-<ul>
-  <li>CPUは平均で30%なのか3までAutoScaleで起動、ログからは13分単位で追加されてる</li>
-  <li>これにより監視しているCPUは合計の平均値であることは確実のようです。</li>
-  <li>その後変化なし</li>
-</ul>
-
-<h2 id="section-5">その3</h2>
-
-<ul>
-  <li>Termination Policy : oldest</li>
-  <li>Cooldown Period : 3min</li>
-  <li>指定したポリシー：30%以下3分間経過すると「Relatively -1 Members」（相対的に1つ削減）</li>
-  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
-</ul>
-
-<p>前提として「その2」の状態である</p>
-
-<p>結果</p>
-
-<ul>
-  <li>CPUの使用を0.x%にする</li>
-  <li>その後1台づつ terminate policyに従い削除される</li>
-</ul>
-
-<h1 id="section-6">まとめ</h1>
-
-<ul>
-  <li>一番最初上手くCPUを100にしても動いていませんでしたがその後動きました。Nimsoftは導入されていない状態のサーバがデプロイされています(CentOS)</li>
-  <li>~~ 2014/08/21 増えたサーバの「始末」をどうするのか？Termination Policy動いている？よくわからない ~~</li>
-  <li>問題なく増加、削除が可能である</li>
-  <li>トリガー条件でスケジュールベースが選択できることは便利</li>
-  <li>監視トリガーで全体で%の指定が可能なので余力を常に確保するようにAutoScale出来る</li>
-  <li>手動で設定の変更ことなしに「QuickScale」が出来るのは面白い</li>
-  <li>Regionの名前が初めて出てきた気がします。香港の場合には「as-hkg-central-1」そしてその中のDataCenter名が「Hong Kong2」という構成ですね。</li>
-</ul>
-
-<h1 id="section-7">参考</h1>
-
-<ul>
-  <li>@urasoko 氏のレポート：<a href="https://medium.com/@urasoko/softlayer-introduces-auto-scale-f91e0bae2a89">SoftLayer Introduces Auto Scale — Medium</a>
-  こちらを見ると色々Linkがありました。珍しくAutoScaleはドキュメントがあるなぁ。</li>
 </ul>
 
 ]]></content>

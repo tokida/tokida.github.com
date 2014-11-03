@@ -132,6 +132,94 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-06T00:53:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年7月6日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/07/06/iterm+tmux/" itemprop="url">iTerm(2バイトオプション)+Tmuxでステータスがズレるのを修正しbrewでInstallする</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><p>iTermを利用していて「Treat ambiguous-width characters as double width」をONにしているとTmux+Powerlineのステータスがズレてしまう問題がありました。
+チェックをOFFにしていると問題がないのですが日本語を多様していることもありググってみました。</p>
+
+<ul>
+  <li>http://ta.ps.st/d/1350718711.html</li>
+</ul>
+
+<p>こちらは少し古いのですがこれで解消が出来ました。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/tokida/997cf6b608d93ccbefef#file-tmux_utf8-patch">tmux_utf8.patch</a></li>
+</ul>
+
+<p>Tmux1.9に対してのpatch形式にしたのをgistにあげておきます。</p>
+
+<p>さて、tmuxはhomebrewで導入しているのでこちらから修正して導入できるようにしておきます。brewコマンドはsourceからのコンパイルする際にpatchなどの適応ができるので追記してみます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ brew edit tmux</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これで以下のように修正します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">23   depends_on 'pkg-config' =&gt; :build
+</span><span class="line">24   depends_on 'libevent'
+</span><span class="line">25
+</span><span class="line">26   def patches
+</span><span class="line">27     [
+</span><span class="line">28         "https://gist.githubusercontent.com/tokida/997cf6b608d93ccbefef/raw/63219743ec84b255a975f230593895dbdad9f364/tmux_utf8.patch"
+</span><span class="line">29     ]
+</span><span class="line">30   end
+</span><span class="line">31
+</span><span class="line">32   def install
+</span><span class="line">33     system "sh", "autogen.sh" if build.head?</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>先ほどのパッチを指定しておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">brew install --build-from-source tmux</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上記のコマンドオプションを実行することによりsourceからリビルドされます。
+最近これでズレまくって嫌になっていたのですがまたtmuxに戻って見たいと思います。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-04T16:34:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年7月4日</time>
         
       </p>
@@ -1303,59 +1391,6 @@ let g:startify_bookmarks = [
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-30T12:00:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月30日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/" itemprop="url">Octopressの記事の消し方</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><p>早速、Octopressに投稿してみて最初に方法がわからなかったのは「投稿した記事の削除」の方法。
-変な文章あげちまったよ。と思ったところで消せずに悩んで10分。
-そう</p>
-
-<h2 id="section">ファイルを消せ。</h2>
-
-<p>ということだ。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ ls -l source/_posts/*
-</span><span class="line">source/_posts/2014-05-30-firstpost.markdown
-</span><span class="line">source/_posts/2014-05-30-octopressの記事の消し方.markdown</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>このファイルを<code>rm</code>で消した後に<code>rake gen_deploy</code>すれば問題ない。</p>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1379,6 +1414,8 @@ let g:startify_bookmarks = [
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
+    
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
     <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
@@ -1386,8 +1423,6 @@ let g:startify_bookmarks = [
     <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
     
     <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/20/softlayer-autoscale/">SoftLayerでのAutoScale機能がリリース</a>
     
   </div>
 </section>
@@ -1419,7 +1454,7 @@ let g:startify_bookmarks = [
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">19</span>
+        <span class="badge">20</span>
         review
       </a>
     
@@ -1463,7 +1498,7 @@ let g:startify_bookmarks = [
     
     
     <a class="list-group-item " href="/blog/tags/softlayer/index.html">
-        <span class="badge">7</span>
+        <span class="badge">8</span>
         softlayer
       </a>
     
