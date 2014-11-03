@@ -1,0 +1,857 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: softlayer | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/softlayer/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[vxlan on Softlayer]]></title>
+    <link href="http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer/"/>
+    <updated>2014-11-01T00:44:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">これは何？</a></li>
+  <li><a href="#section-1">環境</a></li>
+  <li><a href="#subnet">同一Subnet内</a></li>
+  <li><a href="#vlan">異なるVLAN間</a></li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerのネットワークはマルチキャストが使えるのでvxlanが動くのかを確認。</p>
+
+<ol>
+  <li>同一のSubnet内で利用可能か</li>
+  <li>同一のvlan間で利用可能か（これは今回オーダー出来ず）</li>
+  <li>異なるVLAN間（VLAN Spaning = on )で利用可能か</li>
+</ol>
+
+<p>というところを確認する。</p>
+
+<h1 id="section-1">環境</h1>
+
+<p>今回用意したのはダラスデータセンター内に仮想サーバを2つ起動している状態。プライベートIPで割り当てられているのは同一のSubnet上で登録されている。OSはUbuntu14.04を利用。</p>
+
+<p>仮想サーバは以下のコマンドで作成する。</p>
+
+<pre><code>sl vs create --datacenter=dal01 --cpu=1 --memory=1024 --os=UBUNTU_14_64 --domain=sl.com --hostname=test01 --hourly --san --disk=25,10 --key=mainkey --postinstall=https://gist.githubusercontent.com/tokida/5b58831c0d94ce7b25f2/raw/bootstrap4Ubuntu.sh
+</code></pre>
+
+<p>作成した結果は以下の感じになりました。同じSubnetになっていますね。違うSubnetに付け直したかったら動するのがいいのかな？:</p>
+
+<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
+:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : *****     :
+: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : *****     :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+</code></pre>
+
+<h1 id="subnet">同一Subnet内</h1>
+
+<p>以下のコマンドによりvxlanを設定する。今回は内部eth0に対して作成する</p>
+
+<pre><code>$ ip link add vxlan0 type vxlan id 42 group 239.1.1.1 dev eth0
+$ ip link set up vxlan0
+$ ip a add 192.168.42.3/24 dev vxlan0
+$ root@test02:~# ip -d link show vxlan0
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN mode DEFAULT group default
+    link/ether 2e:eb:95:ed:97:9d brd ff:ff:ff:ff:ff:ff promiscuity 0
+    vxlan id 42 group 239.1.1.1 dev eth0 port 32768 61000 ageing 300
+</code></pre>
+
+<p>test01は、<code>192.168.42.2</code>を付与、test02は、<code>192.168.43.3</code>を付与します。</p>
+
+<p>Pingを実行すると</p>
+
+<pre><code>root@test02:~# ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_seq=1 ttl=64 time=0.957 ms
+64 bytes from 192.168.42.2: icmp_seq=2 ttl=64 time=0.377 ms
+</code></pre>
+
+<p>通信ができていることがわかります。マルチキャスト動いているようですね。</p>
+
+<h1 id="vlan">異なるVLAN間</h1>
+
+<p>3台目のサーバをサンノゼに作成します。この場合Subetが違いまたVLANが違う環境となります。VLANスパニングを有効にしているのでこのダラス⇔サンノゼ通信ができるようになっています。</p>
+
+<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
+:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : ********* :
+: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : ********* :
+: 6816998 :   sjc01    : test03.sl.com :   1   :   1G   : 158.85.***.*** : 10.89.0.170 :                    : ********* :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+</code></pre>
+
+<p>先ほど同様に設定を行い <code>192.168.42.4/24</code>としました。</p>
+
+<pre><code>root@test01:~# ping 192.168.42.4
+PING 192.168.42.4 (192.168.42.4) 56(84) bytes of data.
+From 192.168.42.2 icmp_seq=1 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=2 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=3 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=4 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
+</code></pre>
+
+<p>あわよくば動けば面白いなと思ったけど残念ながらこちらは通信出来ない模様ですね。さすがにDataCenterをまたいでマルチキャストが許可されていないのでしょうか。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた]]></title>
+    <link href="http://tokida.github.io/blog/2014/09/17/consistentstorage/"/>
+    <updated>2014-09-17T20:40:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/09/17/consistentstorage</id>
+    <content type="html"><![CDATA[<p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
+1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerの帯域保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
+対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
+
+<ul>
+  <li>容量 20Gから12TByteまで</li>
+  <li>帯域保証 100IOPS から 6000IOPSまで</li>
+  <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
+</ul>
+
+<h1 id="section-1">オーダーから設定まで</h1>
+
+<h2 id="section-2">オーダ方法</h2>
+
+<p>オーダ時のオプションで利用OSを選択するようになっていますね。
+管理ポータルから、<code>Storage</code>→<code>Block Storage</code>→<code>Order Consistent Performance</code>を選択しましょう。</p>
+
+<p><img src="/images/2014-09-17-iscsi.png" alt="iscsi" /></p>
+
+<p>ここでの費用は、「ディスクサイズ」＋「IOPS」となるようです。この画像の場合、<code>20 GB 100 to 1000 IOPS</code>というは20GのiSCSIディスクはIOPS
+として100から1000までが指定可能ということになります。一番安い、20G 100IOPSをオーダしてみたいと思います。</p>
+
+<h2 id="section-3">設定方法</h2>
+
+<p>購入したデバイス（ここでは<code>SL01SL29*****-1 (20 GB)</code>のような名称)の詳細を確認します。
+iSCSIデバイスらしく<code>Authorized Hosts</code>という項目があるので利用したいサーバを指定します、すると「Username」「Password」「Host IQN」「Device Type」が該当のホスト向けに表示されます。</p>
+
+<p>画面を見る限り以前までのSnapshotなどの機能はなさそうです（残念！）</p>
+
+<p>今回のiSCSIはマルチパスで構成されているようなので<code>multipath-tools</code>を導入して利用します。</p>
+
+<p><code>
+apt-get install multipath-tools
+apt-get install open-iscsi
+</code></p>
+
+<p>iSCSIの設定を行います。<code>/etc/iscsi/initiatorname.iscsi</code>のファイルにIQNを設定します。</p>
+
+<p><code>
+InitiatorName= "value-from-the-SL-Portal"
+</code></p>
+
+<p>次に<code>/etc/iscsi/iscsid.conf</code>を以下の内容を記載します。</p>
+
+<p><code>
+node.session.auth.authmethod = CHAP
+node.session.auth.username = "Username-value-from-SL-Portal"
+node.session.auth.password = "Password-value-from-SL-Portal"
+discovery.sendtargets.auth.authmethod = CHAP
+discovery.sendtargets.auth.username = "Username-value-from-SL-Portal"
+discovery.sendtargets.auth.password = "Password-value-from-SL-Portal"
+</code></p>
+
+<p>設定が終わったら <code>/etc/init.d/open-iscsi restart</code>で再起動を行います。</p>
+
+<p><code>
+root@ansibletower:~# iscsiadm -m discovery -t sendtargets -p 10.2.174.111
+10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
+10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
+</code></p>
+
+<p>iSCSIを探してみると2つのIPで見つけることが出来ました。先ほど書いたようにMultipathでの接続が前提のようですね。</p>
+
+<p><code>
+root@ansibletower:~#  iscsiadm -m node --login
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] (multiple)
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] (multiple)
+Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] successful.
+Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] successful.
+root@ansibletower:~#
+root@ansibletower:~#
+root@ansibletower:~# iscsiadm -m session -o show
+tcp: [1] 10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
+tcp: [2] 10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
+</code></p>
+
+<p>この作業により<code>/dev/sda</code>と<code>/dev/sdb</code>としてiSCSIが認識されます。また先ほど導入したmultipathを確認すると</p>
+
+<p><code>
+root@ansibletower:~# multipath -l
+3600a0980383030525324464331596470 dm-0 NETAPP,LUN C-Mode
+size=20G features='1 queue_if_no_path' hwhandler='0' wp=rw
+|-+- policy='round-robin 0' prio=-1 status=active
+| `- 0:0:0:186 sdb  8:16   active undef running
+`-+- policy='round-robin 0' prio=-1 status=enabled
+  `- 1:0:0:186 sda  8:0    active undef running
+</code></p>
+
+<p>このようにFailover型でデバイスが登録されているのがわかります。</p>
+
+<p><code>
+root@ansibletower:~#  fdisk -l | grep /dev/mapper
+ディスク /dev/sdb は正常なパーティションテーブルを含んでいません
+ディスク /dev/sda は正常なパーティションテーブルを含んでいません
+ディスク /dev/mapper/3600a0980383030525324464331596470 は正常なパーティションテーブルを含んでいません
+Disk /dev/mapper/3600a0980383030525324464331596470: 21.5 GB, 21474836480 bytes
+</code></p>
+
+<p>device mapper経由では上記のデバイスとして認識されています。これ以降はこのデバイスに対してfdiskが有効なのでパーティションを作成して利用することに成ります。</p>
+
+<p><code>
+root@ansibletower:~# lsblk
+NAME                                       MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                                          8:0    0    20G  0 disk
+└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
+sdb                                          8:16   0    20G  0 disk
+└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
+xvda                                       202:0    0   100G  0 disk
+├─xvda1                                    202:1    0   243M  0 part  /boot
+└─xvda2                                    202:2    0  99.8G  0 part  /
+xvdb                                       202:16   0     2G  0 disk
+└─xvdb1                                    202:17   0     2G  0 part  [SWAP]
+</code></p>
+
+<p>fdiskでパーティションを作成し、カーネルにデバイスの変更を通知してxfsformatを行います。</p>
+
+<p>&#8220;`
+root@ansibletower:~# fdisk /dev/mapper/3600a0980383030525324464331596470</p>
+
+<p>root@ansibletower:~# partprobe
+Error: /dev/sda: ディスクラベルが認識できません。
+Error: /dev/sdb: ディスクラベルが認識できません。
+Error: /dev/mapper/3600a0980383030525324464331596470p1: ディスクラベルが認識できません。
+root@ansibletower:~# mkfs.xfs /dev/mapper/3600a0980383030525324464331596470p1
+meta-data=/dev/mapper/3600a0980383030525324464331596470p1 isize=256    agcount=16, agsize=327663 blks
+         =                       sectsz=4096  attr=2, projid32bit=0
+data     =                       bsize=4096   blocks=5242608, imaxpct=25
+         =                       sunit=1      swidth=16 blks
+naming   =version 2              bsize=4096   ascii-ci=0
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+&#8220;`</p>
+
+<p>実際にmountしてみる。恒久的に利用する場合には別途定義を行って下さい。</p>
+
+<p><code>
+root@ansibletower:~# mkdir /mnt/data1
+root@ansibletower:~# mount /dev/mapper/3600a0980383030525324464331596470p1 /mnt/data1
+</code></p>
+
+<h1 id="iops">IOPS試験の実施</h1>
+
+<p>簡単にするためにgistにスクリプトを置いています</p>
+
+<p><code>
+$ apt-get install fio
+$ apt-get install curl
+$ export DISK=/mnt/data1 ; curl -s https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/fio_test.sh | sh
+</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Benchmark</th>
+      <th style="text-align: right">Bandwiddh</th>
+      <th style="text-align: right">IOPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">4k, sequential read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">147</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, sequential write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">165</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">107</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">103</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential read</td>
+      <td style="text-align: right">51.871MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential write</td>
+      <td style="text-align: right">12.221MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>参考までに同じ試験項目でローカルディスク(100G SAN)を実施した場合</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Benchmark</th>
+      <th style="text-align: right">Bandwiddh</th>
+      <th style="text-align: right">IOPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">4k, sequential read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">27362</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, sequential write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">26305</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">14188</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">22233</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential read</td>
+      <td style="text-align: right">114.070MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential write</td>
+      <td style="text-align: right">113.188MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>今回オーダしたのは100IOPSのBlock Storageになりますが、確かに100前後で制御されているように見えます。帯域はこれがMaxなのか分かりませんがこのあたりも今後確認していきたいところですね。</p>
+
+<p>良かった点は、iSCSIがMultipathになった点でしょうか、とはいえ手軽さはNFS(FileStorage)での利用ですかね。また帯域が保証されているので6000IOPSを複数束ねてRaid0構成も出来るかもしれませんね。ただし結構費用が高いのが辛いかもしれないですが。12TByte(6000IOPS)の場合 $1,200+$720になるので $0.16/GByte となりますね。</p>
+
+<p><img src="/images/2014-09-17-iscsi02.png" alt="os" /></p>
+
+<p>このパラメータが何を意味しているのか調べていないのですが<code>AIX</code>とかありますね！</p>
+
+<p>悪かった点は、以前のiSCSIが抽象化された利便性の高いデバイスだったのですが今回はかなり素のiSCSIデバイスとしての利用になります。とくにSnapshotが使えないのは残念ですね。今回の場合にはこのiSCSIデバイスのバックアップをなにか考えなければいけません。12Tとか考えるとかなり面倒な感じですね。</p>
+
+<h1 id="section-5">参考</h1>
+
+<ul>
+  <li><a href="http://knowledgelayer.softlayer.com/procedure/accessing-block-storage-consistent-performance-linux">Accessing Block Storage Consistent Performance on Linux</a></li>
+  <li><a href="https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/738cec3a3dfa7816d65882c5d45d513e4a8cc160/fio_test.sh">FIO試験スクリプト</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftLayerでのAutoScale機能がリリース]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/"/>
+    <updated>2014-08-20T22:45:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/20/softlayer-autoscale</id>
+    <content type="html"><![CDATA[<p>SoftLayerにAutoScaleが発表されました。
+先日からAPIにはScale関数が登場していたのですがようやく管理ポータル側から設定ができるようになっていました。</p>
+
+<ul>
+  <li>この文章はRelease後の検証のため誤りが含まれている可能性がありますのでご注意下さい。</li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerのAutoScale機能についての説明</p>
+
+<p>AutoScaleでは、トリガーの条件を元にサーバの台数を自動的に増やすことが出来る機能です。</p>
+
+<p>トリガーには</p>
+
+<ul>
+  <li>CPU%の値</li>
+  <li>毎日の時間</li>
+  <li>特定の日時</li>
+</ul>
+
+<p>を選択することが出来ます。
+またその際に実行できるアクションは</p>
+
+<ul>
+  <li>相対的にサーバを増やす（追加台数指定）</li>
+  <li>指定の台数にする（固定）</li>
+  <li>CPU%を指定する</li>
+</ul>
+
+<p>が選択できます。
+これによって、朝6時に10台へ夜8時に1台に変更などという事が出来ます。またトリガーは複数選択できるためこの間もCPUに応じてAutoScaleを取ることが出来ます。</p>
+
+<p>またAutoScaleの際には、Local Load Balancer（DataCenter内で利用可能なロードバランサーオプションの名前）に自動的に追加することが可能です。
+これ意外にも、「Auto」ではなく「Manual」でスケールさせることも出来ます、これは便利そうです。</p>
+
+<h1 id="section-1">使い方</h1>
+
+<p>管理ポータル上から、<code>Devices</code> → <code>Auto Scale</code> を選択します。なにも設定がないので右上の <code>Add Auto Scale Group</code>より追加を行います。</p>
+
+<p>設定値を記載しておきます。まだ全ての動作を見ていないので不明な箇所は※で記載しておきます。以下の設定をした後に右下の <code>Add Group</code>から構成を追加します。</p>
+
+<h2 id="group-configuration">Group Configuration</h2>
+
+<p>参考 <a href="http://knowledgelayer.softlayer.com/articles/auto-scale-terms">Auto Scale Terms</a></p>
+
+<h3 id="group-details">Group Details</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">分類</th>
+      <th style="text-align: left">設定値</th>
+      <th style="text-align: left">値</th>
+      <th style="text-align: left">補足</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Group Details</td>
+      <td style="text-align: left">Group Name</td>
+      <td style="text-align: left">グループの名前</td>
+      <td style="text-align: left">ユニークになっていれば何でも良いみたい</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Region</td>
+      <td style="text-align: left">地域の選択</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">DataCenter</td>
+      <td style="text-align: left">サーバを置くデータセンターを選択</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Termination Policy</td>
+      <td style="text-align: left">Closest to next Charge, Newest , Oldest</td>
+      <td style="text-align: left">サーバをRemoveする際にどのサーバから消すかの指定</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Network</td>
+      <td style="text-align: left">Private Network Only</td>
+      <td style="text-align: left">ON/OFF</td>
+      <td style="text-align: left">プライベートのネットワークのみ利用</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Private (VLAN)</td>
+      <td style="text-align: left">VLAN名</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Public (VLAN)</td>
+      <td style="text-align: left">VLAN名</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Group Setting</td>
+      <td style="text-align: left">Minimum Member Count</td>
+      <td style="text-align: left">最小の起動数</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Maximum Member Count</td>
+      <td style="text-align: left">最大の起動数</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">CloodDown Prelod</td>
+      <td style="text-align: left">時間(min),Max 10day</td>
+      <td style="text-align: left">AutoScale動作後の非監視期間（だと思う）</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="member-configuraion">Member Configuraion</h3>
+
+<p>| 分類 | 設定値 | 値 | 補足 |
+|:—-|:——|:–|:—-|</p>
+
+<p>ここは一般的な仮想サーバのパラメータが指定可能、ホスト名とドメイン名が仮に<code>web</code>と<code>autoscale.com</code>だとすると実際にプロビジョニングされる際には<code>web-xxxxxx.autoscale.com</code>のような名称が割り振られる。ここでは <code>Provision Scirpt</code>が指定可能。</p>
+
+<h3 id="policies">Policies</h3>
+
+<p>Policyは何個でも作ることが出来る</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">分類</th>
+      <th style="text-align: left">設定値</th>
+      <th style="text-align: left">値</th>
+      <th style="text-align: left">補足</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Policy Details</td>
+      <td style="text-align: left">PolicyName</td>
+      <td style="text-align: left">必須</td>
+      <td style="text-align: left"> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Cooldown Preiod</td>
+      <td style="text-align: left">0(min)-10(day)</td>
+      <td style="text-align: left">全体の設定を利用するか、個別に作るか</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Triggers</td>
+      <td style="text-align: left">指定</td>
+      <td style="text-align: left">CPU%を指定可能( 30%以上や10%以下等,複数組みあせ可能）,特定の曜日, 特定の期間</td>
+      <td style="text-align: left"> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Action</td>
+      <td style="text-align: left">Scale By</td>
+      <td style="text-align: left">Exact(固定) , Relative(相対的に), Percentage(%)</td>
+      <td style="text-align: left">値は符号なしの場合「増加」、マイナス符号の場合「削減」となる</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="local-load-balancers">Local Load Balancers</h3>
+
+<p>| 分類 | 設定値 | 値 | 補足 |
+|:—-|:——|:–|:—-|</p>
+
+<ul>
+  <li>あとで時間が有る時に追記する</li>
+</ul>
+
+<hr />
+
+<p>Policiesでは、どの様に増やすのかが指定可能です。設定できるLoadBalancersは<code>Local Load Balancers</code>のみですが基本的には問題無いと思います。指定したLBに自動的に組み込みが行われます。</p>
+
+<h1 id="section-2">実験</h1>
+
+<h2 id="section-3">その1</h2>
+
+<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
+
+<ul>
+  <li>Termination Policy : Newest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：80%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>この状態でCPUを100%にすることで1台が追加されます。
+合計にすると追加後は全体で平均CPU使用率50%(100%+0%)になっているはずです。したがって動きとしては3分後に1台追加 ~~ 、その後 3分で Cooldown し新しい方が消える（Terminate）予定です。 ~~ この設定の場合全体で80%以下になるまで1台づつAutoscaleで増加</p>
+
+<p>結果</p>
+
+<ul>
+  <li>3分後に1台が追加</li>
+  <li>6分後特に変化なし（2台のまま継続)</li>
+  <li>その後経か無いため1台目のCPUを0%に変更</li>
+  <li>~~ 30分放置したが結果変わらず ~~ これで正しい</li>
+  <li>~~ LogにもCooldownしたとかそういう結果は出てこない（事が正しのか不明だ） ~~ 正しいCooldown経過後の数値はログに出て欲しいが出ない</li>
+</ul>
+
+<p>そもそもTerminateの指定は削除の指定であるのか、CPUの使用率は台数分の平均値なのか等が不明。</p>
+
+<h2 id="section-4">その2</h2>
+
+<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
+
+<ul>
+  <li>Termination Policy : oldest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：30%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>この状態でCPUを100%に1:することで1台が追加されます。</p>
+
+<p>結果</p>
+
+<ul>
+  <li>CPUは平均で30%なのか3までAutoScaleで起動、ログからは13分単位で追加されてる</li>
+  <li>これにより監視しているCPUは合計の平均値であることは確実のようです。</li>
+  <li>その後変化なし</li>
+</ul>
+
+<h2 id="section-5">その3</h2>
+
+<ul>
+  <li>Termination Policy : oldest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：30%以下3分間経過すると「Relatively -1 Members」（相対的に1つ削減）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>前提として「その2」の状態である</p>
+
+<p>結果</p>
+
+<ul>
+  <li>CPUの使用を0.x%にする</li>
+  <li>その後1台づつ terminate policyに従い削除される</li>
+</ul>
+
+<h1 id="section-6">まとめ</h1>
+
+<ul>
+  <li>一番最初上手くCPUを100にしても動いていませんでしたがその後動きました。Nimsoftは導入されていない状態のサーバがデプロイされています(CentOS)</li>
+  <li>~~ 2014/08/21 増えたサーバの「始末」をどうするのか？Termination Policy動いている？よくわからない ~~</li>
+  <li>問題なく増加、削除が可能である</li>
+  <li>トリガー条件でスケジュールベースが選択できることは便利</li>
+  <li>監視トリガーで全体で%の指定が可能なので余力を常に確保するようにAutoScale出来る</li>
+  <li>手動で設定の変更ことなしに「QuickScale」が出来るのは面白い</li>
+  <li>Regionの名前が初めて出てきた気がします。香港の場合には「as-hkg-central-1」そしてその中のDataCenter名が「Hong Kong2」という構成ですね。</li>
+</ul>
+
+<h1 id="section-7">参考</h1>
+
+<ul>
+  <li>@urasoko 氏のレポート：<a href="https://medium.com/@urasoko/softlayer-introduces-auto-scale-f91e0bae2a89">SoftLayer Introduces Auto Scale — Medium</a>
+  こちらを見ると色々Linkがありました。珍しくAutoScaleはドキュメントがあるなぁ。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftLayerのObjecｔStorageへファイルバックアップを行う slbackup.py を試す]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/09/softlayerobjectstoragebackup/"/>
+    <updated>2014-08-09T07:39:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/09/softlayerobjectstoragebackup</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">これは何？</a></li>
+  <li><a href="#section-1">使い方</a></li>
+  <li><a href="#section-2">まとめ</a></li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>github上で見つけた ObjectStorageにバックアップをするためのスクリプト。
+メジャーなIaaS環境では結構ObjecｔStorageがサポートされているし、値段的にも非常に安いのでObjecｔStorageにデータバックアップを取る手法を持っていたほうがいいですね。</p>
+
+<ul>
+  <li>Whole file delta backups - only changed/new files are uploaded saving you time/bandwidth.</li>
+  <li>Retention policies - deleted/updated files are kept for any desired length of time. These can also be disabled.</li>
+  <li>Threaded - Copying can always be the longest part, so backups are done in the background as file comparisions are being performed.</li>
+  <li>MD5 support - Swift automatically sets a default hash (md5) for every object. We support file comparisions using this hash instead of time/size variance.</li>
+  <li>Open source - MIT licensed (as is the object storage library).</li>
+</ul>
+
+<h1 id="section-1">使い方</h1>
+
+<p>gitからソースを取得する</p>
+
+<p><code>
+$ git cline https://github.com/softlayer/softlayer-object-storage-backup.git
+$ sudo pip install softlayer-object-storage
+$ sudo pip install slbackup
+</code></p>
+
+<p>設定の実施</p>
+
+<p><code>
+$ ./slbackup.py --example &gt; ~/.slbackup
+</code></p>
+
+<p>設定ファイルの中に、username, apikey を設定します。またObjectStorageのどのデータセンターを利用するかも指定することが出来ます。</p>
+
+<p>カレントディレクトリ以下を<code>test</code>というコンテナに格納するのは以下のコマンドで実施できます。</p>
+
+<p><code>
+$ ./slbackup.py -s ./ -o test
+</code></p>
+
+<h1 id="section-2">まとめ</h1>
+
+<p>機能的に変更分のみ、マルチスレッド対応なのでPerformanceも期待できるのだろうか。実際の運用を想定すると、(a) Restore (b) 履歴（世代）管理 (c) 圧縮 などの機能があると嬉しいですね。日本語のファイルなどはそのまま ObjectStorageに入れると文字コードなど問題ですこし不安です。とは言えこのスクリプトは簡単にバックアップを実現するという意味で現在全く利用していないユーザなどには良いと思います。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ansible 1.7 External Inventory SoftLayerを試してみる]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/09/ansible-softlayer/"/>
+    <updated>2014-08-09T02:17:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/09/ansible-softlayer</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">何が出来るの？</a></li>
+  <li><a href="#section-1">準備</a></li>
+  <li><a href="#section-2">プラグインの実行</a></li>
+  <li><a href="#section-3">使ってみる</a>    <ul>
+      <li><a href="#tips">Tips</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-4">まとめ</a></li>
+</ul>
+
+<h1 id="section">何が出来るの？</h1>
+
+<p>Ansible 1.7 より 外部インベントリ（Dynamic Inventory）に SoftLayerのプラグインがCommitされていました。外部インベントリとして利用できるため Ansible の hosts を記載しなくても動的に SoftLayerの管理ポータル上からサーバのリスト等が取得できるはずです。どのような感じで利用できるのか試してみます。</p>
+
+<h1 id="section-1">準備</h1>
+
+<p>古いバージョンの場合には Ansible 1.7 にアップデートします。今回はUbuntu上の環境でpipで過去のバージョンを導入している場合です。</p>
+
+<p><code>
+$ sudo pip install ansible --upgrade
+</code></p>
+
+<p>不勉強なので分かっていないですが pip で入れると pluginが入らないので（何かどこかに入るのかもしれませんが）自分でダウンロードしておきます。</p>
+
+<p><code>
+$ git clone https://github.com/ansible/ansible.git
+$ cd ansible/plugins/inventory
+$ ls -l softlayer.py
+-rwxrwxr-x 1 vagrant vagrant 6112 Aug  8 03:03 softlayer.py
+</code></p>
+
+<p>また、SoftLayer CLIが利用可能になっている必要があるので導入をしておきます。</p>
+
+<p><code>
+$ sudo pip install softlayer
+$ sl config setup
+</code></p>
+
+<p>SoftLayerの管理ポータルから、USER名、APIキーを控えておきセットアップします。slコマンドが利用できるようになっている必要があります。</p>
+
+<h1 id="section-2">プラグインの実行</h1>
+
+<p>プラグインを単体で実行してみます。</p>
+
+<p><code>
+$ ./softlayer.py --list
+{
+  "_meta": {
+    "hostvars": {
+      "119.81.131.10": {
+        "datacenter": {
+          "id": 352494,
+          "longName": "Hong Kong 2",
+          "name": "hkg02"
+        },
+        "domain": "niandc.co.jp",
+        "fullyQualifiedDomainName": "kensyu05.niandc.co.jp",
+        "globalIdentifier": "461a86f4-3e4f-4b78-90df-9207d2337ee4",
+        "hostname": "kensyu05",
+        "id": 5509848,
+        "maxCpu": 1,
+        "maxMemory": 1024,
+        "powerState": {
+          "keyName": "RUNNING",
+          "name": "Running"
+        },
+        "primaryBackendIpAddress": "10.x.x.x",
+        "primaryIpAddress": "119.81.x.x",
+        "status": {
+          "keyName": "ACTIVE",
+          "name": "Active"
+        }
+      },
+</code></p>
+
+<p>という形でホストの情報が出てくるとともに以下のグルーピングでもJSONが返ってきています。</p>
+
+<ul>
+  <li>cpu_“数”</li>
+  <li>datacenter_“DC名”</li>
+  <li>“HOSTNAME”</li>
+  <li>“HOSTNAME”.”DOMAINNAME”&gt;</li>
+  <li>hardware</li>
+  <li>virtual</li>
+  <li>memory_“サイズ”</li>
+  <li>“DOMAINNAME”</li>
+</ul>
+
+<p>などです。これらはいずれも</p>
+
+<p><code>
+ "datacenter_sng01": [
+    "119.81.xx.x",
+    "119.81.xx.x",
+    "119.81.xx.x",
+    "119.81.xx.x"
+  ],
+</code></p>
+
+<p>のような形でIPアドレスが応答されます。</p>
+
+<h1 id="section-3">使ってみる</h1>
+
+<p>先ほどのJSON形式が渡されるためどうもIPアドレスで sshの設定が必要になりそうです。したがって ~/.ssh/confg内にてIPアドレスでログイン出来るように設定しておきます。パスワードありで接続する場合、<code>-k</code>または<code>--ask-pass --ask-sudo-pass</code>などを引数につけます。</p>
+
+<p><code>
+ansible -i `pwd`/softlayer.py docker02 -u root -m ping -k
+SSH password:
+119.81.x.x | success &gt;&gt; {
+    "changed": false,
+    "ping": "pong"
+}
+</code></p>
+
+<p>このようにPingが実行できました。同様に <code>all</code> や <code>datacenter_hkg02</code> 等の括りで制御する事が出来ます。</p>
+
+<h2 id="tips">Tips</h2>
+
+<p>常にこの <code>softlayer.py</code> を指定するには</p>
+
+<ul>
+  <li>softlayer.py を <code>/etc/ansible/hosts</code>に上書き</li>
+  <li>環境変数ANSIBLE_HOSTSに softlayer.py を指定</li>
+</ul>
+
+<p>の2通りの方法があります。</p>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>台数が多くなると便利な Ansible の External Inventory ですが、SoftLayerのプラグインが出ていることでより簡単に利用することが出来るように成りました。 データセンター単位やドメイン単位で変更が発生する際などは特に便利そうですね。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

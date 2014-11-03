@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: AWS | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/aws/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[AWS Workspaces における日本語切替の問題]]></title>
+    <link href="http://tokida.github.io/blog/2014/06/14/aws_workspaces_change_input/"/>
+    <updated>2014-06-14T08:32:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/06/14/aws_workspaces_change_input</id>
+    <content type="html"><![CDATA[<p>Amazon Web Service の Daas である「Workspaces」を利用していて日本語の切替にハマったので設定方法を書いておきます。</p>
+
+<h1 id="goal">Goal</h1>
+
+<p>日本語の切替が出来る</p>
+
+<h1 id="how-to">How to</h1>
+
+<p>英語版Windows2008R2でできてるWorkspacesですが日本語の切替が上手くないです。
+日本語キーボードをどうしても理解しないためのような気もしますがこの段階では不便すぎるので以下のように設定をします。</p>
+
+<iframe width="640" height="390" src="//www.youtube.com/embed/-voaY7xykSs" frameborder="0" allowfullscreen=""></iframe>
+
+<p>ポイントとしては、「日本語」環境と「英語」環境を切り替えるということです。
+これで「詳細なキー設定」で定義されている「入力言語のホットキー」で切り替えることが出来ます。
+そして、今回の場合は「Google日本語入力」に関しては「あ」（日本語）の状態にしておくと切り替えた時に「あ」になっています。</p>
+
+<p>右下のタスクバーとしての動作は <code>JP</code> &lt;-&gt; <code>EN</code> の切り替えになります。</p>
+
+<h1 id="section">まとめ</h1>
+
+<p>Workspacesが発表されたのは去年のRe:Invent2013でしたね。もうRe:Invent2014の申し込みが始まったことを考えると早いものです。
+Workspacesの日本語がらみの問題は「東京リージョン」が出てくる段階で解決しておいて欲しいですね。そもそも東京リージョンは日本語版を入れておいて欲しいところです。とは言え、今の段階でも速度的な事が要件を満たせるのであれば十分に使える感じです。
+後は、日本語キーボードが認識しないのはどうにかして欲しいところです。</p>
+
+<h1 id="section-1">追記(2014/06/19)</h1>
+
+<p>日本語<code>JP</code>にてIMEを、Google日本語変換を選択していました。日本語の変換は「設定」で制御できるようです。今回はMacbookから利用しているのですが「英数」「かな」キーを押しても何も反応をしないことからWorkspcaceクライアントの制御の問題かなと思い始めました。とりあえず現時点では日本語入力はすこし面倒な感じですね。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

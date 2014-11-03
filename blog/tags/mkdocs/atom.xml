@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: mkdocs | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/mkdocs/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Markdownで簡単にサイトが構築できる「mkdocs」]]></title>
+    <link href="http://tokida.github.io/blog/2014/06/12/mkdocs/"/>
+    <updated>2014-06-12T01:06:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/06/12/mkdocs</id>
+    <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
+
+<p>先日Dockerのサイトを見ているとgithubにリンクが張ってありたどっていってmkdocsというMarkdown形式の文章を整形するツールが有ることを知りました。結構良さそうな感じなので使ってみました。</p>
+
+<ul>
+  <li><a href="http://www.mkdocs.org/">mkdocs</a></li>
+</ul>
+
+<h1 id="howto">Howto</h1>
+
+<p>早速入れてみます。環境は MacOS 10.9 となります。</p>
+
+<p><code>
+$ sudo pip install mkdocs
+</code></p>
+
+<p>導入はこれで終わりです。
+使い方も簡単で、文章（Markdown）を整形するフォルダを用意します。そのフォルダの中で処理を進めていきます。最終的には <code>mkdocs build</code>コマンドで 静的なサイトを作ることが出来ます。</p>
+
+<p>ディレクトリ構成として</p>
+
+<p><code>
+mkdocs.yml
+docs/
+	index.md
+	about.md
+	abcd01.md
+</code></p>
+
+<p>という構成です。<code>mkdocs.yml</code>に構成を書いていきます。</p>
+
+<h2 id="mkdocsyml">構成ファイル mkdocs.yml</h2>
+
+<p>単純な形のサンプル。</p>
+
+<p><code>
+site_name: MkLorum
+pages:
+- [index.md, Home]
+- [about.md, About]
+theme: readthedocs
+</code></p>
+
+<p>もう少し設定する場合には、<a href="http://www.mkdocs.org/user-guide/configuration/">Configuration - MkDocs</a> を参考にします。</p>
+
+<h2 id="section">プレビュー機能</h2>
+
+<p>プレビュー機能としてmkdocsでローカルにHTTPで起動する事が出来ます。実行後、http://local.host:8000 で接続してみるとかっこいい画面で表示されているのがわかります。</p>
+
+<p><code>
+$ mkdocs serve
+</code></p>
+
+<p><img src="/images/mkdocs01.png" alt="images" /></p>
+
+<p>のような形で出力されます。</p>
+
+<h2 id="section-1">ビルド作業</h2>
+
+<p>問題なければ最後に静的ファイルを作成します</p>
+
+<p><code>
+$ mkdocs build
+</code></p>
+
+<p>これでローカルの <code>./site</code> 以下にファイル群が作られます。</p>
+
+<h2 id="section-2">使いこなし</h2>
+
+<p>これらのソースをgitで管理するには <code>echo ¥'site/¥' &gt;&gt; .gitignor</code> で site/ を除いた形で作ると良いです。
+出来上がったファイル群は静的なHTMLファイルなので github page とか amazon s3なんかにUpしておければ使い勝手の良いサイトができる事に成ります。</p>
+
+<h1 id="section-3">まとめ</h1>
+
+<p>すごく簡単に綺麗にマニュアルサイトとかが作ることが出来ます。すでにmarkdownの文章があれば見せ方としてWebサイトのように構築することが出来るので機会があれば積極的に使っていきたい。それにしても便利んだな。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

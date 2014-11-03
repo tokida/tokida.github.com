@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SoftLayerでのAutoScale機能がリリース - なんでもやってみるのが良いと思う</title>
+  <meta name="author" content="H.Tokida">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="なんでもやってみるのが良いと思う" type="application/atom+xml">
+
+  <link href="/stylesheets/data-table.css" rel="stylesheet" type="text/css" />
+  <link href="/stylesheets/toc.css" rel="stylesheet" type="text/css" />
+
+
+  <!-- http://opengraphprotocol.org/ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale">
+  <meta property="og:title" content="SoftLayerでのAutoScale機能がリリース - なんでもやってみるのが良いと思う">
+  
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+
+<link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+
+
+  
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+  
+   <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-477563-11', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+  <body   >
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">なんでもやってみるのが良いと思う</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/about">About</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="https://www.google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:tokida.github.io">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" role="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9" itemscope itemtype="http://schema.org/Blog">
+    <meta itemprop="name" content="なんでもやってみるのが良いと思う" />
+    <meta itemprop="description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。" />
+    <meta itemprop="url" content="http://tokida.github.io" />
+    <article class="hentry" role="article" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-20T22:45:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月20日</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title" itemprop="name headline">
+        SoftLayerでのAutoScale機能がリリース
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix" itemprop="articleBody description"><p>SoftLayerにAutoScaleが発表されました。
+先日からAPIにはScale関数が登場していたのですがようやく管理ポータル側から設定ができるようになっていました。</p>
+
+<ul>
+  <li>この文章はRelease後の検証のため誤りが含まれている可能性がありますのでご注意下さい。</li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerのAutoScale機能についての説明</p>
+
+<p>AutoScaleでは、トリガーの条件を元にサーバの台数を自動的に増やすことが出来る機能です。</p>
+
+<p>トリガーには</p>
+
+<ul>
+  <li>CPU%の値</li>
+  <li>毎日の時間</li>
+  <li>特定の日時</li>
+</ul>
+
+<p>を選択することが出来ます。
+またその際に実行できるアクションは</p>
+
+<ul>
+  <li>相対的にサーバを増やす（追加台数指定）</li>
+  <li>指定の台数にする（固定）</li>
+  <li>CPU%を指定する</li>
+</ul>
+
+<p>が選択できます。
+これによって、朝6時に10台へ夜8時に1台に変更などという事が出来ます。またトリガーは複数選択できるためこの間もCPUに応じてAutoScaleを取ることが出来ます。</p>
+
+<p>またAutoScaleの際には、Local Load Balancer（DataCenter内で利用可能なロードバランサーオプションの名前）に自動的に追加することが可能です。
+これ意外にも、「Auto」ではなく「Manual」でスケールさせることも出来ます、これは便利そうです。</p>
+
+<h1 id="section-1">使い方</h1>
+
+<p>管理ポータル上から、<code>Devices</code> → <code>Auto Scale</code> を選択します。なにも設定がないので右上の <code>Add Auto Scale Group</code>より追加を行います。</p>
+
+<p>設定値を記載しておきます。まだ全ての動作を見ていないので不明な箇所は※で記載しておきます。以下の設定をした後に右下の <code>Add Group</code>から構成を追加します。</p>
+
+<h2 id="group-configuration">Group Configuration</h2>
+
+<p>参考 <a href="http://knowledgelayer.softlayer.com/articles/auto-scale-terms">Auto Scale Terms</a></p>
+
+<h3 id="group-details">Group Details</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">分類</th>
+      <th style="text-align: left">設定値</th>
+      <th style="text-align: left">値</th>
+      <th style="text-align: left">補足</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Group Details</td>
+      <td style="text-align: left">Group Name</td>
+      <td style="text-align: left">グループの名前</td>
+      <td style="text-align: left">ユニークになっていれば何でも良いみたい</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Region</td>
+      <td style="text-align: left">地域の選択</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">DataCenter</td>
+      <td style="text-align: left">サーバを置くデータセンターを選択</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Termination Policy</td>
+      <td style="text-align: left">Closest to next Charge, Newest , Oldest</td>
+      <td style="text-align: left">サーバをRemoveする際にどのサーバから消すかの指定</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Network</td>
+      <td style="text-align: left">Private Network Only</td>
+      <td style="text-align: left">ON/OFF</td>
+      <td style="text-align: left">プライベートのネットワークのみ利用</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Private (VLAN)</td>
+      <td style="text-align: left">VLAN名</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Public (VLAN)</td>
+      <td style="text-align: left">VLAN名</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Group Setting</td>
+      <td style="text-align: left">Minimum Member Count</td>
+      <td style="text-align: left">最小の起動数</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Maximum Member Count</td>
+      <td style="text-align: left">最大の起動数</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">CloodDown Prelod</td>
+      <td style="text-align: left">時間(min),Max 10day</td>
+      <td style="text-align: left">AutoScale動作後の非監視期間（だと思う）</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="member-configuraion">Member Configuraion</h3>
+
+<p>| 分類 | 設定値 | 値 | 補足 |
+|:—-|:——|:–|:—-|</p>
+
+<p>ここは一般的な仮想サーバのパラメータが指定可能、ホスト名とドメイン名が仮に<code>web</code>と<code>autoscale.com</code>だとすると実際にプロビジョニングされる際には<code>web-xxxxxx.autoscale.com</code>のような名称が割り振られる。ここでは <code>Provision Scirpt</code>が指定可能。</p>
+
+<h3 id="policies">Policies</h3>
+
+<p>Policyは何個でも作ることが出来る</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">分類</th>
+      <th style="text-align: left">設定値</th>
+      <th style="text-align: left">値</th>
+      <th style="text-align: left">補足</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Policy Details</td>
+      <td style="text-align: left">PolicyName</td>
+      <td style="text-align: left">必須</td>
+      <td style="text-align: left"> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Cooldown Preiod</td>
+      <td style="text-align: left">0(min)-10(day)</td>
+      <td style="text-align: left">全体の設定を利用するか、個別に作るか</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Triggers</td>
+      <td style="text-align: left">指定</td>
+      <td style="text-align: left">CPU%を指定可能( 30%以上や10%以下等,複数組みあせ可能）,特定の曜日, 特定の期間</td>
+      <td style="text-align: left"> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Action</td>
+      <td style="text-align: left">Scale By</td>
+      <td style="text-align: left">Exact(固定) , Relative(相対的に), Percentage(%)</td>
+      <td style="text-align: left">値は符号なしの場合「増加」、マイナス符号の場合「削減」となる</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="local-load-balancers">Local Load Balancers</h3>
+
+<p>| 分類 | 設定値 | 値 | 補足 |
+|:—-|:——|:–|:—-|</p>
+
+<ul>
+  <li>あとで時間が有る時に追記する</li>
+</ul>
+
+<hr />
+
+<p>Policiesでは、どの様に増やすのかが指定可能です。設定できるLoadBalancersは<code>Local Load Balancers</code>のみですが基本的には問題無いと思います。指定したLBに自動的に組み込みが行われます。</p>
+
+<h1 id="section-2">実験</h1>
+
+<h2 id="section-3">その1</h2>
+
+<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
+
+<ul>
+  <li>Termination Policy : Newest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：80%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>この状態でCPUを100%にすることで1台が追加されます。
+合計にすると追加後は全体で平均CPU使用率50%(100%+0%)になっているはずです。したがって動きとしては3分後に1台追加 ~~ 、その後 3分で Cooldown し新しい方が消える（Terminate）予定です。 ~~ この設定の場合全体で80%以下になるまで1台づつAutoscaleで増加</p>
+
+<p>結果</p>
+
+<ul>
+  <li>3分後に1台が追加</li>
+  <li>6分後特に変化なし（2台のまま継続)</li>
+  <li>その後経か無いため1台目のCPUを0%に変更</li>
+  <li>~~ 30分放置したが結果変わらず ~~ これで正しい</li>
+  <li>~~ LogにもCooldownしたとかそういう結果は出てこない（事が正しのか不明だ） ~~ 正しいCooldown経過後の数値はログに出て欲しいが出ない</li>
+</ul>
+
+<p>そもそもTerminateの指定は削除の指定であるのか、CPUの使用率は台数分の平均値なのか等が不明。</p>
+
+<h2 id="section-4">その2</h2>
+
+<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
+
+<ul>
+  <li>Termination Policy : oldest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：30%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>この状態でCPUを100%に1:することで1台が追加されます。</p>
+
+<p>結果</p>
+
+<ul>
+  <li>CPUは平均で30%なのか3までAutoScaleで起動、ログからは13分単位で追加されてる</li>
+  <li>これにより監視しているCPUは合計の平均値であることは確実のようです。</li>
+  <li>その後変化なし</li>
+</ul>
+
+<h2 id="section-5">その3</h2>
+
+<ul>
+  <li>Termination Policy : oldest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：30%以下3分間経過すると「Relatively -1 Members」（相対的に1つ削減）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>前提として「その2」の状態である</p>
+
+<p>結果</p>
+
+<ul>
+  <li>CPUの使用を0.x%にする</li>
+  <li>その後1台づつ terminate policyに従い削除される</li>
+</ul>
+
+<h1 id="section-6">まとめ</h1>
+
+<ul>
+  <li>一番最初上手くCPUを100にしても動いていませんでしたがその後動きました。Nimsoftは導入されていない状態のサーバがデプロイされています(CentOS)</li>
+  <li>~~ 2014/08/21 増えたサーバの「始末」をどうするのか？Termination Policy動いている？よくわからない ~~</li>
+  <li>問題なく増加、削除が可能である</li>
+  <li>トリガー条件でスケジュールベースが選択できることは便利</li>
+  <li>監視トリガーで全体で%の指定が可能なので余力を常に確保するようにAutoScale出来る</li>
+  <li>手動で設定の変更ことなしに「QuickScale」が出来るのは面白い</li>
+  <li>Regionの名前が初めて出てきた気がします。香港の場合には「as-hkg-central-1」そしてその中のDataCenter名が「Hong Kong2」という構成ですね。</li>
+</ul>
+
+<h1 id="section-7">参考</h1>
+
+<ul>
+  <li>@urasoko 氏のレポート：<a href="https://medium.com/@urasoko/softlayer-introduces-auto-scale-f91e0bae2a89">SoftLayer Introduces Auto Scale — Medium</a>
+  こちらを見ると色々Linkがありました。珍しくAutoScaleはドキュメントがあるなぁ。</li>
+</ul>
+
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard" itemprop="author" itemscope itemtype="http://schema.org/Person">Posted by <span class="fn" itemprop="name">H.Tokida</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-20T22:45:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月20日</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/review/'>review</a>
+  
+</span>
+
+
+		  
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="tags">
+  Tagged as
+  
+    <a class='tag label label-primary' href='/blog/tags/softlayer/'>softlayer</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/" data-via="" data-counturl="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/" >Tweet</a>
+  
+  
+  
+</div>
+
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/08/17/write-first/" title="Previous Post: Software Desing 2014年9月号に寄稿しました">&laquo; Software Desing 2014年9月号に寄稿しました</a></li>
+            
+            
+            <li class="next"><a href="/blog/2014/08/22/first_serf/" title="Next Post: Serfを試してみる">Serfを試してみる &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+    
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Recent Posts</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
+    
+    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
+    
+    <a class="list-group-item active" href="/blog/2014/08/20/softlayer-autoscale/">SoftLayerでのAutoScale機能がリリース</a>
+    
+  </div>
+</section>
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">寄稿</h3>
+  </div>
+  <div class="list-group">
+  	    <a class="list-group-item " href="http://c.af.moshimo.com/af/c/click?a_id=187314&p_id=170&pc_id=185&pl_id=4062&s_v=b5Rz2P0601xu&url=http%3A%2F%2Fwww.amazon.co.jp%2Fexec%2Fobidos%2FASIN%2FB00M7AWOJQ%2Fref%3Dnosim"><img src="http://ecx.images-amazon.com/images/I/51f%2BNfl-h-L._SL160_.jpg" style="border: none;" />
+  	    <div>Software Design (ソフトウェア デザイン) 2014年 09月号 [雑誌]</div></a>
+  </div>
+</section>
+
+
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Categories</h3>
+  </div>
+  <div class="list-group">
+    
+    
+    <a class="list-group-item " href="/blog/categories/info/index.html">
+        <span class="badge">1</span>
+        info
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/categories/review/index.html">
+        <span class="badge">19</span>
+        review
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/categories/think/index.html">
+        <span class="badge">1</span>
+        think
+      </a>
+    
+  </div>
+</section>
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Tag Cloud</h3>
+  </div>
+  <div class="list-group">
+    
+    
+    <a class="list-group-item " href="/blog/tags/octopress/index.html">
+        <span class="badge">2</span>
+        octopress
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/markdown/index.html">
+        <span class="badge">2</span>
+        markdown
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/vim/index.html">
+        <span class="badge">1</span>
+        vim
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/github/index.html">
+        <span class="badge">1</span>
+        github
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/softlayer/index.html">
+        <span class="badge">7</span>
+        softlayer
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/redmine/index.html">
+        <span class="badge">2</span>
+        redmine
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/mkdocs/index.html">
+        <span class="badge">1</span>
+        mkdocs
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/aws/index.html">
+        <span class="badge">1</span>
+        AWS
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/mailman/index.html">
+        <span class="badge">1</span>
+        mailman
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/postfix/index.html">
+        <span class="badge">1</span>
+        postfix
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/nginx/index.html">
+        <span class="badge">1</span>
+        nginx
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/tmux/index.html">
+        <span class="badge">1</span>
+        tmux
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/iterm/index.html">
+        <span class="badge">1</span>
+        iterm
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/ansbile/index.html">
+        <span class="badge">1</span>
+        ansbile
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/docker/index.html">
+        <span class="badge">1</span>
+        docker
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/digitalocean/index.html">
+        <span class="badge">1</span>
+        digitalocean
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/serf/index.html">
+        <span class="badge">1</span>
+        serf
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/wordpress/index.html">
+        <span class="badge">1</span>
+        wordpress
+      </a>
+    
+  </div>
+</section>
+
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - H.Tokida<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+<script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+  </body>
+</html>

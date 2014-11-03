@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: wordpress | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/wordpress/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[XMLRPCに大量にアクセスされている場合の回避策]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos/"/>
+    <updated>2014-08-25T11:28:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos</id>
+    <content type="html"><![CDATA[<p>さてCPU使用率が100%になったりApacheのデーモンが大量に発生したりした場合どんな原因が考えられますか？
+最近担当しているサーバからMemoryがいっぱいだよ、CPUがいっぱいだよとNew Relic経由でメールが届いたと思ったら触れなくなっていました。</p>
+
+<p>調べてみるとhttpdが大量に起動してメモリがなくなりフォークしたプロセスがKillされている状態でした。標準の設定でhttpd.confを書いているのでそもそも大量にコネクションがあった場合（今回のようなケース）はメモリが足りないなという状態だったので計算をしみたところ一つあたり57MByteもメモリを使っているという富豪な設定になっていました。ApacheでLoadModuleされすぎです。（CentOSの標準パッケージの問題だと思いますが）</p>
+
+<p>さて、そのようなことは横においておくとして今回の原因は xml-rpc.php に対して不特定の大量のアクセスが発生指定していることから起こっています。</p>
+
+<p>以下の例は暫定で<code>xmlrpc.php</code>を削除しています。</p>
+
+<p><code>
+88.150.160.81 - - [23/Aug/2014:11:24:30 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+172.245.37.220 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+96.8.126.60 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+109.104.118.82 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+88.150.160.82 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+172.245.221.237 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+185.17.151.106 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+217.78.5.180 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+192.3.43.160 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+96.8.123.95 - - [23/Aug/2014:11:24:34 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+217.78.5.165 - - [23/Aug/2014:11:24:37 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+^C
+</code></p>
+
+<h3 id="section">対策</h3>
+
+<p>幾つかの対策が考えられます。</p>
+
+<ul>
+  <li>XMLRPCの機能を無効化する（Wordpress3.5以降はディフォルトで有効になっているためソースを変更する必要がありそうです／VersionUp等の際にまた忘れる可能性があるので今回は選択しません）。</li>
+  <li>プラグインで無効化（プラグインで無効化してもPHPが動くためCPUリソースは食べそうです）／これはこれで導入しておきましょう。</li>
+  <li>接続可能なIPアドレスを制限する（今回はこれ）</li>
+</ul>
+
+<p>今回はこの3番目のアドレスで制限をしてみたいと思います。このサーバは、Public側とPrivate側に2つのネットワークインターフェースを持っているサーバとなっています。また設定についてはApacheだったので以下のようなディレクティブを追加することで対応が出来ます。</p>
+
+<h3 id="section-1">設定内容</h3>
+
+<ul>
+  <li><code>httpd.conf</code>に以下を追記する。xmlrpc.php　は 10.0.0.0　からのアクセスのみ許可にする。</li>
+</ul>
+
+<p><code>
+&lt;Files xmlrpc.php&gt;
+    order deny,allow
+    deny from all
+    allow from 10.0.0.0/255.0.0.0
+&lt;/Files&gt;
+</code></p>
+
+<p>これでPrivateNetworki(10.0.0.0)側のみになりそれ以外は403でエラーになります。</p>
+
+<p><code>
+172.245.37.225 - - [23/Aug/2014:11:35:55 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.117 - - [23/Aug/2014:11:35:56 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.82 - - [23/Aug/2014:11:35:56 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+198.23.154.30 - - [23/Aug/2014:11:35:57 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.117 - - [23/Aug/2014:11:35:57 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+217.78.5.166 - - [23/Aug/2014:11:35:58 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.131 - - [23/Aug/2014:11:35:58 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+96.8.125.21 - - [23/Aug/2014:11:35:59 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+217.78.5.165 - - [23/Aug/2014:11:35:59 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.77 - - [23/Aug/2014:11:36:00 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+^C
+</code></p>
+
+<h3 id="section-2">まとめ</h3>
+
+<p>今回リソースはNewRelicで見ていましたがログまでは保管していなかったため問題が発生している際に状況を調べるのが面倒でした。というかCPU100%の状態を解消しないと見ることが出来ませんでした。キチンとFluentd等で別のログサーバにデータを転送しておきたいと思います。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

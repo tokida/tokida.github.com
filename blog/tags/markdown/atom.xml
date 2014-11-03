@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: markdown | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/markdown/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Markdownで簡単にサイトが構築できる「mkdocs」]]></title>
+    <link href="http://tokida.github.io/blog/2014/06/12/mkdocs/"/>
+    <updated>2014-06-12T01:06:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/06/12/mkdocs</id>
+    <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
+
+<p>先日Dockerのサイトを見ているとgithubにリンクが張ってありたどっていってmkdocsというMarkdown形式の文章を整形するツールが有ることを知りました。結構良さそうな感じなので使ってみました。</p>
+
+<ul>
+  <li><a href="http://www.mkdocs.org/">mkdocs</a></li>
+</ul>
+
+<h1 id="howto">Howto</h1>
+
+<p>早速入れてみます。環境は MacOS 10.9 となります。</p>
+
+<p><code>
+$ sudo pip install mkdocs
+</code></p>
+
+<p>導入はこれで終わりです。
+使い方も簡単で、文章（Markdown）を整形するフォルダを用意します。そのフォルダの中で処理を進めていきます。最終的には <code>mkdocs build</code>コマンドで 静的なサイトを作ることが出来ます。</p>
+
+<p>ディレクトリ構成として</p>
+
+<p><code>
+mkdocs.yml
+docs/
+	index.md
+	about.md
+	abcd01.md
+</code></p>
+
+<p>という構成です。<code>mkdocs.yml</code>に構成を書いていきます。</p>
+
+<h2 id="mkdocsyml">構成ファイル mkdocs.yml</h2>
+
+<p>単純な形のサンプル。</p>
+
+<p><code>
+site_name: MkLorum
+pages:
+- [index.md, Home]
+- [about.md, About]
+theme: readthedocs
+</code></p>
+
+<p>もう少し設定する場合には、<a href="http://www.mkdocs.org/user-guide/configuration/">Configuration - MkDocs</a> を参考にします。</p>
+
+<h2 id="section">プレビュー機能</h2>
+
+<p>プレビュー機能としてmkdocsでローカルにHTTPで起動する事が出来ます。実行後、http://local.host:8000 で接続してみるとかっこいい画面で表示されているのがわかります。</p>
+
+<p><code>
+$ mkdocs serve
+</code></p>
+
+<p><img src="/images/mkdocs01.png" alt="images" /></p>
+
+<p>のような形で出力されます。</p>
+
+<h2 id="section-1">ビルド作業</h2>
+
+<p>問題なければ最後に静的ファイルを作成します</p>
+
+<p><code>
+$ mkdocs build
+</code></p>
+
+<p>これでローカルの <code>./site</code> 以下にファイル群が作られます。</p>
+
+<h2 id="section-2">使いこなし</h2>
+
+<p>これらのソースをgitで管理するには <code>echo ¥'site/¥' &gt;&gt; .gitignor</code> で site/ を除いた形で作ると良いです。
+出来上がったファイル群は静的なHTMLファイルなので github page とか amazon s3なんかにUpしておければ使い勝手の良いサイトができる事に成ります。</p>
+
+<h1 id="section-3">まとめ</h1>
+
+<p>すごく簡単に綺麗にマニュアルサイトとかが作ることが出来ます。すでにmarkdownの文章があれば見せ方としてWebサイトのように構築することが出来るので機会があれば積極的に使っていきたい。それにしても便利んだな。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Markdownの文章をHTMLに変換する]]></title>
+    <link href="http://tokida.github.io/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/"/>
+    <updated>2014-05-31T05:52:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/05/31/markdownの文章をhtmlに変換する</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">はじめに</a></li>
+  <li><a href="#pandoc">Pandocを導入する</a>    <ul>
+      <li><a href="#section-1">インストール</a></li>
+      <li><a href="#githubcss">githubのCSSで変換してみる</a>        <ul>
+          <li><a href="#section-2">導入・設定</a></li>
+          <li><a href="#section-3">変換する</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#section-4">まとめ</a>    <ul>
+      <li><a href="#section-5">参考文献</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="section">はじめに</h1>
+
+<p>ここの所、文章は全てMakrdownで書くようにしています。仕事でも <a href="http://qiita.com/">Qiita</a> などのサービスを利用しており身の回りで徐々に markdown を使う環境を広げているところです。 まさにこのサイトも makrdown で書かれており色々と捗ります。
+先日、だいぶ長い文章を markdown で書いたのですが最終的に清書して出す必要がありその際にフォーマット変換（HTMLやPDF）に変換したくなりました。
+その際には時間切れだったのですが改めて環境を作ったので書いておきます。</p>
+
+<h1 id="pandoc">Pandocを導入する</h1>
+
+<p>最近ちょっと入れてみたいと言う時にはDockerとかVagrantで簡単に環境を作っています。なのでMacbookで書いているのですが以後の処理はUbuntuで行った場合の対応になります。色々なファイルフォーマットを変換してもらうことの出来る <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> を利用します。</p>
+
+<h2 id="section-1">インストール</h2>
+
+<p>PandcoはHaskellの上で動くのでHaskel Platformの上で導入することも出来ますが今回は簡単にパッケージマネージャーから導入することにします。</p>
+
+<p><code>
+$ sudo apt-get install pandoc
+</code></p>
+
+<p>導入の確認</p>
+
+<p><code>
+vagrant@ubuntu1404:/vagrant_data/files$ pandoc -v
+pandoc 1.12.2.1
+Compiled with texmath 0.6.5.2, highlighting-kate 0.5.5.1.
+Syntax highlighting is supported for the following languages:
+    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
+    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
+    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
+    fortran, fsharp, gnuassembler, go, haskell, haxe, html, ini, java, javadoc,
+    javascript, json, jsp, julia, latex, lex, literatecurry, literatehaskell,
+    lua, makefile, mandoc, markdown, matlab, maxima, metafont, mips, modelines,
+    modula2, modula3, monobasic, nasm, noweb, objectivec, objectivecpp, ocaml,
+    octave, pascal, perl, php, pike, postscript, prolog, python, r,
+    relaxngcompact, rhtml, roff, ruby, rust, scala, scheme, sci, sed, sgml, sql,
+    sqlmysql, sqlpostgresql, tcl, texinfo, verilog, vhdl, xml, xorg, xslt, xul,
+    yacc, yaml
+Default user data directory: /home/vagrant/.pandoc
+Copyright (C) 2006-2013 John MacFarlane
+Web:  http://johnmacfarlane.net/pandoc
+This is free software; see the source for copying conditions.  There is no
+warranty, not even for merchantability or fitness for a particular purpose.
+</code></p>
+
+<p>変換してみる</p>
+
+<p><code>
+% pandoc input.markdown -s -o output.html
+</code></p>
+
+<p>オプションの説明などは日本語のリファレンスもあるのでそちらを参考にします。</p>
+
+<h2 id="githubcss">githubのCSSで変換してみる</h2>
+
+<p>実際にHTMLにした際にも見た目、Github風に慣れ親しんでいるのでCSSを指定してHTMLに変換することが出来ます。またオプションを指定することにより toc(目次）も入れること出来ます。目次はHTMLの場合にはキチンとHyperlinkになってくれるのでありがたい。</p>
+
+<h3 id="section-2">導入・設定</h3>
+
+<p>markdownファイルがある場所にCSSをダウンロードします。</p>
+
+<p><code>
+$ wget https://gist.github.com/andyferra/2554919
+</code></p>
+
+<h3 id="section-3">変換する</h3>
+
+<p>変換には、cssファイルを指定する方法がありますがこの場合には生成されたHTMLファイルがCSSファイルを利用するようになります。
+単体の一つのHTMLにしたい場合にはテンプレートをコピーしてその中にCSSを埋め込んだほうが良いです。テンプレートはubuntuの場合には、<code>/usr/share/pandoc/data/templates</code> に導入されています。
+今回はCSSファイルを個別にしてして見ます。</p>
+
+<p><code>
+$ pandoc --toc --toc-depth=1 -t html -c github.css input.markdown -s -o output.html
+</code></p>
+
+<p>こうするとmarkdownの書式に合わせて目次を生成してくれます。
+自動でこういう風になってくれるとすごく便利です。</p>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>簡単に変換できるツールなので他にもコンバージョンを試してみたいと思います。PDFの変換も気になるところですがChromeブラウザのPDF出力もある程度代用可能なので暫くはそちらでも良いかなと思っています。それよりも SLIDES 利用したスライド作れる方が興味があります。
+簡単にテキスト(markdown)で書いておいてさっと発表に使えるとなると色々捗りそうです。</p>
+
+<h2 id="section-5">参考文献</h2>
+
+<ul>
+  <li><a href="http://qiita.com/sky_y/items/80bcd0f353ef5b8980ee">HTML - 多様なフォーマットに対応！ドキュメント変換ツールPandocを知ろう - Qiita</a></li>
+  <li><a href="http://sky-y.github.io/site-pandoc-jp/users-guide/">Pandoc ユーザーズガイド 日本語版 - Japanese Pandoc User&#8217;s Association</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

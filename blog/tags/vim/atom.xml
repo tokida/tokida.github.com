@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: vim | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/vim/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Vimの起動画面で履歴を表示できるStartifyを入れてみる]]></title>
+    <link href="http://tokida.github.io/blog/2014/05/31/02/"/>
+    <updated>2014-05-31T23:02:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/05/31/02</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#startify-">Startify プラグイン</a>    <ul>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#section">設定</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-1">まとめ</a>    <ul>
+      <li><a href="#section-2">参考</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>最近、MacとWindowsを行き来することもあり共通で使えるVimを利用しています。
+かなり前から使っている割には仕事では素のviを使う機会が多かったこともありVimをカスタマイズして使うということがなかったのですがここのところすっかりプラグイン入れて遊んでいます。</p>
+
+<ul>
+  <li><a href="http://ja.wikipedia.org/wiki/Vim">Vim - Wikipedia</a></li>
+  <li><a href="http://www.kaoriya.net/software/vim/">Vim — KaoriYa</a></li>
+</ul>
+
+<p>日本語で使うために色々パッケージングされたものをKaoriyaさんで公開されていますのでこれから導入される方はオススメです。</p>
+
+<h1 id="startify-">Startify プラグイン</h1>
+
+<p>起動した時の画面が変わります。</p>
+
+<p><img src="/images/2014_06_01_am0_00.png" alt="images" /></p>
+
+<p>こんな感じで起動時に履歴が選択できるようになります。
+また <code>:startify</code>でいつでもこの画面を呼び出す事ができます。</p>
+
+<h2 id="install">Install</h2>
+
+<p>導入はいつもどおり NeoBundle 経由で行います。</p>
+
+<ul>
+  <li><a href="https://github.com/mhinz/vim-startify">mhinz/vim-startify</a></li>
+</ul>
+
+<p>したがって<code>.vimrc</code>の NeoBundleの所に以下のように記述します。</p>
+
+<p><code>
+	NeoBundle 'mhinz/vim-startify'    "起動時に履歴を表示させる
+</code></p>
+
+<p>あとは起動後に <code>NeoBundleInstall</code> して導入します。</p>
+
+<h2 id="section">設定</h2>
+
+<p>設定は <code>.vimrc</code> にて行います。
+詳細の設定内容は <code>:h startify</code> でヘルプが詳細に書いてあるので見るとわかります。
+参考で記載しているサイトの設定を参考にしています。</p>
+
+<p><div><script src='https://gist.github.com/3a978d48817b98fb4f18.js'></script>
+<noscript><pre><code>&quot; Startify
+&quot; 起動時の画面の設定
+&quot; startifyのヘッダー部分に表示する文字列を設定する(dateコマンドを実行して日付を設定している)
+let g:startify_custom_header =
+  \ map(split(system(&#39;date&#39;), &#39;\n&#39;), &#39;&quot;   &quot;. v:val&#39;) + [&#39;&#39;,&#39;&#39;]
+let g:startify_files_number = 10
+&quot; デフォルトだと、最近使ったファイルの先頭は数字なので、使用するアルファベットを指定
+&quot; let g:startify_custom_indices = [&#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;r&#39;, &#39;i&#39;, &#39;o&#39;, &#39;b&#39;]
+&quot; よく使うファイルをブックマークとして登録しておく
+let g:startify_bookmarks = [
+  \ &#39;~/.vimrc&#39;,
+  \ &#39;~/.gvimrc&#39;,
+  \ &#39;~/.bash_profile&#39;,
+  \ &#39;~/memo/todo.markdown&#39;,
+  \ ]
+</code></pre></noscript></div>
+</p>
+
+<h1 id="section-1">まとめ</h1>
+
+<p>起動画面でさっと履歴が選択できるのはありがたいです。とは言え別のプラグインで同じような事を実装することも出来るようなので珍しいことではないのかもしれませんがプラグイン一つ入れて簡単に出来るのが良かったです。</p>
+
+<h2 id="section-2">参考</h2>
+
+<ul>
+  <li><a href="http://deris.hatenablog.jp/entry/2013/12/15/235606">Vimmerなら2013年中に試しておきたい海外産Vim plugin 8選 - derisの日記</a>  </li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

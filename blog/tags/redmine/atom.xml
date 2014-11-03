@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: redmine | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/redmine/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Redmine の 「Local_Avatar_Plugin」 の画像表示を修正（仮想ホスト運用すると画像のURLがlocalhostに）]]></title>
+    <link href="http://tokida.github.io/blog/2014/06/05/redminelocalavatar/"/>
+    <updated>2014-06-05T06:41:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/06/05/redminelocalavatar</id>
+    <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
+
+<p>仮想ホスト環境で運用していると、ローカルのIPアドレス:ポート番号（今回のケースでは http://localhost:10000 )がURLに入ってしまっていることがあります。多分理由は場所場所で絶対パスで入ってしまうせいだと思います。
+仮想ホストでNginxなどでリバースプロキシしていると別の名前でアクセスすることになり問題になってしまいます。</p>
+
+<p>今回導入した、アバター画像をローカルで利用できる（標準だと gavatar に取りに行ってしまう）プラグインでも同様の問題で画像が表示されない問題がありました。</p>
+
+<ul>
+  <li><a href="https://github.com/ncoders/redmine_local_avatars">redmine_local_avatars</a></li>
+</ul>
+
+<h1 id="section">修正</h1>
+
+<p>プラグインの中で <code>plugin/redmine_local_avatars/lib/application_helper_avatar_patch.rb</code> の中を修正します。</p>
+
+<p><code>
+	image_url = url_for :only_path =&gt; true, :controller =&gt; 'account', :action =&gt; 'get_avatar', :id =&gt; user
+</code></p>
+
+<p>上記の <code>url_for</code> で <code>only_path =&gt; false</code>を<code>only_path =&gt;true</code>へ変更させます。
+これで相対パスになるので画像が表示されます。</p>
+
+<h1 id="section-1">まとめ</h1>
+
+<p>仮想ホストで使うのってそれほど変わっているわけではないと思うのでこの問題はローカルな問題なんですかね？
+もともとonly_pathがfalseで指定されている所見ると理由があるのかもしれません。
+とりあえずおっさんの画像が表示されるようになったのでので気分が落ち着いたわ。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redmineのプラグインをアンインストールする]]></title>
+    <link href="http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin/"/>
+    <updated>2014-06-05T05:29:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/06/05/redmienuninstallplugin</id>
+    <content type="html"><![CDATA[<h1 id="goal">Goal</h1>
+
+<p>Redmine のプラグインの削除</p>
+
+<h1 id="howto">Howto</h1>
+
+<p>先日からどうしてもDocker-Redmineの環境でうまく動かないPluginがあり何度もいじっていてキチンとプラグインを消すやり方を知らかなかったのでメモして置きます</p>
+
+<p><code>
+$ rake redmine:plugins:migrate  NAME=hogehoge VERSION=0 RAILS_ENV=production
+</code></p>
+
+<p>その後、実態であるフィアルを <code>rm -rf &lt;REDMINE&gt;/plugin/hogehoge</code> すれば良いです。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: octopress | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/octopress/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopressの記事の消し方]]></title>
+    <link href="http://tokida.github.io/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/"/>
+    <updated>2014-05-30T12:00:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/05/30/octopressの記事の消し方</id>
+    <content type="html"><![CDATA[<p>早速、Octopressに投稿してみて最初に方法がわからなかったのは「投稿した記事の削除」の方法。
+変な文章あげちまったよ。と思ったところで消せずに悩んで10分。
+そう</p>
+
+<h2 id="section">ファイルを消せ。</h2>
+
+<p>ということだ。</p>
+
+<p><code>
+$ ls -l source/_posts/*
+source/_posts/2014-05-30-firstpost.markdown
+source/_posts/2014-05-30-octopressの記事の消し方.markdown
+</code></p>
+
+<p>このファイルを<code>rm</code>で消した後に<code>rake gen_deploy</code>すれば問題ない。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello, Octopres .]]></title>
+    <link href="http://tokida.github.io/blog/2014/05/20/firstpost/"/>
+    <updated>2014-05-20T12:47:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/05/20/firstpost</id>
+    <content type="html"><![CDATA[<p>最近、続けていたiPhone系のブログが更新できない。 仕事が忙しくてあまり差割れていないのが原因。最近またインフラ系のエンジニアに戻りつつあり勉強する日々。 色々試してみたりしているのでその記録を残していきたい。</p>
+
+<p>ということで触ってみたかった <code>Octopress</code> を入れてみた。</p>
+
+<p>何を書いていこうか迷うけどメモをどんどん公開していってみよう。普段書いているブログのテーマと違いすぎて更新できないまま結構放置してしまって普段していることをアウトプットするという気持ちが少なくなってきてしまう。</p>
+
+<p>このブログが何かの転機に成りますように。</p>
+]]></content>
+  </entry>
+  
+</feed>

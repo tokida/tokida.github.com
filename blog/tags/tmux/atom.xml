@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: tmux | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/tmux/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[iTerm(2バイトオプション)+Tmuxでステータスがズレるのを修正しbrewでInstallする]]></title>
+    <link href="http://tokida.github.io/blog/2014/07/06/iterm+tmux/"/>
+    <updated>2014-07-06T00:53:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/07/06/iterm+tmux</id>
+    <content type="html"><![CDATA[<p>iTermを利用していて「Treat ambiguous-width characters as double width」をONにしているとTmux+Powerlineのステータスがズレてしまう問題がありました。
+チェックをOFFにしていると問題がないのですが日本語を多様していることもありググってみました。</p>
+
+<ul>
+  <li>http://ta.ps.st/d/1350718711.html</li>
+</ul>
+
+<p>こちらは少し古いのですがこれで解消が出来ました。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/tokida/997cf6b608d93ccbefef#file-tmux_utf8-patch">tmux_utf8.patch</a></li>
+</ul>
+
+<p>Tmux1.9に対してのpatch形式にしたのをgistにあげておきます。</p>
+
+<p>さて、tmuxはhomebrewで導入しているのでこちらから修正して導入できるようにしておきます。brewコマンドはsourceからのコンパイルする際にpatchなどの適応ができるので追記してみます。</p>
+
+<p><code>
+$ brew edit tmux
+</code></p>
+
+<p>これで以下のように修正します。</p>
+
+<p><code>
+23   depends_on 'pkg-config' =&gt; :build
+24   depends_on 'libevent'
+25
+26   def patches
+27     [
+28         "https://gist.githubusercontent.com/tokida/997cf6b608d93ccbefef/raw/63219743ec84b255a975f230593895dbdad9f364/tmux_utf8.patch"
+29     ]
+30   end
+31
+32   def install
+33     system "sh", "autogen.sh" if build.head?
+</code></p>
+
+<p>先ほどのパッチを指定しておきます。</p>
+
+<p><code>
+brew install --build-from-source tmux
+</code></p>
+
+<p>上記のコマンドオプションを実行することによりsourceからリビルドされます。
+最近これでズレまくって嫌になっていたのですがまたtmuxに戻って見たいと思います。</p>
+]]></content>
+  </entry>
+  
+</feed>

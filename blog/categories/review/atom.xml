@@ -1,0 +1,1041 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Review | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/categories/review/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Vxlan on Softlayer]]></title>
+    <link href="http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer/"/>
+    <updated>2014-11-01T00:44:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/11/01/vxlan-on-softlayer</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">これは何？</a></li>
+  <li><a href="#section-1">環境</a></li>
+  <li><a href="#subnet">同一Subnet内</a></li>
+  <li><a href="#vlan">異なるVLAN間</a></li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerのネットワークはマルチキャストが使えるのでvxlanが動くのかを確認。</p>
+
+<ol>
+  <li>同一のSubnet内で利用可能か</li>
+  <li>同一のvlan間で利用可能か（これは今回オーダー出来ず）</li>
+  <li>異なるVLAN間（VLAN Spaning = on )で利用可能か</li>
+</ol>
+
+<p>というところを確認する。</p>
+
+<h1 id="section-1">環境</h1>
+
+<p>今回用意したのはダラスデータセンター内に仮想サーバを2つ起動している状態。プライベートIPで割り当てられているのは同一のSubnet上で登録されている。OSはUbuntu14.04を利用。</p>
+
+<p>仮想サーバは以下のコマンドで作成する。</p>
+
+<pre><code>sl vs create --datacenter=dal01 --cpu=1 --memory=1024 --os=UBUNTU_14_64 --domain=sl.com --hostname=test01 --hourly --san --disk=25,10 --key=mainkey --postinstall=https://gist.githubusercontent.com/tokida/5b58831c0d94ce7b25f2/raw/bootstrap4Ubuntu.sh
+</code></pre>
+
+<p>作成した結果は以下の感じになりました。同じSubnetになっていますね。違うSubnetに付け直したかったら動するのがいいのかな？:</p>
+
+<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
+:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : *****     :
+: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : *****     :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+</code></pre>
+
+<h1 id="subnet">同一Subnet内</h1>
+
+<p>以下のコマンドによりvxlanを設定する。今回は内部eth0に対して作成する</p>
+
+<pre><code>$ ip link add vxlan0 type vxlan id 42 group 239.1.1.1 dev eth0
+$ ip link set up vxlan0
+$ ip a add 192.168.42.3/24 dev vxlan0
+$ root@test02:~# ip -d link show vxlan0
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN mode DEFAULT group default
+    link/ether 2e:eb:95:ed:97:9d brd ff:ff:ff:ff:ff:ff promiscuity 0
+    vxlan id 42 group 239.1.1.1 dev eth0 port 32768 61000 ageing 300
+</code></pre>
+
+<p>test01は、<code>192.168.42.2</code>を付与、test02は、<code>192.168.43.3</code>を付与します。</p>
+
+<p>Pingを実行すると</p>
+
+<pre><code>root@test02:~# ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_seq=1 ttl=64 time=0.957 ms
+64 bytes from 192.168.42.2: icmp_seq=2 ttl=64 time=0.377 ms
+</code></pre>
+
+<p>通信ができていることがわかります。マルチキャスト動いているようですね。</p>
+
+<h1 id="vlan">異なるVLAN間</h1>
+
+<p>3台目のサーバをサンノゼに作成します。この場合Subetが違いまたVLANが違う環境となります。VLANスパニングを有効にしているのでこのダラス⇔サンノゼ通信ができるようになっています。</p>
+
+<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
+:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : ********* :
+: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : ********* :
+: 6816998 :   sjc01    : test03.sl.com :   1   :   1G   : 158.85.***.*** : 10.89.0.170 :                    : ********* :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+</code></pre>
+
+<p>先ほど同様に設定を行い <code>192.168.42.4/24</code>としました。</p>
+
+<pre><code>root@test01:~# ping 192.168.42.4
+PING 192.168.42.4 (192.168.42.4) 56(84) bytes of data.
+From 192.168.42.2 icmp_seq=1 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=2 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=3 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=4 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
+</code></pre>
+
+<p>あわよくば動けば面白いなと思ったけど残念ながらこちらは通信出来ない模様ですね。さすがにDataCenterをまたいでマルチキャストが許可されていないのでしょうか。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた]]></title>
+    <link href="http://tokida.github.io/blog/2014/09/17/consistentstorage/"/>
+    <updated>2014-09-17T20:40:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/09/17/consistentstorage</id>
+    <content type="html"><![CDATA[<p>SoftLayerでの新機能で「帯域保証型ブロックデバイス」が登場しました。
+1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerの帯域保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
+対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
+
+<ul>
+  <li>容量 20Gから12TByteまで</li>
+  <li>帯域保証 100IOPS から 6000IOPSまで</li>
+  <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
+</ul>
+
+<h1 id="section-1">オーダーから設定まで</h1>
+
+<h2 id="section-2">オーダ方法</h2>
+
+<p>オーダ時のオプションで利用OSを選択するようになっていますね。
+管理ポータルから、<code>Storage</code>→<code>Block Storage</code>→<code>Order Consistent Performance</code>を選択しましょう。</p>
+
+<p><img src="/images/2014-09-17-iscsi.png" alt="iscsi" /></p>
+
+<p>ここでの費用は、「ディスクサイズ」＋「IOPS」となるようです。この画像の場合、<code>20 GB 100 to 1000 IOPS</code>というは20GのiSCSIディスクはIOPS
+として100から1000までが指定可能ということになります。一番安い、20G 100IOPSをオーダしてみたいと思います。</p>
+
+<h2 id="section-3">設定方法</h2>
+
+<p>購入したデバイス（ここでは<code>SL01SL29*****-1 (20 GB)</code>のような名称)の詳細を確認します。
+iSCSIデバイスらしく<code>Authorized Hosts</code>という項目があるので利用したいサーバを指定します、すると「Username」「Password」「Host IQN」「Device Type」が該当のホスト向けに表示されます。</p>
+
+<p>画面を見る限り以前までのSnapshotなどの機能はなさそうです（残念！）</p>
+
+<p>今回のiSCSIはマルチパスで構成されているようなので<code>multipath-tools</code>を導入して利用します。</p>
+
+<p><code>
+apt-get install multipath-tools
+apt-get install open-iscsi
+</code></p>
+
+<p>iSCSIの設定を行います。<code>/etc/iscsi/initiatorname.iscsi</code>のファイルにIQNを設定します。</p>
+
+<p><code>
+InitiatorName= "value-from-the-SL-Portal"
+</code></p>
+
+<p>次に<code>/etc/iscsi/iscsid.conf</code>を以下の内容を記載します。</p>
+
+<p><code>
+node.session.auth.authmethod = CHAP
+node.session.auth.username = "Username-value-from-SL-Portal"
+node.session.auth.password = "Password-value-from-SL-Portal"
+discovery.sendtargets.auth.authmethod = CHAP
+discovery.sendtargets.auth.username = "Username-value-from-SL-Portal"
+discovery.sendtargets.auth.password = "Password-value-from-SL-Portal"
+</code></p>
+
+<p>設定が終わったら <code>/etc/init.d/open-iscsi restart</code>で再起動を行います。</p>
+
+<p><code>
+root@ansibletower:~# iscsiadm -m discovery -t sendtargets -p 10.2.174.111
+10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
+10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
+</code></p>
+
+<p>iSCSIを探してみると2つのIPで見つけることが出来ました。先ほど書いたようにMultipathでの接続が前提のようですね。</p>
+
+<p><code>
+root@ansibletower:~#  iscsiadm -m node --login
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] (multiple)
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] (multiple)
+Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] successful.
+Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] successful.
+root@ansibletower:~#
+root@ansibletower:~#
+root@ansibletower:~# iscsiadm -m session -o show
+tcp: [1] 10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
+tcp: [2] 10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
+</code></p>
+
+<p>この作業により<code>/dev/sda</code>と<code>/dev/sdb</code>としてiSCSIが認識されます。また先ほど導入したmultipathを確認すると</p>
+
+<p><code>
+root@ansibletower:~# multipath -l
+3600a0980383030525324464331596470 dm-0 NETAPP,LUN C-Mode
+size=20G features='1 queue_if_no_path' hwhandler='0' wp=rw
+|-+- policy='round-robin 0' prio=-1 status=active
+| `- 0:0:0:186 sdb  8:16   active undef running
+`-+- policy='round-robin 0' prio=-1 status=enabled
+  `- 1:0:0:186 sda  8:0    active undef running
+</code></p>
+
+<p>このようにFailover型でデバイスが登録されているのがわかります。</p>
+
+<p><code>
+root@ansibletower:~#  fdisk -l | grep /dev/mapper
+ディスク /dev/sdb は正常なパーティションテーブルを含んでいません
+ディスク /dev/sda は正常なパーティションテーブルを含んでいません
+ディスク /dev/mapper/3600a0980383030525324464331596470 は正常なパーティションテーブルを含んでいません
+Disk /dev/mapper/3600a0980383030525324464331596470: 21.5 GB, 21474836480 bytes
+</code></p>
+
+<p>device mapper経由では上記のデバイスとして認識されています。これ以降はこのデバイスに対してfdiskが有効なのでパーティションを作成して利用することに成ります。</p>
+
+<p><code>
+root@ansibletower:~# lsblk
+NAME                                       MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                                          8:0    0    20G  0 disk
+└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
+sdb                                          8:16   0    20G  0 disk
+└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
+xvda                                       202:0    0   100G  0 disk
+├─xvda1                                    202:1    0   243M  0 part  /boot
+└─xvda2                                    202:2    0  99.8G  0 part  /
+xvdb                                       202:16   0     2G  0 disk
+└─xvdb1                                    202:17   0     2G  0 part  [SWAP]
+</code></p>
+
+<p>fdiskでパーティションを作成し、カーネルにデバイスの変更を通知してxfsformatを行います。</p>
+
+<p>&#8220;`
+root@ansibletower:~# fdisk /dev/mapper/3600a0980383030525324464331596470</p>
+
+<p>root@ansibletower:~# partprobe
+Error: /dev/sda: ディスクラベルが認識できません。
+Error: /dev/sdb: ディスクラベルが認識できません。
+Error: /dev/mapper/3600a0980383030525324464331596470p1: ディスクラベルが認識できません。
+root@ansibletower:~# mkfs.xfs /dev/mapper/3600a0980383030525324464331596470p1
+meta-data=/dev/mapper/3600a0980383030525324464331596470p1 isize=256    agcount=16, agsize=327663 blks
+         =                       sectsz=4096  attr=2, projid32bit=0
+data     =                       bsize=4096   blocks=5242608, imaxpct=25
+         =                       sunit=1      swidth=16 blks
+naming   =version 2              bsize=4096   ascii-ci=0
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+&#8220;`</p>
+
+<p>実際にmountしてみる。恒久的に利用する場合には別途定義を行って下さい。</p>
+
+<p><code>
+root@ansibletower:~# mkdir /mnt/data1
+root@ansibletower:~# mount /dev/mapper/3600a0980383030525324464331596470p1 /mnt/data1
+</code></p>
+
+<h1 id="iops">IOPS試験の実施</h1>
+
+<p>簡単にするためにgistにスクリプトを置いています</p>
+
+<p><code>
+$ apt-get install fio
+$ apt-get install curl
+$ export DISK=/mnt/data1 ; curl -s https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/fio_test.sh | sh
+</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Benchmark</th>
+      <th style="text-align: right">Bandwiddh</th>
+      <th style="text-align: right">IOPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">4k, sequential read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">147</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, sequential write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">165</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">107</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">103</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential read</td>
+      <td style="text-align: right">51.871MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential write</td>
+      <td style="text-align: right">12.221MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>参考までに同じ試験項目でローカルディスク(100G SAN)を実施した場合</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Benchmark</th>
+      <th style="text-align: right">Bandwiddh</th>
+      <th style="text-align: right">IOPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">4k, sequential read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">27362</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, sequential write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">26305</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">14188</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">22233</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential read</td>
+      <td style="text-align: right">114.070MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential write</td>
+      <td style="text-align: right">113.188MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>今回オーダしたのは100IOPSのBlock Storageになりますが、確かに100前後で制御されているように見えます。帯域はこれがMaxなのか分かりませんがこのあたりも今後確認していきたいところですね。</p>
+
+<p>良かった点は、iSCSIがMultipathになった点でしょうか、とはいえ手軽さはNFS(FileStorage)での利用ですかね。また帯域が保証されているので6000IOPSを複数束ねてRaid0構成も出来るかもしれませんね。ただし結構費用が高いのが辛いかもしれないですが。12TByte(6000IOPS)の場合 $1,200+$720になるので $0.16/GByte となりますね。</p>
+
+<p><img src="/images/2014-09-17-iscsi02.png" alt="os" /></p>
+
+<p>このパラメータが何を意味しているのか調べていないのですが<code>AIX</code>とかありますね！</p>
+
+<p>悪かった点は、以前のiSCSIが抽象化された利便性の高いデバイスだったのですが今回はかなり素のiSCSIデバイスとしての利用になります。とくにSnapshotが使えないのは残念ですね。今回の場合にはこのiSCSIデバイスのバックアップをなにか考えなければいけません。12Tとか考えるとかなり面倒な感じですね。</p>
+
+<h1 id="section-5">参考</h1>
+
+<ul>
+  <li><a href="http://knowledgelayer.softlayer.com/procedure/accessing-block-storage-consistent-performance-linux">Accessing Block Storage Consistent Performance on Linux</a></li>
+  <li><a href="https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/738cec3a3dfa7816d65882c5d45d513e4a8cc160/fio_test.sh">FIO試験スクリプト</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[XMLRPCに大量にアクセスされている場合の回避策]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos/"/>
+    <updated>2014-08-25T11:28:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/25/xml-rpc-ddos</id>
+    <content type="html"><![CDATA[<p>さてCPU使用率が100%になったりApacheのデーモンが大量に発生したりした場合どんな原因が考えられますか？
+最近担当しているサーバからMemoryがいっぱいだよ、CPUがいっぱいだよとNew Relic経由でメールが届いたと思ったら触れなくなっていました。</p>
+
+<p>調べてみるとhttpdが大量に起動してメモリがなくなりフォークしたプロセスがKillされている状態でした。標準の設定でhttpd.confを書いているのでそもそも大量にコネクションがあった場合（今回のようなケース）はメモリが足りないなという状態だったので計算をしみたところ一つあたり57MByteもメモリを使っているという富豪な設定になっていました。ApacheでLoadModuleされすぎです。（CentOSの標準パッケージの問題だと思いますが）</p>
+
+<p>さて、そのようなことは横においておくとして今回の原因は xml-rpc.php に対して不特定の大量のアクセスが発生指定していることから起こっています。</p>
+
+<p>以下の例は暫定で<code>xmlrpc.php</code>を削除しています。</p>
+
+<p><code>
+88.150.160.81 - - [23/Aug/2014:11:24:30 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+172.245.37.220 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+96.8.126.60 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+109.104.118.82 - - [23/Aug/2014:11:24:31 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+88.150.160.82 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+172.245.221.237 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+185.17.151.106 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+217.78.5.180 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+192.3.43.160 - - [23/Aug/2014:11:24:32 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+96.8.123.95 - - [23/Aug/2014:11:24:34 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+217.78.5.165 - - [23/Aug/2014:11:24:37 -0500] "POST /xmlrpc.php HTTP/1.1" 404 286 "-" "-"
+^C
+</code></p>
+
+<h3 id="section">対策</h3>
+
+<p>幾つかの対策が考えられます。</p>
+
+<ul>
+  <li>XMLRPCの機能を無効化する（Wordpress3.5以降はディフォルトで有効になっているためソースを変更する必要がありそうです／VersionUp等の際にまた忘れる可能性があるので今回は選択しません）。</li>
+  <li>プラグインで無効化（プラグインで無効化してもPHPが動くためCPUリソースは食べそうです）／これはこれで導入しておきましょう。</li>
+  <li>接続可能なIPアドレスを制限する（今回はこれ）</li>
+</ul>
+
+<p>今回はこの3番目のアドレスで制限をしてみたいと思います。このサーバは、Public側とPrivate側に2つのネットワークインターフェースを持っているサーバとなっています。また設定についてはApacheだったので以下のようなディレクティブを追加することで対応が出来ます。</p>
+
+<h3 id="section-1">設定内容</h3>
+
+<ul>
+  <li><code>httpd.conf</code>に以下を追記する。xmlrpc.php　は 10.0.0.0　からのアクセスのみ許可にする。</li>
+</ul>
+
+<p><code>
+&lt;Files xmlrpc.php&gt;
+    order deny,allow
+    deny from all
+    allow from 10.0.0.0/255.0.0.0
+&lt;/Files&gt;
+</code></p>
+
+<p>これでPrivateNetworki(10.0.0.0)側のみになりそれ以外は403でエラーになります。</p>
+
+<p><code>
+172.245.37.225 - - [23/Aug/2014:11:35:55 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.117 - - [23/Aug/2014:11:35:56 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.82 - - [23/Aug/2014:11:35:56 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+198.23.154.30 - - [23/Aug/2014:11:35:57 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.117 - - [23/Aug/2014:11:35:57 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+217.78.5.166 - - [23/Aug/2014:11:35:58 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.131 - - [23/Aug/2014:11:35:58 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+96.8.125.21 - - [23/Aug/2014:11:35:59 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+217.78.5.165 - - [23/Aug/2014:11:35:59 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+109.104.118.77 - - [23/Aug/2014:11:36:00 -0500] "POST /xmlrpc.php HTTP/1.1" 403 290 "-" "-"
+^C
+</code></p>
+
+<h3 id="section-2">まとめ</h3>
+
+<p>今回リソースはNewRelicで見ていましたがログまでは保管していなかったため問題が発生している際に状況を調べるのが面倒でした。というかCPU100%の状態を解消しないと見ることが出来ませんでした。キチンとFluentd等で別のログサーバにデータを転送しておきたいと思います。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Serfを試してみる]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/22/first_serf/"/>
+    <updated>2014-08-22T01:30:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/22/first_serf</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">はじめに</a></li>
+  <li><a href="#section-1">導入</a></li>
+  <li><a href="#section-2">起動</a>    <ul>
+      <li><a href="#mdns">mDNSを利用したクラスタへのログイン</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-3">使い方</a>    <ul>
+      <li><a href="#eventhandler">最初に各サーバに最初のEventHandlerのシェルを配置する</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-4">まとめ</a></li>
+  <li><a href="#section-5">参考</a></li>
+</ul>
+
+<h1 id="section">はじめに</h1>
+
+<p>Software Design 2014/09号に「Serf・Consul入門」が載っていたのでそれを参考に少し動かしてみました。また記事を書かれている @zenbutu さんのQiita上でのまとめを参考にしています。</p>
+
+<ul>
+  <li><a href="http://qiita.com/zembutsu/items/aaffab81f9d5b60d7ecc">SerfとConsulの記事まとめ - Qiita</a></li>
+  <li><a href="http://www.amazon.co.jp/exec/obidos/ASIN/B00M7AWOJQ/ref=nosim?tag=maftracking33806-22&amp;linkCode=ure&amp;creative=6339">Software Design (ソフトウェア デザイン) 2014年 09月号</a></li>
+</ul>
+
+<h1 id="section-1">導入</h1>
+
+<p><a href="http://www.serfdom.io/downloads.html">http://www.serfdom.io/downloads.html</a></p>
+
+<p>上記から各サーバにあったものを落とす。
+ここではUbuntu14.04を2台で試すので</p>
+
+<p><a href="https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip">https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip</a></p>
+
+<p>を利用する</p>
+
+<pre><code>$ apt-get install unzip
+$ wget https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip
+$ unzip 0.6.3_linux_amd64.zip
+$ cp ./serf /usr/bin/serf
+</code></pre>
+
+<p>バージョンの確認</p>
+
+<pre><code>$ serf version
+Serf v0.6.3
+Agent Protocol: 4 (Understands back to: 2)
+</code></pre>
+
+<h1 id="section-2">起動</h1>
+
+<p>バックグラウンドでの起動</p>
+
+<pre><code>root@serf1:~# serf agent &amp;
+[1] 10094
+root@serf1:~# ==&gt; Starting Serf agent...
+==&gt; Starting Serf agent RPC...
+==&gt; Serf agent running!
+         Node name: 'serf1'
+         Bind addr: '0.0.0.0:7946'
+          RPC addr: '127.0.0.1:7373'
+         Encrypted: false
+          Snapshot: false
+           Profile: lan
+
+==&gt; Log data will now stream in as it occurs:
+
+    2014/08/21 18:31:15 [INFO] agent: Serf agent starting
+    2014/08/21 18:31:15 [INFO] serf: EventMemberJoin: serf1 10.114.16.197
+    2014/08/21 18:31:16 [INFO] agent: Received event: member-join
+</code></pre>
+
+<p>エージェントの確認／クラスタの状態の確認</p>
+
+<pre><code>root@serf1:~# serf members
+    2014/08/21 18:32:13 [INFO] agent.ipc: Accepted client: 127.0.0.1:44401
+serf1  10.114.16.197:7946  alive
+</code></pre>
+
+<p>2台目のサーバで、上記のSerf導入後以下を実施</p>
+
+<pre><code>root@serf2$ serf agent &amp;
+root@serf1$ serf join 10.114.16.197 
+    2014/08/21 18:35:05 [INFO] agent.ipc: Accepted client: 127.0.0.1:48145
+    2014/08/21 18:35:05 [INFO] agent: joining: [10.114.16.197] replay: false
+    2014/08/21 18:35:05 [INFO] serf: EventMemberJoin: serf1 10.114.16.197
+    2014/08/21 18:35:05 [INFO] agent: joined: 1 nodes
+Successfully joined cluster by contacting 1 nodes.
+root@serf2:~#     2014/08/21 18:35:06 [INFO] agent: Received event: member-join
+</code></pre>
+
+<p>1台目でMemberの確認</p>
+
+<pre><code>root@serf1:~# serf members
+    2014/08/21 18:36:12 [INFO] agent.ipc: Accepted client: 127.0.0.1:44421
+serf1  10.114.16.197:7946  alive
+serf2  10.114.16.196:7946  alive
+</code></pre>
+
+<p>止める</p>
+
+<pre><code>root@serf1:~# serf leave
+    2014/08/21 18:44:31 [INFO] agent.ipc: Accepted client: 127.0.0.1:44457
+    2014/08/21 18:44:31 [INFO] agent.ipc: Graceful leave triggered
+    2014/08/21 18:44:31 [INFO] agent: requesting graceful leave from Serf
+    2014/08/21 18:44:31 [INFO] serf: EventMemberLeave: serf1 10.114.16.197
+    2014/08/21 18:44:31 [INFO] agent: requesting serf shutdown
+    2014/08/21 18:44:31 [INFO] agent: shutdown complete
+    2014/08/21 18:44:31 [WARN] agent: Serf shutdown detected, quitting
+Error leaving: client closed
+[1]+  終了                  serf agent
+</code></pre>
+
+<h2 id="mdns">mDNSを利用したクラスタへのログイン</h2>
+
+<p>serfサーバをJoinするのにIPアドレスなどでしてしないでディスカバリーする。今回の環境はSoftLayerなのでマルチキャストDNS(mDNS)が通信できるためディスカバリーすることが出来ます。</p>
+
+<p>先に2台とも停止しておく<code>serf leave</code></p>
+
+<pre><code>root@serf1:~# ==&gt; Starting Serf agent...
+==&gt; Starting Serf agent RPC...
+==&gt; Serf agent running!
+         Node name: 'serf1'
+         Bind addr: '0.0.0.0:7946'
+          RPC addr: '127.0.0.1:7373'
+         Encrypted: false
+          Snapshot: false
+           Profile: lan
+      mDNS cluster: serf
+
+==&gt; Log data will now stream in as it occurs:
+
+    2014/08/21 18:46:50 [INFO] agent: Serf agent starting
+    2014/08/21 18:46:50 [INFO] serf: EventMemberJoin: serf1 10.114.16.197
+    2014/08/21 18:46:51 [INFO] agent: joining: [10.114.16.197:7946] replay: false
+    2014/08/21 18:46:51 [INFO] agent: joined: 1 nodes
+    2014/08/21 18:46:51 [INFO] agent.mdns: Joined 1 hosts
+    2014/08/21 18:46:51 [INFO] agent: Received event: member-join
+
+root@serf1:~# serf members
+    2014/08/21 18:47:01 [INFO] agent.ipc: Accepted client: 127.0.0.1:44467
+serf1  10.114.16.197:7946  alive
+</code></pre>
+
+<p>次にserf2側でも実行</p>
+
+<pre><code>root@serf2:~# ==&gt; Starting Serf agent...
+==&gt; Starting Serf agent RPC...
+==&gt; Serf agent running!
+         Node name: 'serf2'
+         Bind addr: '0.0.0.0:7946'
+          RPC addr: '127.0.0.1:7373'
+         Encrypted: false
+          Snapshot: false
+           Profile: lan
+      mDNS cluster: serf
+
+==&gt; Log data will now stream in as it occurs:
+
+    2014/08/21 18:47:23 [INFO] agent: Serf agent starting
+    2014/08/21 18:47:23 [INFO] serf: EventMemberJoin: serf2 10.114.16.196
+    2014/08/21 18:47:23 [INFO] agent: joining: [10.114.16.196:7946 10.114.16.197:7946] replay: false
+    2014/08/21 18:47:23 [INFO] serf: EventMemberJoin: serf1 10.114.16.197
+    2014/08/21 18:47:23 [INFO] agent: joined: 2 nodes
+    2014/08/21 18:47:23 [INFO] agent.mdns: Joined 2 hosts
+    2014/08/21 18:47:24 [INFO] agent: Received event: member-join
+
+root@serf2:~# serf members
+    2014/08/21 18:47:31 [INFO] agent.ipc: Accepted client: 127.0.0.1:48185
+serf2  10.114.16.196:7946  alive
+serf1  10.114.16.197:7946  alive
+</code></pre>
+
+<h1 id="section-3">使い方</h1>
+
+<p>このserfでは<code>Event</code>というものを使って処理ができるようになるのが特徴。その際の処理は<code>Event Handler</code>と言うものが担っている。</p>
+
+<p>EventHander自体は、スクリプト等の実行コマンドで各サーバ上に事前に用意しておく必要がある。したがって複数の処理をしたい場合などはGitなど経由でダウンロードする仕組みを組み込んでいくほうが良いと思われる。</p>
+
+<h2 id="eventhandler">最初に各サーバに最初のEventHandlerのシェルを配置する</h2>
+
+<p>以下の内容で ~/event.sh を作成</p>
+
+<p><figure class='code'><figcaption><span>event.sh </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh &lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;LOG<span class="o">=</span>event.log&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;echo “—–” » <span class="nv">$LOG</span>
+</span><span class='line'>hostname » <span class="nv">$LOG</span>
+</span><span class='line'>date » <span class="nv">$LOG</span>
+</span><span class='line'>env <span class="p">|</span>grep “^SERF” » <span class="nv">$LOG</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>次に各serfを起動する。一旦<code>serf leave</code>で抜けておいて各サーバで以下のコマンドを実行する。</p>
+
+<p>serf1側を、<code>-role=server</code>として serf2側を <code>-role=agent</code> として起動します。 </p>
+
+<pre><code>serf agent -event-handler=./event.sh -discover=serf -role=&lt;ROLE&gt; &amp;
+</code></pre>
+
+<p>これにより、何らかのイベントが発行される都度に <code>event.sh</code>が実行されます。その際の書きだされる内容は</p>
+
+<pre><code>root@serf1:~# tail -f event.log
+SERF_EVENT=member-join
+SERF_SELF_ROLE=
+SERF_SELF_NAME=serf1
+-----
+serf1
+2014年  8月 21日 木曜日 19:16:36 JST
+SERF_EVENT=member-join
+SERF_SELF_ROLE=server
+SERF_TAG_ROLE=server
+SERF_SELF_NAME=serf1
+    2014/08/21 19:17:08 [INFO] serf: EventMemberLeave: serf2 10.114.16.196
+    2014/08/21 19:17:09 [INFO] agent: Received event: member-leave
+-----
+serf1
+2014年  8月 21日 木曜日 19:17:09 JST
+SERF_EVENT=member-leave
+SERF_SELF_ROLE=server
+SERF_TAG_ROLE=server
+SERF_SELF_NAME=serf1
+    2014/08/21 19:17:27 [INFO] serf: EventMemberJoin: serf2 10.114.16.196
+    2014/08/21 19:17:28 [INFO] agent: Received event: member-join
+-----
+serf1
+2014年  8月 21日 木曜日 19:17:28 JST
+SERF_EVENT=member-join
+SERF_SELF_ROLE=server
+SERF_TAG_ROLE=server
+SERF_SELF_NAME=serf1
+</code></pre>
+
+<p>次に</p>
+
+<pre><code>root@serf2:~# tail -f event.log
+SERF_EVENT=member-join
+SERF_SELF_ROLE=
+SERF_SELF_NAME=serf2
+-----
+serf2
+2014年  8月 21日 木曜日 19:17:28 JST
+SERF_EVENT=member-join
+SERF_SELF_ROLE=agent
+SERF_TAG_ROLE=agent
+SERF_SELF_NAME=serf2
+</code></pre>
+
+<p>つまり、このEventHandlerのスクリプトをゴニョゴニョすると色々出来ますね。という話です。任意のイベント名を指定して実行してみます。serf2から<code>event TEST</code>を実行します。</p>
+
+<pre><code>root@serf2:~# serf event TEST
+</code></pre>
+
+<p>この時、serf1、serf2で同時に event.sh が実行されます。すると</p>
+
+<pre><code>serf1
+2014年  8月 21日 木曜日 19:27:16 JST
+SERF_EVENT=user
+SERF_SELF_ROLE=server
+SERF_TAG_ROLE=server
+SERF_USER_LTIME=3
+SERF_SELF_NAME=serf1
+SERF_USER_EVENT=TEST
+</code></pre>
+
+<p>のようなイベントな環境変数で実行されます。
+これを利用して、XXXサーバ機能として Role/Tag/Serf_Nameを駆使してサーバを特定して特定の処理を実施すると良いことになりますね。</p>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>ざっくり言えば、用意しておいスクリプトをクラスタ環境で実行することが出来る。実行はサーバが起動した際等にmember-joinした際に動くなど、複数のサーバ間で何かの処理をしたい時に同時に実行することが出来るのが面白い。</p>
+
+<p>スクリプトへ渡されるものは、SERF＿EVENTの場合 msmber-* は、標準入力で引き渡されます。その際にはホスト名やIPアドレスを取得することが出来ます。またEventの場合には、引数で指定したデータが渡ります。</p>
+
+<p><a href="http://qiita.com/foostan/items/5d61595b1b331a73b8c9">Dockerで試す、はじめてのSerf - Qiita</a></p>
+
+<p>によるとEventHandlerをイベント事に指定することも出来るようなので色々出来そうです。反面、スクリプトを各サーバに用意しておく必要がありこの部分をプロビジョニング時にうまいことする必要もありそうですね。</p>
+
+<h1 id="section-5">参考</h1>
+
+<ul>
+  <li><a href="http://pocketstudio.jp/log3/2014/04/01/serf_event_handlers/">イベントハンドラを整理してみる</a></li>
+  <li><a href="http://blog.livedoor.jp/sonots/archives/35397486.html">正月休みだし Serf 触ってみた - sonots:blog</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftLayerでのAutoScale機能がリリース]]></title>
+    <link href="http://tokida.github.io/blog/2014/08/20/softlayer-autoscale/"/>
+    <updated>2014-08-20T22:45:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/08/20/softlayer-autoscale</id>
+    <content type="html"><![CDATA[<p>SoftLayerにAutoScaleが発表されました。
+先日からAPIにはScale関数が登場していたのですがようやく管理ポータル側から設定ができるようになっていました。</p>
+
+<ul>
+  <li>この文章はRelease後の検証のため誤りが含まれている可能性がありますのでご注意下さい。</li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerのAutoScale機能についての説明</p>
+
+<p>AutoScaleでは、トリガーの条件を元にサーバの台数を自動的に増やすことが出来る機能です。</p>
+
+<p>トリガーには</p>
+
+<ul>
+  <li>CPU%の値</li>
+  <li>毎日の時間</li>
+  <li>特定の日時</li>
+</ul>
+
+<p>を選択することが出来ます。
+またその際に実行できるアクションは</p>
+
+<ul>
+  <li>相対的にサーバを増やす（追加台数指定）</li>
+  <li>指定の台数にする（固定）</li>
+  <li>CPU%を指定する</li>
+</ul>
+
+<p>が選択できます。
+これによって、朝6時に10台へ夜8時に1台に変更などという事が出来ます。またトリガーは複数選択できるためこの間もCPUに応じてAutoScaleを取ることが出来ます。</p>
+
+<p>またAutoScaleの際には、Local Load Balancer（DataCenter内で利用可能なロードバランサーオプションの名前）に自動的に追加することが可能です。
+これ意外にも、「Auto」ではなく「Manual」でスケールさせることも出来ます、これは便利そうです。</p>
+
+<h1 id="section-1">使い方</h1>
+
+<p>管理ポータル上から、<code>Devices</code> → <code>Auto Scale</code> を選択します。なにも設定がないので右上の <code>Add Auto Scale Group</code>より追加を行います。</p>
+
+<p>設定値を記載しておきます。まだ全ての動作を見ていないので不明な箇所は※で記載しておきます。以下の設定をした後に右下の <code>Add Group</code>から構成を追加します。</p>
+
+<h2 id="group-configuration">Group Configuration</h2>
+
+<p>参考 <a href="http://knowledgelayer.softlayer.com/articles/auto-scale-terms">Auto Scale Terms</a></p>
+
+<h3 id="group-details">Group Details</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">分類</th>
+      <th style="text-align: left">設定値</th>
+      <th style="text-align: left">値</th>
+      <th style="text-align: left">補足</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Group Details</td>
+      <td style="text-align: left">Group Name</td>
+      <td style="text-align: left">グループの名前</td>
+      <td style="text-align: left">ユニークになっていれば何でも良いみたい</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Region</td>
+      <td style="text-align: left">地域の選択</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">DataCenter</td>
+      <td style="text-align: left">サーバを置くデータセンターを選択</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Termination Policy</td>
+      <td style="text-align: left">Closest to next Charge, Newest , Oldest</td>
+      <td style="text-align: left">サーバをRemoveする際にどのサーバから消すかの指定</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Network</td>
+      <td style="text-align: left">Private Network Only</td>
+      <td style="text-align: left">ON/OFF</td>
+      <td style="text-align: left">プライベートのネットワークのみ利用</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Private (VLAN)</td>
+      <td style="text-align: left">VLAN名</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Public (VLAN)</td>
+      <td style="text-align: left">VLAN名</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Group Setting</td>
+      <td style="text-align: left">Minimum Member Count</td>
+      <td style="text-align: left">最小の起動数</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Maximum Member Count</td>
+      <td style="text-align: left">最大の起動数</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">CloodDown Prelod</td>
+      <td style="text-align: left">時間(min),Max 10day</td>
+      <td style="text-align: left">AutoScale動作後の非監視期間（だと思う）</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="member-configuraion">Member Configuraion</h3>
+
+<p>| 分類 | 設定値 | 値 | 補足 |
+|:—-|:——|:–|:—-|</p>
+
+<p>ここは一般的な仮想サーバのパラメータが指定可能、ホスト名とドメイン名が仮に<code>web</code>と<code>autoscale.com</code>だとすると実際にプロビジョニングされる際には<code>web-xxxxxx.autoscale.com</code>のような名称が割り振られる。ここでは <code>Provision Scirpt</code>が指定可能。</p>
+
+<h3 id="policies">Policies</h3>
+
+<p>Policyは何個でも作ることが出来る</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">分類</th>
+      <th style="text-align: left">設定値</th>
+      <th style="text-align: left">値</th>
+      <th style="text-align: left">補足</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Policy Details</td>
+      <td style="text-align: left">PolicyName</td>
+      <td style="text-align: left">必須</td>
+      <td style="text-align: left"> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Cooldown Preiod</td>
+      <td style="text-align: left">0(min)-10(day)</td>
+      <td style="text-align: left">全体の設定を利用するか、個別に作るか</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Triggers</td>
+      <td style="text-align: left">指定</td>
+      <td style="text-align: left">CPU%を指定可能( 30%以上や10%以下等,複数組みあせ可能）,特定の曜日, 特定の期間</td>
+      <td style="text-align: left"> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Action</td>
+      <td style="text-align: left">Scale By</td>
+      <td style="text-align: left">Exact(固定) , Relative(相対的に), Percentage(%)</td>
+      <td style="text-align: left">値は符号なしの場合「増加」、マイナス符号の場合「削減」となる</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="local-load-balancers">Local Load Balancers</h3>
+
+<p>| 分類 | 設定値 | 値 | 補足 |
+|:—-|:——|:–|:—-|</p>
+
+<ul>
+  <li>あとで時間が有る時に追記する</li>
+</ul>
+
+<hr />
+
+<p>Policiesでは、どの様に増やすのかが指定可能です。設定できるLoadBalancersは<code>Local Load Balancers</code>のみですが基本的には問題無いと思います。指定したLBに自動的に組み込みが行われます。</p>
+
+<h1 id="section-2">実験</h1>
+
+<h2 id="section-3">その1</h2>
+
+<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
+
+<ul>
+  <li>Termination Policy : Newest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：80%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>この状態でCPUを100%にすることで1台が追加されます。
+合計にすると追加後は全体で平均CPU使用率50%(100%+0%)になっているはずです。したがって動きとしては3分後に1台追加 ~~ 、その後 3分で Cooldown し新しい方が消える（Terminate）予定です。 ~~ この設定の場合全体で80%以下になるまで1台づつAutoscaleで増加</p>
+
+<p>結果</p>
+
+<ul>
+  <li>3分後に1台が追加</li>
+  <li>6分後特に変化なし（2台のまま継続)</li>
+  <li>その後経か無いため1台目のCPUを0%に変更</li>
+  <li>~~ 30分放置したが結果変わらず ~~ これで正しい</li>
+  <li>~~ LogにもCooldownしたとかそういう結果は出てこない（事が正しのか不明だ） ~~ 正しいCooldown経過後の数値はログに出て欲しいが出ない</li>
+</ul>
+
+<p>そもそもTerminateの指定は削除の指定であるのか、CPUの使用率は台数分の平均値なのか等が不明。</p>
+
+<h2 id="section-4">その2</h2>
+
+<p>最初にプロビジョニングされたサーバ上でcpuを100%にするスクリプトを実施</p>
+
+<ul>
+  <li>Termination Policy : oldest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：30%以上3分間経過すると「Relatively 1 Members」（相対的に1つ追加）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>この状態でCPUを100%に1:することで1台が追加されます。</p>
+
+<p>結果</p>
+
+<ul>
+  <li>CPUは平均で30%なのか3までAutoScaleで起動、ログからは13分単位で追加されてる</li>
+  <li>これにより監視しているCPUは合計の平均値であることは確実のようです。</li>
+  <li>その後変化なし</li>
+</ul>
+
+<h2 id="section-5">その3</h2>
+
+<ul>
+  <li>Termination Policy : oldest</li>
+  <li>Cooldown Period : 3min</li>
+  <li>指定したポリシー：30%以下3分間経過すると「Relatively -1 Members」（相対的に1つ削減）</li>
+  <li>LLB: 80番ポート、ヘルスチェックはDefaultを指定</li>
+</ul>
+
+<p>前提として「その2」の状態である</p>
+
+<p>結果</p>
+
+<ul>
+  <li>CPUの使用を0.x%にする</li>
+  <li>その後1台づつ terminate policyに従い削除される</li>
+</ul>
+
+<h1 id="section-6">まとめ</h1>
+
+<ul>
+  <li>一番最初上手くCPUを100にしても動いていませんでしたがその後動きました。Nimsoftは導入されていない状態のサーバがデプロイされています(CentOS)</li>
+  <li>~~ 2014/08/21 増えたサーバの「始末」をどうするのか？Termination Policy動いている？よくわからない ~~</li>
+  <li>問題なく増加、削除が可能である</li>
+  <li>トリガー条件でスケジュールベースが選択できることは便利</li>
+  <li>監視トリガーで全体で%の指定が可能なので余力を常に確保するようにAutoScale出来る</li>
+  <li>手動で設定の変更ことなしに「QuickScale」が出来るのは面白い</li>
+  <li>Regionの名前が初めて出てきた気がします。香港の場合には「as-hkg-central-1」そしてその中のDataCenter名が「Hong Kong2」という構成ですね。</li>
+</ul>
+
+<h1 id="section-7">参考</h1>
+
+<ul>
+  <li>@urasoko 氏のレポート：<a href="https://medium.com/@urasoko/softlayer-introduces-auto-scale-f91e0bae2a89">SoftLayer Introduces Auto Scale — Medium</a>
+  こちらを見ると色々Linkがありました。珍しくAutoScaleはドキュメントがあるなぁ。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

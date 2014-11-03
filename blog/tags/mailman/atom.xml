@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: mailman | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/tags/mailman/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Mailman + Postfix + Nginx on Ubuntu SoftLayer]]></title>
+    <link href="http://tokida.github.io/blog/2014/07/04/mailman/"/>
+    <updated>2014-07-04T16:34:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/07/04/mailman</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#goal">Goal</a></li>
+  <li><a href="#install">Install</a>    <ul>
+      <li><a href="#section">はじめに</a></li>
+      <li><a href="#section-1">ドメイン名</a></li>
+      <li><a href="#dns">DNSへの登録</a></li>
+    </ul>
+  </li>
+  <li><a href="#install-1">Install</a>    <ul>
+      <li><a href="#postfix">Postfix</a></li>
+      <li><a href="#fcgiwrap">fcgiwrap</a></li>
+      <li><a href="#mailman">Mailman</a></li>
+      <li><a href="#nginx">Nginx</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-2">使ってみる</a></li>
+  <li><a href="#section-3">ハマった点</a></li>
+  <li><a href="#section-4">まとめ</a></li>
+</ul>
+
+<h1 id="goal">Goal</h1>
+
+<p>個人用のメーリングリストを構築する</p>
+
+<h1 id="install">Install</h1>
+
+<h2 id="section">はじめに</h2>
+
+<p>個人で安く抑えたい場合には digital Ocean (https://www.digitalocean.com/pricing/) が快適で結構オススメです。$5/moで1core,521MB,20GB(SSD Disk),1T Transferなのでメーリングリスト等の簡易な用途であれば十分にこなしてくれそうです。今回はこれ意外にもOwnCloudなどを入れたかったのでSoftLayer (http://www.softlayer.com) のCloud Compute Instanceで利用してみました。一番安いノードで$25/moで 1core,1GB,25Gですね、すこし高いです。</p>
+
+<h2 id="section-1">ドメイン名</h2>
+
+<p>メーリングリストを始めるためにあたり今回は独自ドメインが欲しかったので色々あるので安いところから購入するのが良いかと思います。注意が必要なのはドメインを取得すると利用者の住所などの情報がwhoisで公開されるのですがこれをレジストラの業者が代行して表示してくれるサービスがあります。この対象となるドメインが業者により異なるので気をつけましょう。</p>
+
+<h2 id="dns">DNSへの登録</h2>
+
+<p>SoftLayerのDNSサービスがありますのでこちらを利用していきます。ドメイン業者側のコントロールパネルなどの設定でNSを以下の2つに変更します。</p>
+
+<ul>
+  <li>ns1.softlayer.com</li>
+  <li>ns2.softlayer.com </li>
+</ul>
+
+<p>すこし待てばSoftlayer側のDNS登録画面で登録した情報が利用されます。
+次に、Softlayer側で構築するサーバを登録します。ネットワーク設定の画面でドメイン名(mailabcd.net)と対象となるサーバのIPアドレス(119.81.xxx.xx1)を入れると自動で幾つかの値がセットされます。不要な項目を消して消して置けば良いと思います。TTLは短くしておけば最初に伝搬されます。</p>
+
+<p>&#8220;`
+$ORIGIN mailabcd.net.
+$TTL 900
+@ IN SOA ns1.softlayer.com. support.softlayer.com. (
+                       2014070307        ; Serial
+                       7200              ; Refresh
+                       600               ; Retry
+                       1728000           ; Expire
+                       43200)            ; Minimum</p>
+
+<p>@                      900      IN NS    ns1.softlayer.com.
+@                      900      IN NS    ns2.softlayer.com.</p>
+
+<p>@                      900      IN MX 10 study.mailabcd.net.</p>
+
+<p>@                      900      IN A     119.81.xxx.xx1
+mail                   86400    IN A     119.81.xxx.xx1
+study                  86400    IN A     119.81.xxx.xx1
+&#8220;`</p>
+
+<p>こんな感じにしておきます。感覚的に結構はやく名前の情報は反映される印象。
+これで準備は出来たので導入をしていきたいと思います。</p>
+
+<h1 id="install-1">Install</h1>
+
+<p>一度にmailman入れるとすこし変だったので一つづつ入れていきます。</p>
+
+<h2 id="postfix">Postfix</h2>
+
+<p><code>
+$ apt-get install postfix
+</code></p>
+
+<p>導入時にConfigureで幾つか聞かれるので回答してします。
+また設定は <code>/etc/postfix/main.cf</code> になります。</p>
+
+<ol>
+  <li>General type : Internet Site</li>
+  <li>Site Name : mailabcd.net </li>
+  <li>設定ファイルは以下の様になります。ただし alias_maps で指定している /var/lib/mailman/data/aliases はmailman導入後に出来るため現時点ではエラーになります。</li>
+</ol>
+
+<p><code>
+smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+myhostname = study.mailabcd.net
+alias_maps = hash:/etc/aliases, hash:/var/lib/mailman/data/aliases
+alias_database = hash:/etc/aliases
+myorigin = /etc/mailname
+mydestination = mailabcd.net, study.mailabcd.net, localhost.mailabcd.net, localhost
+relayhost =
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+owner_request_special = no
+unknown_local_recipient_reject_code = 550
+</code></p>
+
+<h2 id="fcgiwrap">fcgiwrap</h2>
+
+<p>cgiを動かす必要がありますが今回はnginx経由で使うために fcgiwrap を利用します。</p>
+
+<p><code>
+$ apt-get install fcgiwrap
+</code></p>
+
+<p>サービスとして動作します</p>
+
+<p><code>
+$ service fcgiwrap start
+$ ps -ef | grep fcgiwrap
+www-data 10577     1  0 Jul03 ?        00:00:00 /usr/sbin/fcgiwrap -f
+</code></p>
+
+<h2 id="mailman">Mailman</h2>
+
+<p>本命のmailmanを導入します。日本語がオカシイという情報がネットで見られましたが特に問題はなさそうに見えます。</p>
+
+<p><code>
+$ apt-get install mailman
+$ dpkg-reconfigure mailman
+</code></p>
+
+<p>なぜか日本語が導入されませんので導入したら再構成します。その際に[ja]を選択します。</p>
+
+<p>導入後の手順で <code>check_perms</code> をしている事がありますが今回は利用しません。特に問題なく使えるようです。</p>
+
+<p>管理用パスワードの変更</p>
+
+<p><code>
+$ mmsitepass
+New site password:
+Again to confirm password:
+Password changed.
+</code></p>
+
+<p>設定は <code>/etc/mailman/mm_cfg.py</code> で行います。
+変更を行ったところだけピックアップして書いておきます。</p>
+
+<p><code>
+MAILMAN_SITE_LIST = 'mailman'
+DEFAULT_EMAIL_HOST = 'mailabcd.net'
+EFAULT_URL_HOST   = 'mailabcd.net'
+add_virtualhost(DEFAULT_URL_HOST, DEFAULT_EMAIL_HOST)
+DEFAULT_SERVER_LANGUAGE = 'ja'
+MTA='Postfix'
+</code></p>
+
+<p>実際にはMTAの箇所をコメントアウトしただけかな。</p>
+
+<p><code>
+$ newlist mailman
+Enter the email of the person running the list: hogehoge@gmail.com
+Initial mailman password:
+Hit enter to notify mailman owner...
+</code></p>
+
+<p>これを実行するとaliasesも変更される</p>
+
+<p><code>
+# ls -l /var/lib/mailman/data/aliases*
+-rw-rw---- 1 root list  1132 Jul  3 20:44 /var/lib/mailman/data/aliases
+-rw-r----- 1 root list 12288 Jul  3 20:44 /var/lib/mailman/data/aliases.db
+</code></p>
+
+<p>Postfixとmailmanを起動します。</p>
+
+<p><code>
+$ service postfix start
+$ service mailman start
+</code></p>
+
+<p>エラーなどがある場合には、 <code>/var/log/</code>配下を確認します。</p>
+
+<h2 id="nginx">Nginx</h2>
+
+<p>最後にフロントエンドになるnginxを導入します</p>
+
+<p><code>
+$ apt-get install nginx
+</code></p>
+
+<p>設定ファイルを修正します。<code>/etc/nginx/fastcgi_params</code>に以下の行をコメントアウト</p>
+
+<p><code>
+#fastcgi_param SCRIPT_FILENAME $request_filename;
+</code></p>
+
+<p>一応WebサイトになってしまうのでRootのファイルを<code>/var/www/mailabc.org/web</code>におけるようにディレクトリを作っておきます。</p>
+
+<p>次に<code>/etc/nginx/site-available/mailabcd.net.vhost</code>にファイルを作る。また有効にするために <code>/etc/nginx/sites-enabled/mailabcd.net</code>にシンボリックリンクを作っておきます。</p>
+
+<p><code>
+server {
+       listen 80;
+       server_name mailabcd.net;
+       root /var/www/mailabcd.net/web;
+       if ($http_host != "mailabcd.net") {
+                 rewrite ^ http://mailabcd.net$request_uri permanent;
+       }
+       index index.php index.html;
+       location = /favicon.ico {
+                log_not_found off;
+                access_log off;
+       }
+       location = /robots.txt {
+                allow all;
+                log_not_found off;
+                access_log off;
+       }
+       # Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
+       location ~ /\. {
+                deny all;
+                access_log off;
+                log_not_found off;
+       }
+       location /cgi-bin/mailman {
+               root /usr/lib/;
+               fastcgi_split_path_info (^/cgi-bin/mailman/[^/]*)(.*)$;
+               include /etc/nginx/fastcgi_params;
+               fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+               fastcgi_param PATH_INFO $fastcgi_path_info;
+               fastcgi_pass unix:/var/run/fcgiwrap.socket;
+        }
+        location /images/mailman {
+               alias /usr/share/images/mailman;
+        }
+        location /pipermail {
+               alias /var/lib/mailman/archives/public;
+               autoindex on;
+        }
+}
+</code></p>
+
+<p>以下でい起動します</p>
+
+<p><code>
+$ service nginx start 
+</code></p>
+
+<h1 id="section-2">使ってみる</h1>
+
+<p>サイトへは http://mailabcd.net/cgi-bin/mailman/admin でアクセス可能です。
+その後は画面をみて利用する事ができるかと思います。</p>
+
+<h1 id="section-3">ハマった点</h1>
+
+<ul>
+  <li>Gmailはメーリングリストへ投稿され記事（正確にはMessage-idが同じ記事）をリジェクト刷るようですね。したがってGmailから送信するとメーリングリストに投稿された後の記事が届かない感じになって動いてない〜って成りました。 強制的にSource変更して書き換えている人もいました <a href="http://mypockt.blogspot.jp/2008/02/gmail.html">my poc kt: Gmail でメーリングリストのメールが弾かれる件を自己環境だけでもとりあえず対処してみた</a></li>
+  <li>MX レコードが自動で mail.mailabcd.net に記載されていたけどホスト名を study.mailabcd.net にしていたのでスパム扱いされてメールがgoogleからRejectされて悩んだ。</li>
+  <li>メーリングリストのドメインを @study.mailabcd.net から @mailabcd.net に後でで変えたら動作が？な箇所もあり結局再導入した（SoftLayerの場合にはOSReloadすれば５分もいらずに初期化される）</li>
+</ul>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>久しぶりにメーリングリストとか入れるとハマりました。Facebookとか色々共有するツールはあるのですがメールはほぼどの端末でも環境でも使えるのが良いですね。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

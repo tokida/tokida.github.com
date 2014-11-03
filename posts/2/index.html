@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>なんでもやってみるのが良いと思う</title>
+  <meta name="author" content="H.Tokida">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tokida.github.io/posts/2">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="なんでもやってみるのが良いと思う" type="application/atom+xml">
+
+  <link href="/stylesheets/data-table.css" rel="stylesheet" type="text/css" />
+  <link href="/stylesheets/toc.css" rel="stylesheet" type="text/css" />
+
+
+  <!-- http://opengraphprotocol.org/ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://tokida.github.io/posts/2">
+  <meta property="og:title" content="なんでもやってみるのが良いと思う">
+  <meta property="og:description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。">
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+
+<link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+
+
+  
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+  
+   <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-477563-11', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+  <body   >
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">なんでもやってみるのが良いと思う</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/about">About</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="https://www.google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:tokida.github.io">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" role="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <div class="blog-index" itemscope itemtype="http://schema.org/Blog">
+    <meta itemprop="name" content="なんでもやってみるのが良いと思う" />
+    <meta itemprop="description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。" />
+    <meta itemprop="url" content="http://tokida.github.io" />
+      
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-04T16:34:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年7月4日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/07/04/mailman/" itemprop="url">Mailman + Postfix + Nginx on Ubuntu SoftLayer</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#goal">Goal</a></li>
+  <li><a href="#install">Install</a>    <ul>
+      <li><a href="#section">はじめに</a></li>
+      <li><a href="#section-1">ドメイン名</a></li>
+      <li><a href="#dns">DNSへの登録</a></li>
+    </ul>
+  </li>
+  <li><a href="#install-1">Install</a>    <ul>
+      <li><a href="#postfix">Postfix</a></li>
+      <li><a href="#fcgiwrap">fcgiwrap</a></li>
+      <li><a href="#mailman">Mailman</a></li>
+      <li><a href="#nginx">Nginx</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-2">使ってみる</a></li>
+  <li><a href="#section-3">ハマった点</a></li>
+  <li><a href="#section-4">まとめ</a></li>
+</ul>
+
+<h1 id="goal">Goal</h1>
+
+<p>個人用のメーリングリストを構築する</p>
+
+<h1 id="install">Install</h1>
+
+<h2 id="section">はじめに</h2>
+
+<p>個人で安く抑えたい場合には digital Ocean (https://www.digitalocean.com/pricing/) が快適で結構オススメです。$5/moで1core,521MB,20GB(SSD Disk),1T Transferなのでメーリングリスト等の簡易な用途であれば十分にこなしてくれそうです。今回はこれ意外にもOwnCloudなどを入れたかったのでSoftLayer (http://www.softlayer.com) のCloud Compute Instanceで利用してみました。一番安いノードで$25/moで 1core,1GB,25Gですね、すこし高いです。</p>
+
+<h2 id="section-1">ドメイン名</h2>
+
+<p>メーリングリストを始めるためにあたり今回は独自ドメインが欲しかったので色々あるので安いところから購入するのが良いかと思います。注意が必要なのはドメインを取得すると利用者の住所などの情報がwhoisで公開されるのですがこれをレジストラの業者が代行して表示してくれるサービスがあります。この対象となるドメインが業者により異なるので気をつけましょう。</p>
+
+<h2 id="dns">DNSへの登録</h2>
+
+<p>SoftLayerのDNSサービスがありますのでこちらを利用していきます。ドメイン業者側のコントロールパネルなどの設定でNSを以下の2つに変更します。</p>
+
+<ul>
+  <li>ns1.softlayer.com</li>
+  <li>ns2.softlayer.com </li>
+</ul>
+
+<p>すこし待てばSoftlayer側のDNS登録画面で登録した情報が利用されます。
+次に、Softlayer側で構築するサーバを登録します。ネットワーク設定の画面でドメイン名(mailabcd.net)と対象となるサーバのIPアドレス(119.81.xxx.xx1)を入れると自動で幾つかの値がセットされます。不要な項目を消して消して置けば良いと思います。TTLは短くしておけば最初に伝搬されます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ORIGIN mailabcd.net.
+</span><span class="line">$TTL 900
+</span><span class="line">@ IN SOA ns1.softlayer.com. support.softlayer.com. (
+</span><span class="line">                       2014070307        ; Serial
+</span><span class="line">                       7200              ; Refresh
+</span><span class="line">                       600               ; Retry
+</span><span class="line">                       1728000           ; Expire
+</span><span class="line">                       43200)            ; Minimum
+</span><span class="line">
+</span><span class="line">@                      900      IN NS    ns1.softlayer.com.
+</span><span class="line">@                      900      IN NS    ns2.softlayer.com.
+</span><span class="line">
+</span><span class="line">@                      900      IN MX 10 study.mailabcd.net.
+</span><span class="line">
+</span><span class="line">@                      900      IN A     119.81.xxx.xx1
+</span><span class="line">mail                   86400    IN A     119.81.xxx.xx1
+</span><span class="line">study                  86400    IN A     119.81.xxx.xx1</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こんな感じにしておきます。感覚的に結構はやく名前の情報は反映される印象。
+これで準備は出来たので導入をしていきたいと思います。</p>
+
+<h1 id="install-1">Install</h1>
+
+<p>一度にmailman入れるとすこし変だったので一つづつ入れていきます。</p>
+
+<h2 id="postfix">Postfix</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ apt-get install postfix</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>導入時にConfigureで幾つか聞かれるので回答してします。
+また設定は <code>/etc/postfix/main.cf</code> になります。</p>
+
+<ol>
+  <li>General type : Internet Site</li>
+  <li>Site Name : mailabcd.net </li>
+  <li>設定ファイルは以下の様になります。ただし alias_maps で指定している /var/lib/mailman/data/aliases はmailman導入後に出来るため現時点ではエラーになります。</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+</span><span class="line">myhostname = study.mailabcd.net
+</span><span class="line">alias_maps = hash:/etc/aliases, hash:/var/lib/mailman/data/aliases
+</span><span class="line">alias_database = hash:/etc/aliases
+</span><span class="line">myorigin = /etc/mailname
+</span><span class="line">mydestination = mailabcd.net, study.mailabcd.net, localhost.mailabcd.net, localhost
+</span><span class="line">relayhost =
+</span><span class="line">mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+</span><span class="line">mailbox_size_limit = 0
+</span><span class="line">recipient_delimiter = +
+</span><span class="line">inet_interfaces = all
+</span><span class="line">owner_request_special = no
+</span><span class="line">unknown_local_recipient_reject_code = 550</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="fcgiwrap">fcgiwrap</h2>
+
+<p>cgiを動かす必要がありますが今回はnginx経由で使うために fcgiwrap を利用します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ apt-get install fcgiwrap</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>サービスとして動作します</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ service fcgiwrap start
+</span><span class="line">$ ps -ef | grep fcgiwrap
+</span><span class="line">www-data 10577     1  0 Jul03 ?        00:00:00 /usr/sbin/fcgiwrap -f</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="mailman">Mailman</h2>
+
+<p>本命のmailmanを導入します。日本語がオカシイという情報がネットで見られましたが特に問題はなさそうに見えます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ apt-get install mailman
+</span><span class="line">$ dpkg-reconfigure mailman</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>なぜか日本語が導入されませんので導入したら再構成します。その際に[ja]を選択します。</p>
+
+<p>導入後の手順で <code>check_perms</code> をしている事がありますが今回は利用しません。特に問題なく使えるようです。</p>
+
+<p>管理用パスワードの変更</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ mmsitepass
+</span><span class="line">New site password:
+</span><span class="line">Again to confirm password:
+</span><span class="line">Password changed.</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>設定は <code>/etc/mailman/mm_cfg.py</code> で行います。
+変更を行ったところだけピックアップして書いておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">MAILMAN_SITE_LIST = 'mailman'
+</span><span class="line">DEFAULT_EMAIL_HOST = 'mailabcd.net'
+</span><span class="line">EFAULT_URL_HOST   = 'mailabcd.net'
+</span><span class="line">add_virtualhost(DEFAULT_URL_HOST, DEFAULT_EMAIL_HOST)
+</span><span class="line">DEFAULT_SERVER_LANGUAGE = 'ja'
+</span><span class="line">MTA='Postfix'</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実際にはMTAの箇所をコメントアウトしただけかな。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ newlist mailman
+</span><span class="line">Enter the email of the person running the list: hogehoge@gmail.com
+</span><span class="line">Initial mailman password:
+</span><span class="line">Hit enter to notify mailman owner...</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これを実行するとaliasesも変更される</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line"># ls -l /var/lib/mailman/data/aliases*
+</span><span class="line">-rw-rw---- 1 root list  1132 Jul  3 20:44 /var/lib/mailman/data/aliases
+</span><span class="line">-rw-r----- 1 root list 12288 Jul  3 20:44 /var/lib/mailman/data/aliases.db</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Postfixとmailmanを起動します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ service postfix start
+</span><span class="line">$ service mailman start</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>エラーなどがある場合には、 <code>/var/log/</code>配下を確認します。</p>
+
+<h2 id="nginx">Nginx</h2>
+
+<p>最後にフロントエンドになるnginxを導入します</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ apt-get install nginx</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>設定ファイルを修正します。<code>/etc/nginx/fastcgi_params</code>に以下の行をコメントアウト</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">#fastcgi_param SCRIPT_FILENAME $request_filename;</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>一応WebサイトになってしまうのでRootのファイルを<code>/var/www/mailabc.org/web</code>におけるようにディレクトリを作っておきます。</p>
+
+<p>次に<code>/etc/nginx/site-available/mailabcd.net.vhost</code>にファイルを作る。また有効にするために <code>/etc/nginx/sites-enabled/mailabcd.net</code>にシンボリックリンクを作っておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">       listen 80;
+</span><span class="line">       server_name mailabcd.net;
+</span><span class="line">       root /var/www/mailabcd.net/web;
+</span><span class="line">       if ($http_host != "mailabcd.net") {
+</span><span class="line">                 rewrite ^ http://mailabcd.net$request_uri permanent;
+</span><span class="line">       }
+</span><span class="line">       index index.php index.html;
+</span><span class="line">       location = /favicon.ico {
+</span><span class="line">                log_not_found off;
+</span><span class="line">                access_log off;
+</span><span class="line">       }
+</span><span class="line">       location = /robots.txt {
+</span><span class="line">                allow all;
+</span><span class="line">                log_not_found off;
+</span><span class="line">                access_log off;
+</span><span class="line">       }
+</span><span class="line">       # Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
+</span><span class="line">       location ~ /\. {
+</span><span class="line">                deny all;
+</span><span class="line">                access_log off;
+</span><span class="line">                log_not_found off;
+</span><span class="line">       }
+</span><span class="line">       location /cgi-bin/mailman {
+</span><span class="line">               root /usr/lib/;
+</span><span class="line">               fastcgi_split_path_info (^/cgi-bin/mailman/[^/]*)(.*)$;
+</span><span class="line">               include /etc/nginx/fastcgi_params;
+</span><span class="line">               fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class="line">               fastcgi_param PATH_INFO $fastcgi_path_info;
+</span><span class="line">               fastcgi_pass unix:/var/run/fcgiwrap.socket;
+</span><span class="line">        }
+</span><span class="line">        location /images/mailman {
+</span><span class="line">               alias /usr/share/images/mailman;
+</span><span class="line">        }
+</span><span class="line">        location /pipermail {
+</span><span class="line">               alias /var/lib/mailman/archives/public;
+</span><span class="line">               autoindex on;
+</span><span class="line">        }
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>以下でい起動します</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ service nginx start </span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="section-2">使ってみる</h1>
+
+<p>サイトへは http://mailabcd.net/cgi-bin/mailman/admin でアクセス可能です。
+その後は画面をみて利用する事ができるかと思います。</p>
+
+<h1 id="section-3">ハマった点</h1>
+
+<ul>
+  <li>Gmailはメーリングリストへ投稿され記事（正確にはMessage-idが同じ記事）をリジェクト刷るようですね。したがってGmailから送信するとメーリングリストに投稿された後の記事が届かない感じになって動いてない〜って成りました。 強制的にSource変更して書き換えている人もいました <a href="http://mypockt.blogspot.jp/2008/02/gmail.html">my poc kt: Gmail でメーリングリストのメールが弾かれる件を自己環境だけでもとりあえず対処してみた</a></li>
+  <li>MX レコードが自動で mail.mailabcd.net に記載されていたけどホスト名を study.mailabcd.net にしていたのでスパム扱いされてメールがgoogleからRejectされて悩んだ。</li>
+  <li>メーリングリストのドメインを @study.mailabcd.net から @mailabcd.net に後でで変えたら動作が？な箇所もあり結局再導入した（SoftLayerの場合にはOSReloadすれば５分もいらずに初期化される）</li>
+</ul>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>久しぶりにメーリングリストとか入れるとハマりました。Facebookとか色々共有するツールはあるのですがメールはほぼどの端末でも環境でも使えるのが良いですね。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-14T08:32:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月14日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/14/aws_workspaces_change_input/" itemprop="url">AWS Workspaces における日本語切替の問題</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><p>Amazon Web Service の Daas である「Workspaces」を利用していて日本語の切替にハマったので設定方法を書いておきます。</p>
+
+<h1 id="goal">Goal</h1>
+
+<p>日本語の切替が出来る</p>
+
+<h1 id="how-to">How to</h1>
+
+<p>英語版Windows2008R2でできてるWorkspacesですが日本語の切替が上手くないです。
+日本語キーボードをどうしても理解しないためのような気もしますがこの段階では不便すぎるので以下のように設定をします。</p>
+
+<iframe width="640" height="390" src="//www.youtube.com/embed/-voaY7xykSs" frameborder="0" allowfullscreen=""></iframe>
+
+<p>ポイントとしては、「日本語」環境と「英語」環境を切り替えるということです。
+これで「詳細なキー設定」で定義されている「入力言語のホットキー」で切り替えることが出来ます。
+そして、今回の場合は「Google日本語入力」に関しては「あ」（日本語）の状態にしておくと切り替えた時に「あ」になっています。</p>
+
+<p>右下のタスクバーとしての動作は <code>JP</code> &lt;-&gt; <code>EN</code> の切り替えになります。</p>
+
+<h1 id="section">まとめ</h1>
+
+<p>Workspacesが発表されたのは去年のRe:Invent2013でしたね。もうRe:Invent2014の申し込みが始まったことを考えると早いものです。
+Workspacesの日本語がらみの問題は「東京リージョン」が出てくる段階で解決しておいて欲しいですね。そもそも東京リージョンは日本語版を入れておいて欲しいところです。とは言え、今の段階でも速度的な事が要件を満たせるのであれば十分に使える感じです。
+後は、日本語キーボードが認識しないのはどうにかして欲しいところです。</p>
+
+<h1 id="section-1">追記(2014/06/19)</h1>
+
+<p>日本語<code>JP</code>にてIMEを、Google日本語変換を選択していました。日本語の変換は「設定」で制御できるようです。今回はMacbookから利用しているのですが「英数」「かな」キーを押しても何も反応をしないことからWorkspcaceクライアントの制御の問題かなと思い始めました。とりあえず現時点では日本語入力はすこし面倒な感じですね。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-12T01:06:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月12日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/12/mkdocs/" itemprop="url">Markdownで簡単にサイトが構築できる「mkdocs」</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><h1 id="goal">Goal</h1>
+
+<p>先日Dockerのサイトを見ているとgithubにリンクが張ってありたどっていってmkdocsというMarkdown形式の文章を整形するツールが有ることを知りました。結構良さそうな感じなので使ってみました。</p>
+
+<ul>
+  <li><a href="http://www.mkdocs.org/">mkdocs</a></li>
+</ul>
+
+<h1 id="howto">Howto</h1>
+
+<p>早速入れてみます。環境は MacOS 10.9 となります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo pip install mkdocs</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>導入はこれで終わりです。
+使い方も簡単で、文章（Markdown）を整形するフォルダを用意します。そのフォルダの中で処理を進めていきます。最終的には <code>mkdocs build</code>コマンドで 静的なサイトを作ることが出来ます。</p>
+
+<p>ディレクトリ構成として</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">mkdocs.yml
+</span><span class="line">docs/
+</span><span class="line">	index.md
+</span><span class="line">	about.md
+</span><span class="line">	abcd01.md</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>という構成です。<code>mkdocs.yml</code>に構成を書いていきます。</p>
+
+<h2 id="mkdocsyml">構成ファイル mkdocs.yml</h2>
+
+<p>単純な形のサンプル。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">site_name: MkLorum
+</span><span class="line">pages:
+</span><span class="line">- [index.md, Home]
+</span><span class="line">- [about.md, About]
+</span><span class="line">theme: readthedocs</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>もう少し設定する場合には、<a href="http://www.mkdocs.org/user-guide/configuration/">Configuration - MkDocs</a> を参考にします。</p>
+
+<h2 id="section">プレビュー機能</h2>
+
+<p>プレビュー機能としてmkdocsでローカルにHTTPで起動する事が出来ます。実行後、http://local.host:8000 で接続してみるとかっこいい画面で表示されているのがわかります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ mkdocs serve</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img src="/images/mkdocs01.png" alt="images" /></p>
+
+<p>のような形で出力されます。</p>
+
+<h2 id="section-1">ビルド作業</h2>
+
+<p>問題なければ最後に静的ファイルを作成します</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ mkdocs build</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これでローカルの <code>./site</code> 以下にファイル群が作られます。</p>
+
+<h2 id="section-2">使いこなし</h2>
+
+<p>これらのソースをgitで管理するには <code>echo ¥'site/¥' &gt;&gt; .gitignor</code> で site/ を除いた形で作ると良いです。
+出来上がったファイル群は静的なHTMLファイルなので github page とか amazon s3なんかにUpしておければ使い勝手の良いサイトができる事に成ります。</p>
+
+<h1 id="section-3">まとめ</h1>
+
+<p>すごく簡単に綺麗にマニュアルサイトとかが作ることが出来ます。すでにmarkdownの文章があれば見せ方としてWebサイトのように構築することが出来るので機会があれば積極的に使っていきたい。それにしても便利んだな。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-05T06:41:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月5日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/05/redminelocalavatar/" itemprop="url">Redmine の 「Local_Avatar_Plugin」 の画像表示を修正（仮想ホスト運用すると画像のURLがlocalhostに）</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><h1 id="goal">Goal</h1>
+
+<p>仮想ホスト環境で運用していると、ローカルのIPアドレス:ポート番号（今回のケースでは http://localhost:10000 )がURLに入ってしまっていることがあります。多分理由は場所場所で絶対パスで入ってしまうせいだと思います。
+仮想ホストでNginxなどでリバースプロキシしていると別の名前でアクセスすることになり問題になってしまいます。</p>
+
+<p>今回導入した、アバター画像をローカルで利用できる（標準だと gavatar に取りに行ってしまう）プラグインでも同様の問題で画像が表示されない問題がありました。</p>
+
+<ul>
+  <li><a href="https://github.com/ncoders/redmine_local_avatars">redmine_local_avatars</a></li>
+</ul>
+
+<h1 id="section">修正</h1>
+
+<p>プラグインの中で <code>plugin/redmine_local_avatars/lib/application_helper_avatar_patch.rb</code> の中を修正します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">image_url = url_for :only_path =&gt; true, :controller =&gt; 'account', :action =&gt; 'get_avatar', :id =&gt; user</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上記の <code>url_for</code> で <code>only_path =&gt; false</code>を<code>only_path =&gt;true</code>へ変更させます。
+これで相対パスになるので画像が表示されます。</p>
+
+<h1 id="section-1">まとめ</h1>
+
+<p>仮想ホストで使うのってそれほど変わっているわけではないと思うのでこの問題はローカルな問題なんですかね？
+もともとonly_pathがfalseで指定されている所見ると理由があるのかもしれません。
+とりあえずおっさんの画像が表示されるようになったのでので気分が落ち着いたわ。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-05T05:29:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月5日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/05/redmienuninstallplugin/" itemprop="url">Redmineのプラグインをアンインストールする</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><h1 id="goal">Goal</h1>
+
+<p>Redmine のプラグインの削除</p>
+
+<h1 id="howto">Howto</h1>
+
+<p>先日からどうしてもDocker-Redmineの環境でうまく動かないPluginがあり何度もいじっていてキチンとプラグインを消すやり方を知らかなかったのでメモして置きます</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ rake redmine:plugins:migrate  NAME=hogehoge VERSION=0 RAILS_ENV=production</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>その後、実態であるフィアルを <code>rm -rf &lt;REDMINE&gt;/plugin/hogehoge</code> すれば良いです。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-01T22:02:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月1日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/01/sldn_configuration_finder/" itemprop="url">[SoftLayer]ベアメタルサーバの構成検索 sl_config_finder.rb を使ってみる</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#section">何が出来るの？</a></li>
+  <li><a href="#install">Install</a></li>
+  <li><a href="#section-1">使ってみる</a></li>
+  <li><a href="#section-2">まとめ</a></li>
+</ul>
+
+<h1 id="section">何が出来るの？</h1>
+
+<p>SoftLayer (IBM社のPublic Cloud Service) では様々なリソースの物理サーバがインスタンスとして利用できる（以下ベアメタルサーバ）のが特徴です。 そんなベアメタルサーバのですが構成が多すぎるので構成を検索してくれるスクリプトが<code>gist</code>に出ていました。</p>
+
+<p>というわけで、ここで紹介するツールはSoftLayerのベアメタルサーバの構成を検索する事が出来ます。</p>
+
+<ul>
+  <li>この記事は <code>SDN SoftLayer Blog</code> で掲載されていた記事の内容をやってみました。
+<a href="http://sldn.softlayer.com/blog/hansKristian/Configuration-Finder-%E2%80%93-Simplify-Your-Server-Search">Configuration Finder – Simplify Your Server Search | SoftLayer Development Network</a></li>
+</ul>
+
+<h1 id="install">Install</h1>
+
+<p>rubyすらはいっていなかったので、Rubyを導入するとともに <code>Softlayer_API</code> も導入します。最近はAWS(Amazon Web Service)もそうですがパッケージレポジトリに登録されているので楽ですね。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install ruby1.9.3
+</span><span class="line">$ sudo gem install softlayer_api
+</span><span class="line">$ git clone https://gist.github.com/7f8ca7027034cecddcc4.git</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>次にダウンロード(git cloneした）ファイルの中にアカウント名/APIキーを記載する項目があるのでSoftLayerの管理コンソールからAPIキーを発行した後に中を書き換えておきましょう。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">require 'rubygems'
+</span><span class="line">require 'softlayer_api'
+</span><span class="line">require 'optparse'
+</span><span class="line">$SL_API_USERNAME = "****"
+</span><span class="line">$SL_API_KEY = "*****"</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="section-1">使ってみる</h1>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./sl_config_finder.rb
+</span><span class="line">Usage: ./sl_config_finder.rb [options]
+</span><span class="line">    -c, --cpu cores                  Amount of CPU cores desired
+</span><span class="line">    -m, --memory amount              Amount of memory desired in GB
+</span><span class="line">    -d, --disk amount                Amount of disk spindels desired
+</span><span class="line">    -p, --priority pri1,pri2[,pri3]  What order to prioritse resources  (cpu, memory, disk) when searching
+</span><span class="line">    -b {higher, lower, nearest},     If exact match for given resource is not found, which way to search
+</span><span class="line">        --bias
+</span><span class="line">    -h, --help                       Displays Help</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>普通に引数漏れだと動きません。
+次に、実際に使ってみます、「CPU(1core),Memory(1G),CPU,Memoryを優先で検索」</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./sl_config_finder.rb -c 1 -m 1 -p cpu,memory,disk -b higher
+</span><span class="line">Desired versus selected specs
+</span><span class="line">CPU:            desired - 1   == selected - 2
+</span><span class="line">RAM:            desired - 1   == selected - 2
+</span><span class="line">Disk spindles:  desired -    == selected - 1
+</span><span class="line">=========== Possible packages meeting these requirements ==================
+</span><span class="line">===========================================================================
+</span><span class="line">ID: 20
+</span><span class="line">Name: Express (Dual Core Single Intel and AMD)
+</span><span class="line">CPU options
+</span><span class="line">Name: Single Processor Dual Core Opteron 1216 - 2.40GHz - 2 x 1MB cache
+</span><span class="line">ID: 383 == Cores: 2
+</span><span class="line">--------------------------------------------
+</span><span class="line">Name: Single Processor Quad Core Opteron 1354 - 2.20GHz - 2 x 1MB cache
+</span><span class="line">ID: 674 == Cores: 4
+</span><span class="line">--------------------------------------------
+</span><span class="line">
+</span><span class="line">Ram options:
+</span><span class="line">ID: 104 Name: 2 GB DDR2 667
+</span><span class="line">===========================================================================</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こんな感じで、選択できるものが表示されます。このIDの番号はAPIからCreate（Order）するときに必要な番号です。
+ちなみに表示までに数十〜数分かかります。何がこんなに遅いのだろうか。</p>
+
+<h1 id="section-2">まとめ</h1>
+
+<p>これで価格まで出てくれれば良い見積もりツールだったのですが現在のところ表示は出来なそうです。 </p>
+
+<p>重い、あまりに遅いので管理コンソール（ブラウザ）で探した方が早いのではなかと思うほどです orz</p>
+
+<p>使い勝手はともかく<code>Source</code>は参考になりそうですね。もう少し重たい原因を見つけておくと良いかもしれません。
+SoftLayerではAPIが色々あり導入出来るOSのリストとか簡単に取得できます。その辺りCLIで出来ると良いのですが。 </p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-01T21:25:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月1日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/01/useoriginaldomain/" itemprop="url">Github Page で独自ドメインを使う</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#goal">Goal</a></li>
+  <li><a href="#github-page">Github page側の設定</a></li>
+  <li><a href="#dns">DNS側の設定</a></li>
+  <li><a href="#section">まとめ</a></li>
+</ul>
+
+<h1 id="goal">Goal</h1>
+
+<ul>
+  <li>Github pageで独自ドメインを使う</li>
+</ul>
+
+<p>このブログのサイトは <code>Github Page</code>で作られています。
+ブログ自体は、<code>Octopress</code>を利用しています。
+Github padeでも独自ドメインが利用可能になっていて簡単に設定をすることが出来ます。</p>
+
+<ul>
+  <li>変更前のドメイン： tokida.github.io</li>
+  <li>変更後のドメイン： stepxstep.org</li>
+</ul>
+
+<p>参考にするドキュメントは、<a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages">Setting up a custom domain with GitHub Pages</a> になります。</p>
+
+<h1 id="github-page">Github page側の設定</h1>
+
+<p>Githubのサイト側で何かをイジる必要はありません。サイトのトップに <code>CNAME</code> というファイルを作成して中に独自ドメイン（これから設定するドメイン）を指定することで利用することが出来ます。</p>
+
+<p>今回は、Octopressを利用してるので <code>source/CNAME</code> ファイルに書き込みます</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">stepxstep.org</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>この状態で <code>rake gen_deploy</code>すると反映されます。実際に反映されるまで <em>10分程度</em> かかるそうです。（実際に10分程度かかっていました）</p>
+
+<h1 id="dns">DNS側の設定</h1>
+
+<p>今回はドメインの設定はRoute53(Amazon Web ServiceのDNSサービス）を利用します。レジストラ（今回はお名前.com側に Route53のDS名の登録）の設定は終えているとします。</p>
+
+<p>今回は、Apex domains （つまり http://stepxstep.org ）でアクセスすることを想定します。もし Subdomain (つまり http://blog.stepxstep.org 等）で実施する場合には、<code>blog.stepxstep.org</code> に対して <code>CNAME</code> で <code>tokida.github.io</code> を割り当てればよいです。</p>
+
+<p>今回は、Aレコードで stepxstep.org に対して以下の2つのIPアドレスを定義します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ dig stepxstep.org +nostats +nocomments +nocmd
+</span><span class="line">
+</span><span class="line">; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; stepxstep.org +nostats +nocomments +nocmd
+</span><span class="line">;; global options: +cmd
+</span><span class="line">;stepxstep.org.			IN	A
+</span><span class="line">stepxstep.org.		300	IN	A	192.30.252.153
+</span><span class="line">stepxstep.org.		300	IN	A	192.30.252.154</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>このIPアドレスは先程のHelpに記載されているものになります。ググったりすると別のIPを書かれている人もいたので以前とは違う値になっているのかもしれません。いずれにしても現時点では上記のIPで問題無いです。</p>
+
+<h1 id="section">まとめ</h1>
+
+<p>最初に時間が立っていないと github のエラーページが表示されます。暫く待てば動くはずです。
+元の <code>tokida.github.io</code> にアクセスすると,一旦お名前.comに飛ばされてしまいますね。これは落ち着くのかな？</p>
+
+<p>それにしても最近は簡単に独自ドメインのサイトが出来てしまって嬉しい限りです、この <code>stepxstep.org</code>も 480円でご購入です。来年度以降はもう少しするんだろうけど。まあそれまでにそのぐらいの額のアフェリエイトでも稼いでくれるようになっていれば元は取れるという。</p>
+
+<p>ほんとに良い世の中になりました。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T23:02:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/31/02/" itemprop="url">Vimの起動画面で履歴を表示できるStartifyを入れてみる</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#startify-">Startify プラグイン</a>    <ul>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#section">設定</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-1">まとめ</a>    <ul>
+      <li><a href="#section-2">参考</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>最近、MacとWindowsを行き来することもあり共通で使えるVimを利用しています。
+かなり前から使っている割には仕事では素のviを使う機会が多かったこともありVimをカスタマイズして使うということがなかったのですがここのところすっかりプラグイン入れて遊んでいます。</p>
+
+<ul>
+  <li><a href="http://ja.wikipedia.org/wiki/Vim">Vim - Wikipedia</a></li>
+  <li><a href="http://www.kaoriya.net/software/vim/">Vim — KaoriYa</a></li>
+</ul>
+
+<p>日本語で使うために色々パッケージングされたものをKaoriyaさんで公開されていますのでこれから導入される方はオススメです。</p>
+
+<h1 id="startify-">Startify プラグイン</h1>
+
+<p>起動した時の画面が変わります。</p>
+
+<p><img src="/images/2014_06_01_am0_00.png" alt="images" /></p>
+
+<p>こんな感じで起動時に履歴が選択できるようになります。
+また <code>:startify</code>でいつでもこの画面を呼び出す事ができます。</p>
+
+<h2 id="install">Install</h2>
+
+<p>導入はいつもどおり NeoBundle 経由で行います。</p>
+
+<ul>
+  <li><a href="https://github.com/mhinz/vim-startify">mhinz/vim-startify</a></li>
+</ul>
+
+<p>したがって<code>.vimrc</code>の NeoBundleの所に以下のように記述します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">NeoBundle 'mhinz/vim-startify'    "起動時に履歴を表示させる</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>あとは起動後に <code>NeoBundleInstall</code> して導入します。</p>
+
+<h2 id="section">設定</h2>
+
+<p>設定は <code>.vimrc</code> にて行います。
+詳細の設定内容は <code>:h startify</code> でヘルプが詳細に書いてあるので見るとわかります。
+参考で記載しているサイトの設定を参考にしています。</p>
+
+<div><script src="https://gist.github.com/3a978d48817b98fb4f18.js"></script>
+<noscript><pre><code>&quot; Startify
+&quot; 起動時の画面の設定
+&quot; startifyのヘッダー部分に表示する文字列を設定する(dateコマンドを実行して日付を設定している)
+let g:startify_custom_header =
+  \ map(split(system(&#39;date&#39;), &#39;\n&#39;), &#39;&quot;   &quot;. v:val&#39;) + [&#39;&#39;,&#39;&#39;]
+let g:startify_files_number = 10
+&quot; デフォルトだと、最近使ったファイルの先頭は数字なので、使用するアルファベットを指定
+&quot; let g:startify_custom_indices = [&#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;r&#39;, &#39;i&#39;, &#39;o&#39;, &#39;b&#39;]
+&quot; よく使うファイルをブックマークとして登録しておく
+let g:startify_bookmarks = [
+  \ &#39;~/.vimrc&#39;,
+  \ &#39;~/.gvimrc&#39;,
+  \ &#39;~/.bash_profile&#39;,
+  \ &#39;~/memo/todo.markdown&#39;,
+  \ ]
+</code></pre></noscript></div>
+
+<h1 id="section-1">まとめ</h1>
+
+<p>起動画面でさっと履歴が選択できるのはありがたいです。とは言え別のプラグインで同じような事を実装することも出来るようなので珍しいことではないのかもしれませんがプラグイン一つ入れて簡単に出来るのが良かったです。</p>
+
+<h2 id="section-2">参考</h2>
+
+<ul>
+  <li><a href="http://deris.hatenablog.jp/entry/2013/12/15/235606">Vimmerなら2013年中に試しておきたい海外産Vim plugin 8選 - derisの日記</a>  </li>
+</ul>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T05:52:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/" itemprop="url">Markdownの文章をHTMLに変換する</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#section">はじめに</a></li>
+  <li><a href="#pandoc">Pandocを導入する</a>    <ul>
+      <li><a href="#section-1">インストール</a></li>
+      <li><a href="#githubcss">githubのCSSで変換してみる</a>        <ul>
+          <li><a href="#section-2">導入・設定</a></li>
+          <li><a href="#section-3">変換する</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#section-4">まとめ</a>    <ul>
+      <li><a href="#section-5">参考文献</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="section">はじめに</h1>
+
+<p>ここの所、文章は全てMakrdownで書くようにしています。仕事でも <a href="http://qiita.com/">Qiita</a> などのサービスを利用しており身の回りで徐々に markdown を使う環境を広げているところです。 まさにこのサイトも makrdown で書かれており色々と捗ります。
+先日、だいぶ長い文章を markdown で書いたのですが最終的に清書して出す必要がありその際にフォーマット変換（HTMLやPDF）に変換したくなりました。
+その際には時間切れだったのですが改めて環境を作ったので書いておきます。</p>
+
+<h1 id="pandoc">Pandocを導入する</h1>
+
+<p>最近ちょっと入れてみたいと言う時にはDockerとかVagrantで簡単に環境を作っています。なのでMacbookで書いているのですが以後の処理はUbuntuで行った場合の対応になります。色々なファイルフォーマットを変換してもらうことの出来る <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> を利用します。</p>
+
+<h2 id="section-1">インストール</h2>
+
+<p>PandcoはHaskellの上で動くのでHaskel Platformの上で導入することも出来ますが今回は簡単にパッケージマネージャーから導入することにします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install pandoc</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>導入の確認</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">vagrant@ubuntu1404:/vagrant_data/files$ pandoc -v
+</span><span class="line">pandoc 1.12.2.1
+</span><span class="line">Compiled with texmath 0.6.5.2, highlighting-kate 0.5.5.1.
+</span><span class="line">Syntax highlighting is supported for the following languages:
+</span><span class="line">    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
+</span><span class="line">    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
+</span><span class="line">    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
+</span><span class="line">    fortran, fsharp, gnuassembler, go, haskell, haxe, html, ini, java, javadoc,
+</span><span class="line">    javascript, json, jsp, julia, latex, lex, literatecurry, literatehaskell,
+</span><span class="line">    lua, makefile, mandoc, markdown, matlab, maxima, metafont, mips, modelines,
+</span><span class="line">    modula2, modula3, monobasic, nasm, noweb, objectivec, objectivecpp, ocaml,
+</span><span class="line">    octave, pascal, perl, php, pike, postscript, prolog, python, r,
+</span><span class="line">    relaxngcompact, rhtml, roff, ruby, rust, scala, scheme, sci, sed, sgml, sql,
+</span><span class="line">    sqlmysql, sqlpostgresql, tcl, texinfo, verilog, vhdl, xml, xorg, xslt, xul,
+</span><span class="line">    yacc, yaml
+</span><span class="line">Default user data directory: /home/vagrant/.pandoc
+</span><span class="line">Copyright (C) 2006-2013 John MacFarlane
+</span><span class="line">Web:  http://johnmacfarlane.net/pandoc
+</span><span class="line">This is free software; see the source for copying conditions.  There is no
+</span><span class="line">warranty, not even for merchantability or fitness for a particular purpose.</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>変換してみる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">% pandoc input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>オプションの説明などは日本語のリファレンスもあるのでそちらを参考にします。</p>
+
+<h2 id="githubcss">githubのCSSで変換してみる</h2>
+
+<p>実際にHTMLにした際にも見た目、Github風に慣れ親しんでいるのでCSSを指定してHTMLに変換することが出来ます。またオプションを指定することにより toc(目次）も入れること出来ます。目次はHTMLの場合にはキチンとHyperlinkになってくれるのでありがたい。</p>
+
+<h3 id="section-2">導入・設定</h3>
+
+<p>markdownファイルがある場所にCSSをダウンロードします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ wget https://gist.github.com/andyferra/2554919</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-3">変換する</h3>
+
+<p>変換には、cssファイルを指定する方法がありますがこの場合には生成されたHTMLファイルがCSSファイルを利用するようになります。
+単体の一つのHTMLにしたい場合にはテンプレートをコピーしてその中にCSSを埋め込んだほうが良いです。テンプレートはubuntuの場合には、<code>/usr/share/pandoc/data/templates</code> に導入されています。
+今回はCSSファイルを個別にしてして見ます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ pandoc --toc --toc-depth=1 -t html -c github.css input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こうするとmarkdownの書式に合わせて目次を生成してくれます。
+自動でこういう風になってくれるとすごく便利です。</p>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>簡単に変換できるツールなので他にもコンバージョンを試してみたいと思います。PDFの変換も気になるところですがChromeブラウザのPDF出力もある程度代用可能なので暫くはそちらでも良いかなと思っています。それよりも SLIDES 利用したスライド作れる方が興味があります。
+簡単にテキスト(markdown)で書いておいてさっと発表に使えるとなると色々捗りそうです。</p>
+
+<h2 id="section-5">参考文献</h2>
+
+<ul>
+  <li><a href="http://qiita.com/sky_y/items/80bcd0f353ef5b8980ee">HTML - 多様なフォーマットに対応！ドキュメント変換ツールPandocを知ろう - Qiita</a></li>
+  <li><a href="http://sky-y.github.io/site-pandoc-jp/users-guide/">Pandoc ユーザーズガイド 日本語版 - Japanese Pandoc User&#8217;s Association</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-30T12:00:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月30日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/" itemprop="url">Octopressの記事の消し方</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><p>早速、Octopressに投稿してみて最初に方法がわからなかったのは「投稿した記事の削除」の方法。
+変な文章あげちまったよ。と思ったところで消せずに悩んで10分。
+そう</p>
+
+<h2 id="section">ファイルを消せ。</h2>
+
+<p>ということだ。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ls -l source/_posts/*
+</span><span class="line">source/_posts/2014-05-30-firstpost.markdown
+</span><span class="line">source/_posts/2014-05-30-octopressの記事の消し方.markdown</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>このファイルを<code>rm</code>で消した後に<code>rake gen_deploy</code>すれば問題ない。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+    </div>
+
+    <ul class="pager">
+      
+        <li class="previous"><a href="/posts/3">&larr;&nbsp;Older</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+        <li class="next"><a href="/index.html">Newer&nbsp;&rarr;</a></li>
+      
+    </ul>
+  </div>
+
+  
+    <aside class="sidebar col-md-3">
+      
+        <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Recent Posts</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
+    
+    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに帯域保証型iSCSI/NASが登場したので試してみた</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/22/first_serf/">Serfを試してみる</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/20/softlayer-autoscale/">SoftLayerでのAutoScale機能がリリース</a>
+    
+  </div>
+</section>
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">寄稿</h3>
+  </div>
+  <div class="list-group">
+  	    <a class="list-group-item " href="http://c.af.moshimo.com/af/c/click?a_id=187314&p_id=170&pc_id=185&pl_id=4062&s_v=b5Rz2P0601xu&url=http%3A%2F%2Fwww.amazon.co.jp%2Fexec%2Fobidos%2FASIN%2FB00M7AWOJQ%2Fref%3Dnosim"><img src="http://ecx.images-amazon.com/images/I/51f%2BNfl-h-L._SL160_.jpg" style="border: none;" />
+  	    <div>Software Design (ソフトウェア デザイン) 2014年 09月号 [雑誌]</div></a>
+  </div>
+</section>
+
+
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Categories</h3>
+  </div>
+  <div class="list-group">
+    
+    
+    <a class="list-group-item " href="/blog/categories/info/index.html">
+        <span class="badge">1</span>
+        info
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/categories/review/index.html">
+        <span class="badge">19</span>
+        review
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/categories/think/index.html">
+        <span class="badge">1</span>
+        think
+      </a>
+    
+  </div>
+</section>
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Tag Cloud</h3>
+  </div>
+  <div class="list-group">
+    
+    
+    <a class="list-group-item " href="/blog/tags/octopress/index.html">
+        <span class="badge">2</span>
+        octopress
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/markdown/index.html">
+        <span class="badge">2</span>
+        markdown
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/vim/index.html">
+        <span class="badge">1</span>
+        vim
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/github/index.html">
+        <span class="badge">1</span>
+        github
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/softlayer/index.html">
+        <span class="badge">7</span>
+        softlayer
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/redmine/index.html">
+        <span class="badge">2</span>
+        redmine
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/mkdocs/index.html">
+        <span class="badge">1</span>
+        mkdocs
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/aws/index.html">
+        <span class="badge">1</span>
+        AWS
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/mailman/index.html">
+        <span class="badge">1</span>
+        mailman
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/postfix/index.html">
+        <span class="badge">1</span>
+        postfix
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/nginx/index.html">
+        <span class="badge">1</span>
+        nginx
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/tmux/index.html">
+        <span class="badge">1</span>
+        tmux
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/iterm/index.html">
+        <span class="badge">1</span>
+        iterm
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/ansbile/index.html">
+        <span class="badge">1</span>
+        ansbile
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/docker/index.html">
+        <span class="badge">1</span>
+        docker
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/digitalocean/index.html">
+        <span class="badge">1</span>
+        digitalocean
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/serf/index.html">
+        <span class="badge">1</span>
+        serf
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/wordpress/index.html">
+        <span class="badge">1</span>
+        wordpress
+      </a>
+    
+  </div>
+</section>
+
+
+      
+    </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - H.Tokida<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'roguer';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+<script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+  </body>
+</html>

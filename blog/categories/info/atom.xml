@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Info | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://tokida.github.io/blog/categories/info/atom.xml" rel="self"/>
+  <link href="http://tokida.github.io/"/>
+  <updated>2014-11-04T01:33:12+09:00</updated>
+  <id>http://tokida.github.io/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hello, Octopres .]]></title>
+    <link href="http://tokida.github.io/blog/2014/05/20/firstpost/"/>
+    <updated>2014-05-20T12:47:00+09:00</updated>
+    <id>http://tokida.github.io/blog/2014/05/20/firstpost</id>
+    <content type="html"><![CDATA[<p>最近、続けていたiPhone系のブログが更新できない。 仕事が忙しくてあまり差割れていないのが原因。最近またインフラ系のエンジニアに戻りつつあり勉強する日々。 色々試してみたりしているのでその記録を残していきたい。</p>
+
+<p>ということで触ってみたかった <code>Octopress</code> を入れてみた。</p>
+
+<p>何を書いていこうか迷うけどメモをどんどん公開していってみよう。普段書いているブログのテーマと違いすぎて更新できないまま結構放置してしまって普段していることをアウトプットするという気持ちが少なくなってきてしまう。</p>
+
+<p>このブログが何かの転機に成りますように。</p>
+]]></content>
+  </entry>
+  
+</feed>
