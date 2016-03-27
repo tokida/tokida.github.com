@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Review | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/categories/review/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-27T09:51:10+09:00</updated>
+  <updated>2016-03-28T02:28:03+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ATOMエディタからOctopressを利用する]]></title>
+    <link href="http://stepxstep.org/blog/2016/03/28/test/"/>
+    <updated>2016-03-28T02:07:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2016/03/28/test</id>
+    <content type="html"><![CDATA[
+<p>最近はVIMではなくATOMを利用していることもあって Atom エディタから簡単に利用することが出来るのかやってみました。</p>
+
+<p>パッケージ　<code>markdown-writer</code> を利用します。</p>
+
+<p>設定が <code>_mdwriter.cson</code> ファイルに出せるはずなのですが上手く行かなかったので<code>個人設定 config.cson</code>に直接設定を書きこみました。</p>
+
+<p>&#8220;`
+“markdown-writer”:
+  fileExtension: “.md”
+  frontMatter: ‘’’
+    —
+    layout: <layout>
+    title: &#8221;<title>&#8221;
+    date: &#8221;<date>&#8221;
+    published: false
+    comments: false
+    tags:
+    categories:
+    &#8212;
+    * Table of Contents
+    {:toc}</date></title></layout></p>
+
+<p>’’’
+  siteEngine: “octopress”
+  siteLocalDir: “/Users/hideaki/tokida.github.com/octopress/source/”
+  sitePostsDir: “_posts/”
+  siteUrl: “http://stepxstep.org”
+&#8220;`</p>
+
+<ul>
+  <li><code>siteLocalDir</code> は必須です。最初入れていないでハマりました。その他のDirは siteLocalDirからの相対パスとなります。</li>
+  <li>Octpress等のエンジンが選択できますが rake generate等をしてくれることはありません。 画像のフォーマットの指定が Octpress 用のタグを入れてくれるというものになります。</li>
+  <li>ドラフト→パブリッシュはフォルダを移動させてくれる。</li>
+  <li><code>rake generate</code> を別途実行する必要あがあります。</li>
+</ul>
+
+<p>rake generateを実行するために、パッケージ <code>Terminal-Plus</code> を導入します。（run-command2などでもよいかもしれません）
+これを利用すると画面のしたにTerminal画面が表示されます。</p>
+
+<p><img class="center" src="images/2016/03/screen20160328-22130.png" width="640" height="480" title="‘screen’" ></p>
+
+<p>ターミナルを開くとドキュメントと同じディレクトリがPATHに設定されるのでそのまま <code>rake preview</code> などと実行すれば利用できます。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Bluemix-cli]]></title>
@@ -414,278 +465,6 @@ From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
 </code></pre>
 
 <p>あわよくば動けば面白いなと思ったけど残念ながらこちらは通信出来ない模様ですね。さすがにDataCenterをまたいでマルチキャストが許可されていないのでしょうか。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[SoftLayerに性能保証型iSCSI/NASが登場したので試してみた]]></title>
-    <link href="http://stepxstep.org/blog/2014/09/17/consistentstorage/"/>
-    <updated>2014-09-17T20:40:00+09:00</updated>
-    <id>http://stepxstep.org/blog/2014/09/17/consistentstorage</id>
-    <content type="html"><![CDATA[
-<pre><code>2014/11/04 追記: [帯域]保証型と書いていましたが、帯域は保証されていないとご指摘を（確かにその通り）受けたので[性能]保証型にしました。さらに言えば性能も保証されていないのですが。
-</code></pre>
-
-<p>SoftLayerでの新機能で「性能保証型ブロックデバイス」が登場しました。
-1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
-
-<h1 id="section">これは何？</h1>
-
-<p>SoftLayerの性能保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
-対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
-
-<ul>
-  <li>容量 20Gから12TByteまで</li>
-  <li>性能保証 100IOPS から 6000IOPSまで</li>
-  <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
-</ul>
-
-<h1 id="section-1">オーダーから設定まで</h1>
-
-<h2 id="section-2">オーダ方法</h2>
-
-<p>オーダ時のオプションで利用OSを選択するようになっていますね。
-管理ポータルから、<code>Storage</code>→<code>Block Storage</code>→<code>Order Consistent Performance</code>を選択しましょう。</p>
-
-<p><img src="/images/2014-09-17-iscsi.png" alt="iscsi" /></p>
-
-<p>ここでの費用は、「ディスクサイズ」＋「IOPS」となるようです。この画像の場合、<code>20 GB 100 to 1000 IOPS</code>というは20GのiSCSIディスクはIOPS
-として100から1000までが指定可能ということになります。一番安い、20G 100IOPSをオーダしてみたいと思います。</p>
-
-<h2 id="section-3">設定方法</h2>
-
-<p>購入したデバイス（ここでは<code>SL01SL29*****-1 (20 GB)</code>のような名称)の詳細を確認します。
-iSCSIデバイスらしく<code>Authorized Hosts</code>という項目があるので利用したいサーバを指定します、すると「Username」「Password」「Host IQN」「Device Type」が該当のホスト向けに表示されます。</p>
-
-<p>画面を見る限り以前までのSnapshotなどの機能はなさそうです（残念！）</p>
-
-<p>今回のiSCSIはマルチパスで構成されているようなので<code>multipath-tools</code>を導入して利用します。</p>
-
-<p><code>
-apt-get install multipath-tools
-apt-get install open-iscsi
-</code></p>
-
-<p>iSCSIの設定を行います。<code>/etc/iscsi/initiatorname.iscsi</code>のファイルにIQNを設定します。</p>
-
-<p><code>
-InitiatorName= "value-from-the-SL-Portal"
-</code></p>
-
-<p>次に<code>/etc/iscsi/iscsid.conf</code>を以下の内容を記載します。</p>
-
-<p><code>
-node.session.auth.authmethod = CHAP
-node.session.auth.username = "Username-value-from-SL-Portal"
-node.session.auth.password = "Password-value-from-SL-Portal"
-discovery.sendtargets.auth.authmethod = CHAP
-discovery.sendtargets.auth.username = "Username-value-from-SL-Portal"
-discovery.sendtargets.auth.password = "Password-value-from-SL-Portal"
-</code></p>
-
-<p>設定が終わったら <code>/etc/init.d/open-iscsi restart</code>で再起動を行います。</p>
-
-<p><code>
-root@ansibletower:~# iscsiadm -m discovery -t sendtargets -p 10.2.174.111
-10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
-10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
-</code></p>
-
-<p>iSCSIを探してみると2つのIPで見つけることが出来ました。先ほど書いたようにMultipathでの接続が前提のようですね。</p>
-
-<p><code>
-root@ansibletower:~#  iscsiadm -m node --login
-Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] (multiple)
-Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] (multiple)
-Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] successful.
-Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] successful.
-root@ansibletower:~#
-root@ansibletower:~#
-root@ansibletower:~# iscsiadm -m session -o show
-tcp: [1] 10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
-tcp: [2] 10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
-</code></p>
-
-<p>この作業により<code>/dev/sda</code>と<code>/dev/sdb</code>としてiSCSIが認識されます。また先ほど導入したmultipathを確認すると</p>
-
-<p><code>
-root@ansibletower:~# multipath -l
-3600a0980383030525324464331596470 dm-0 NETAPP,LUN C-Mode
-size=20G features='1 queue_if_no_path' hwhandler='0' wp=rw
-|-+- policy='round-robin 0' prio=-1 status=active
-| `- 0:0:0:186 sdb  8:16   active undef running
-`-+- policy='round-robin 0' prio=-1 status=enabled
-  `- 1:0:0:186 sda  8:0    active undef running
-</code></p>
-
-<p>このようにFailover型でデバイスが登録されているのがわかります。</p>
-
-<p><code>
-root@ansibletower:~#  fdisk -l | grep /dev/mapper
-ディスク /dev/sdb は正常なパーティションテーブルを含んでいません
-ディスク /dev/sda は正常なパーティションテーブルを含んでいません
-ディスク /dev/mapper/3600a0980383030525324464331596470 は正常なパーティションテーブルを含んでいません
-Disk /dev/mapper/3600a0980383030525324464331596470: 21.5 GB, 21474836480 bytes
-</code></p>
-
-<p>device mapper経由では上記のデバイスとして認識されています。これ以降はこのデバイスに対してfdiskが有効なのでパーティションを作成して利用することに成ります。</p>
-
-<p><code>
-root@ansibletower:~# lsblk
-NAME                                       MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
-sda                                          8:0    0    20G  0 disk
-└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
-sdb                                          8:16   0    20G  0 disk
-└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
-xvda                                       202:0    0   100G  0 disk
-├─xvda1                                    202:1    0   243M  0 part  /boot
-└─xvda2                                    202:2    0  99.8G  0 part  /
-xvdb                                       202:16   0     2G  0 disk
-└─xvdb1                                    202:17   0     2G  0 part  [SWAP]
-</code></p>
-
-<p>fdiskでパーティションを作成し、カーネルにデバイスの変更を通知してxfsformatを行います。</p>
-
-<p>&#8220;`
-root@ansibletower:~# fdisk /dev/mapper/3600a0980383030525324464331596470</p>
-
-<p>root@ansibletower:~# partprobe
-Error: /dev/sda: ディスクラベルが認識できません。
-Error: /dev/sdb: ディスクラベルが認識できません。
-Error: /dev/mapper/3600a0980383030525324464331596470p1: ディスクラベルが認識できません。
-root@ansibletower:~# mkfs.xfs /dev/mapper/3600a0980383030525324464331596470p1
-meta-data=/dev/mapper/3600a0980383030525324464331596470p1 isize=256    agcount=16, agsize=327663 blks
-         =                       sectsz=4096  attr=2, projid32bit=0
-data     =                       bsize=4096   blocks=5242608, imaxpct=25
-         =                       sunit=1      swidth=16 blks
-naming   =version 2              bsize=4096   ascii-ci=0
-log      =internal log           bsize=4096   blocks=2560, version=2
-         =                       sectsz=4096  sunit=1 blks, lazy-count=1
-realtime =none                   extsz=4096   blocks=0, rtextents=0
-&#8220;`</p>
-
-<p>実際にmountしてみる。恒久的に利用する場合には別途定義を行って下さい。</p>
-
-<p><code>
-root@ansibletower:~# mkdir /mnt/data1
-root@ansibletower:~# mount /dev/mapper/3600a0980383030525324464331596470p1 /mnt/data1
-</code></p>
-
-<h1 id="iops">IOPS試験の実施</h1>
-
-<p>簡単にするためにgistにスクリプトを置いています</p>
-
-<p><code>
-$ apt-get install fio
-$ apt-get install curl
-$ export DISK=/mnt/data1 ; curl -s https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/fio_test.sh | sh
-</code></p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Benchmark</th>
-      <th style="text-align: right">Bandwiddh</th>
-      <th style="text-align: right">IOPS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">4k, sequential read</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">147</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">4k, sequential write</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">165</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">4k, randam read</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">107</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">4k, randam write</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">103</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">32m, sequential read</td>
-      <td style="text-align: right">51.871MB/s</td>
-      <td style="text-align: right"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left">32m, sequential write</td>
-      <td style="text-align: right">12.221MB/s</td>
-      <td style="text-align: right"> </td>
-    </tr>
-  </tbody>
-</table>
-
-<p>参考までに同じ試験項目でローカルディスク(100G SAN)を実施した場合</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Benchmark</th>
-      <th style="text-align: right">Bandwiddh</th>
-      <th style="text-align: right">IOPS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">4k, sequential read</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">27362</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">4k, sequential write</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">26305</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">4k, randam read</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">14188</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">4k, randam write</td>
-      <td style="text-align: right"> </td>
-      <td style="text-align: right">22233</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">32m, sequential read</td>
-      <td style="text-align: right">114.070MB/s</td>
-      <td style="text-align: right"> </td>
-    </tr>
-    <tr>
-      <td style="text-align: left">32m, sequential write</td>
-      <td style="text-align: right">113.188MB/s</td>
-      <td style="text-align: right"> </td>
-    </tr>
-  </tbody>
-</table>
-
-<h1 id="section-4">まとめ</h1>
-
-<p>今回オーダしたのは100IOPSのBlock Storageになりますが、確かに100前後で制御されているように見えます。帯域はこれがMaxなのか分かりませんがこのあたりも今後確認していきたいところですね。</p>
-
-<p>良かった点は、iSCSIがMultipathになった点でしょうか、とはいえ手軽さはNFS(FileStorage)での利用ですかね。また帯域が保証されているので6000IOPSを複数束ねてRaid0構成も出来るかもしれませんね。ただし結構費用が高いのが辛いかもしれないですが。12TByte(6000IOPS)の場合 $1,200+$720になるので $0.16/GByte となりますね。</p>
-
-<p><img src="/images/2014-09-17-iscsi02.png" alt="os" /></p>
-
-<p>このパラメータが何を意味しているのか調べていないのですが<code>AIX</code>とかありますね！</p>
-
-<p>悪かった点は、以前のiSCSIが抽象化された利便性の高いデバイスだったのですが今回はかなり素のiSCSIデバイスとしての利用になります。とくにSnapshotが使えないのは残念ですね。今回の場合にはこのiSCSIデバイスのバックアップをなにか考えなければいけません。12Tとか考えるとかなり面倒な感じですね。</p>
-
-<h1 id="section-5">参考</h1>
-
-<ul>
-  <li><a href="http://knowledgelayer.softlayer.com/procedure/accessing-block-storage-consistent-performance-linux">Accessing Block Storage Consistent Performance on Linux</a></li>
-  <li><a href="https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/738cec3a3dfa7816d65882c5d45d513e4a8cc160/fio_test.sh">FIO試験スクリプト</a></li>
-</ul>
 
 ]]></content>
   </entry>

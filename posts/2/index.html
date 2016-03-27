@@ -132,6 +132,175 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T23:49:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/08/09/firstdocker/" itemprop="url">1分でDocker環境を構築する Docker on DigitalOcean</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#docker">素早くDocker環境を用意する</a></li>
+  <li><a href="#section">はじめに</a></li>
+  <li><a href="#section-1">使い方</a></li>
+  <li><a href="#section-2">まとめ</a></li>
+</ul>
+
+<h1 id="docker">素早くDocker環境を用意する</h1>
+
+<p>普段から検証で利用したりしているクラウドのサービスに DigitalOcean というサービスがあります。
+格安のSSD VPSとして有名ですが確かに安い、そして「早い」です。代替最小の構成で1〜2分でプロビジョニングされます。</p>
+
+<ul>
+  <li><a href="https://www.digitalocean.com/pricing/">費用</a></li>
+</ul>
+
+<p>みてもらうとわかりますが、最小モデル(512M Memory, 1Core , 2OG SSD)で $0.007/hr($5/month) です。HighPerformanceの最小構成(16GB Memory,8Core,160GB SSD)で $0.238/hr($160/mo) となっています。さっと検証をしたい程度1日程度であれば非常に安く利用することが出来ます。</p>
+
+<h1 id="section">はじめに</h1>
+
+<p>現在(2014/08/09)、$10分のクーポンがあるので更に利用が便利になります。すでにアカウントがある人はポータル画面の左メニュー<code>Billing</code>から右上の<code>Manage Payment</code>を選択ししたの<code>Promo Code</code>に入力をします。</p>
+
+<ul>
+  <li>CODE:<code>SHIPITFAST10</code></li>
+</ul>
+
+<p>もしアカウントがまだの場合には、こちらのリンクからはじめてもらえると私が嬉しいです。</p>
+
+<ul>
+  <li><a href="https://www.digitalocean.com/?refcode=fb56d3391881">DigitalOcean</a></li>
+</ul>
+
+<h1 id="section-1">使い方</h1>
+
+<p>ポータルから作るのは非常に簡単ですが実際にDocker利用したいと思うとコマンドラインからすると思われるのでここではVagrantを利用してサーバのデプロイをしたいと思います。</p>
+
+<ul>
+  <li><a href="https://github.com/smdahlen/vagrant-digitalocean">smdahlen/vagrant-digitalocean</a></li>
+</ul>
+
+<p>すでにVagrantの環境は入っているものとします。（まだの方は色々ぐぐってみてください）
+以前に入れたままの人はバージョンアップがされているので実行しておきましょう。</p>
+
+<p>古いバージョンではUsername,APIキーと言う形式でしたが現在はToken形式で利用することになります。ポータルからトークンは発行することが出来ます。</p>
+
+<p>$ vagrant plugin install vagrant-digitalocean</p>
+
+<p>実際のVagrantfileのサンプルを以下に載せておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Vagrantfile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="docker"><span class="line"><span class="c"># -*- mode: ruby -*-</span>
+</span><span class="line"><span class="c"># vi: set ft=ruby :</span>
+</span><span class="line"><span class="c"># vagrant up --provider=digital_ocean --provision</span>
+</span><span class="line">
+</span><span class="line">Vagrant.configure<span class="o">(</span><span class="s1">&#39;2&#39;</span><span class="o">)</span> <span class="k">do</span> <span class="p">|</span>config<span class="p">|</span>
+</span><span class="line">  config.vm.hostname              <span class="o">=</span> <span class="s1">&#39;docker01&#39;</span>
+</span><span class="line">
+</span><span class="line">  config.vm.provider :digital_ocean <span class="k">do</span> <span class="p">|</span>provider, override<span class="p">|</span>
+</span><span class="line">    override.ssh.private_key_path <span class="o">=</span> <span class="s1">&#39;~/.ssh/admin&#39;</span>
+</span><span class="line">    override.vm.box               <span class="o">=</span> <span class="s1">&#39;digital_ocean&#39;</span>
+</span><span class="line">    override.vm.box_url           <span class="o">=</span> <span class="s2">&quot;https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box&quot;</span>
+</span><span class="line">    provider.token                <span class="o">=</span> <span class="s1">&#39;TOKEN&#39;</span>
+</span><span class="line">    provider.image                <span class="o">=</span> <span class="s1">&#39;Docker 1.1.2 on Ubuntu 14.04&#39;</span>
+</span><span class="line">    provider.region               <span class="o">=</span> <span class="s1">&#39;LON1&#39;</span>
+</span><span class="line">    provider.size                 <span class="o">=</span> <span class="s1">&#39;512MB&#39;</span>
+</span><span class="line">    provider.ca_path              <span class="o">=</span> <span class="s1">&#39;/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt&#39;</span>
+</span><span class="line">    provider.ssh_key_name         <span class="o">=</span> <span class="s1">&#39;admin&#39;</span>
+</span><span class="line">  end
+</span><span class="line">
+</span><span class="line">end
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>1分で起動が売りなのですが上記の設定で「<code>46秒！</code>」で起動してきます（ポータル上に表示されている時間）
+起動は普段通り、<code>$ vagrant up --provider=digital_ocean --provision</code> で行うことが出来ます。</p>
+
+<p>接続して確認してみます。</p>
+
+<pre><code>$ vagrant ssh
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-24-generic x86_64)
+
+* Documentation:  https://help.ubuntu.com/
+
+System information as of Sat Aug  9 16:55:12 EDT 2014
+
+System load:  0.2               Processes:              76
+Usage of /:   8.0% of 19.56GB   Users logged in:        0
+Memory usage: 13%               IP address for eth0:    178.62.17.227
+Swap usage:   0%                IP address for docker0: 172.17.42.1
+
+Graph this data and manage this system at:
+  https://landscape.canonical.com/
+
+Last login: Tue Aug  5 15:18:31 2014 from 162.243.14.86
+root@docker01:~# docker version
+Client version: 1.1.2
+Client API version: 1.13
+Go version (client): go1.2.1
+Git commit (client): d84a070
+Server version: 1.1.2
+Server API version: 1.13
+Go version (server): go1.2.1
+Git commit (server): d84a070
+</code></pre>
+
+<p>Dockerが動いている状態になっていますね！</p>
+
+<h1 id="section-2">まとめ</h1>
+
+<p>というわけでわずか1分で環境が用意することが出来ました。
+実際に利用してみると便利さがわかります。開発環境で使う分には十分ですね。というかローカルの環境でVirtualBoxで起動する時間以下でネット上にサーバが構築されるとか結構感動です。</p>
+
+<p>プライベートレポジトリを併用して使えば必要なときに使うという使い方が出来て非常に便利です。Vagrant経由で実行することでAnsibleなどを併用すればその辺りもある程度自動化出来ますね。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T07:39:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
         
       </p>
@@ -1300,111 +1469,6 @@ SoftLayerではAPIが色々あり導入出来るOSのリストとか簡単に取
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-01T21:25:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月1日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/01/useoriginaldomain/" itemprop="url">Github Page で独自ドメインを使う</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
-  <li><a href="#goal">Goal</a></li>
-  <li><a href="#github-page">Github page側の設定</a></li>
-  <li><a href="#dns">DNS側の設定</a></li>
-  <li><a href="#section">まとめ</a></li>
-</ul>
-
-<h1 id="goal">Goal</h1>
-
-<ul>
-  <li>Github pageで独自ドメインを使う</li>
-</ul>
-
-<p>このブログのサイトは <code>Github Page</code>で作られています。
-ブログ自体は、<code>Octopress</code>を利用しています。
-Github padeでも独自ドメインが利用可能になっていて簡単に設定をすることが出来ます。</p>
-
-<ul>
-  <li>変更前のドメイン： tokida.github.io</li>
-  <li>変更後のドメイン： stepxstep.org</li>
-</ul>
-
-<p>参考にするドキュメントは、<a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages">Setting up a custom domain with GitHub Pages</a> になります。</p>
-
-<h1 id="github-page">Github page側の設定</h1>
-
-<p>Githubのサイト側で何かをイジる必要はありません。サイトのトップに <code>CNAME</code> というファイルを作成して中に独自ドメイン（これから設定するドメイン）を指定することで利用することが出来ます。</p>
-
-<p>今回は、Octopressを利用してるので <code>source/CNAME</code> ファイルに書き込みます</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">stepxstep.org</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>この状態で <code>rake gen_deploy</code>すると反映されます。実際に反映されるまで <em>10分程度</em> かかるそうです。（実際に10分程度かかっていました）</p>
-
-<h1 id="dns">DNS側の設定</h1>
-
-<p>今回はドメインの設定はRoute53(Amazon Web ServiceのDNSサービス）を利用します。レジストラ（今回はお名前.com側に Route53のDS名の登録）の設定は終えているとします。</p>
-
-<p>今回は、Apex domains （つまり http://stepxstep.org ）でアクセスすることを想定します。もし Subdomain (つまり http://blog.stepxstep.org 等）で実施する場合には、<code>blog.stepxstep.org</code> に対して <code>CNAME</code> で <code>tokida.github.io</code> を割り当てればよいです。</p>
-
-<p>今回は、Aレコードで stepxstep.org に対して以下の2つのIPアドレスを定義します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ dig stepxstep.org +nostats +nocomments +nocmd
-</span><span class="line">
-</span><span class="line">; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; stepxstep.org +nostats +nocomments +nocmd
-</span><span class="line">;; global options: +cmd
-</span><span class="line">;stepxstep.org.			IN	A
-</span><span class="line">stepxstep.org.		300	IN	A	192.30.252.153
-</span><span class="line">stepxstep.org.		300	IN	A	192.30.252.154</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>このIPアドレスは先程のHelpに記載されているものになります。ググったりすると別のIPを書かれている人もいたので以前とは違う値になっているのかもしれません。いずれにしても現時点では上記のIPで問題無いです。</p>
-
-<h1 id="section">まとめ</h1>
-
-<p>最初に時間が立っていないと github のエラーページが表示されます。暫く待てば動くはずです。
-元の <code>tokida.github.io</code> にアクセスすると,一旦お名前.comに飛ばされてしまいますね。これは落ち着くのかな？</p>
-
-<p>それにしても最近は簡単に独自ドメインのサイトが出来てしまって嬉しい限りです、この <code>stepxstep.org</code>も 480円でご購入です。来年度以降はもう少しするんだろうけど。まあそれまでにそのぐらいの額のアフェリエイトでも稼いでくれるようになっていれば元は取れるという。</p>
-
-<p>ほんとに良い世の中になりました。</p>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1428,6 +1492,8 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2016/03/28/test/">ATOMエディタからOctopressを利用する</a>
+    
     <a class="list-group-item " href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
@@ -1435,8 +1501,6 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
     
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
-    
-    <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
     
   </div>
 </section>
@@ -1468,7 +1532,7 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">22</span>
+        <span class="badge">23</span>
         review
       </a>
     
@@ -1604,6 +1668,12 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
     <a class="list-group-item " href="/blog/tags/bluemix/index.html">
         <span class="badge">1</span>
         bluemix
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/atom/index.html">
+        <span class="badge">1</span>
+        atom
       </a>
     
   </div>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: atom | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://stepxstep.org/blog/tags/atom/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2016-03-28T02:28:03+09:00</updated>
+  <id>http://stepxstep.org/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ATOMエディタからOctopressを利用する]]></title>
+    <link href="http://stepxstep.org/blog/2016/03/28/test/"/>
+    <updated>2016-03-28T02:07:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2016/03/28/test</id>
+    <content type="html"><![CDATA[
+<p>最近はVIMではなくATOMを利用していることもあって Atom エディタから簡単に利用することが出来るのかやってみました。</p>
+
+<p>パッケージ　<code>markdown-writer</code> を利用します。</p>
+
+<p>設定が <code>_mdwriter.cson</code> ファイルに出せるはずなのですが上手く行かなかったので<code>個人設定 config.cson</code>に直接設定を書きこみました。</p>
+
+<p>&#8220;`
+“markdown-writer”:
+  fileExtension: “.md”
+  frontMatter: ‘’’
+    —
+    layout: <layout>
+    title: &#8221;<title>&#8221;
+    date: &#8221;<date>&#8221;
+    published: false
+    comments: false
+    tags:
+    categories:
+    &#8212;
+    * Table of Contents
+    {:toc}</date></title></layout></p>
+
+<p>’’’
+  siteEngine: “octopress”
+  siteLocalDir: “/Users/hideaki/tokida.github.com/octopress/source/”
+  sitePostsDir: “_posts/”
+  siteUrl: “http://stepxstep.org”
+&#8220;`</p>
+
+<ul>
+  <li><code>siteLocalDir</code> は必須です。最初入れていないでハマりました。その他のDirは siteLocalDirからの相対パスとなります。</li>
+  <li>Octpress等のエンジンが選択できますが rake generate等をしてくれることはありません。 画像のフォーマットの指定が Octpress 用のタグを入れてくれるというものになります。</li>
+  <li>ドラフト→パブリッシュはフォルダを移動させてくれる。</li>
+  <li><code>rake generate</code> を別途実行する必要あがあります。</li>
+</ul>
+
+<p>rake generateを実行するために、パッケージ <code>Terminal-Plus</code> を導入します。（run-command2などでもよいかもしれません）
+これを利用すると画面のしたにTerminal画面が表示されます。</p>
+
+<p><img class="center" src="images/2016/03/screen20160328-22130.png" width="640" height="480" title="‘screen’" ></p>
+
+<p>ターミナルを開くとドキュメントと同じディレクトリがPATHに設定されるのでそのまま <code>rake preview</code> などと実行すれば利用できます。</p>
+]]></content>
+  </entry>
+  
+</feed>

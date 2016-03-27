@@ -4,7 +4,7 @@
   <title><![CDATA[なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-27T09:51:10+09:00</updated>
+  <updated>2016-03-28T02:28:03+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -12,6 +12,75 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ATOMエディタからOctopressを利用する]]></title>
+    <link href="http://stepxstep.org/blog/2016/03/28/test/"/>
+    <updated>2016-03-28T02:07:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2016/03/28/test</id>
+    <content type="html"><![CDATA[
+<p>最近はVIMではなくATOMを利用していることもあって Atom エディタから簡単に利用することが出来るのかやってみました。</p>
+
+<p>パッケージ　<code>markdown-writer</code> を利用します。</p>
+
+<p>設定が <code>_mdwriter.cson</code> ファイルに出せるはずなのですが上手く行かなかったので<code>個人設定 config.cson</code>に直接設定を書きこみました。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">"markdown-writer":
+</span><span class="line">  fileExtension: ".md"
+</span><span class="line">  frontMatter: '''
+</span><span class="line">    ---
+</span><span class="line">    layout: &lt;layout&gt;
+</span><span class="line">    title: "&lt;title&gt;"
+</span><span class="line">    date: "&lt;date&gt;"
+</span><span class="line">    published: false
+</span><span class="line">    comments: false
+</span><span class="line">    tags:
+</span><span class="line">    categories:
+</span><span class="line">    ---
+</span><span class="line">    * Table of Contents
+</span><span class="line">    {:toc}
+</span><span class="line">
+</span><span class="line">  '''
+</span><span class="line">  siteEngine: "octopress"
+</span><span class="line">  siteLocalDir: "/Users/hideaki/tokida.github.com/octopress/source/"
+</span><span class="line">  sitePostsDir: "_posts/"
+</span><span class="line">  siteUrl: "http://stepxstep.org"</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li><code>siteLocalDir</code> は必須です。最初入れていないでハマりました。その他のDirは siteLocalDirからの相対パスとなります。</li>
+  <li>Octpress等のエンジンが選択できますが rake generate等をしてくれることはありません。 画像のフォーマットの指定が Octpress 用のタグを入れてくれるというものになります。</li>
+  <li>ドラフト→パブリッシュはフォルダを移動させてくれる。</li>
+  <li><code>rake generate</code> を別途実行する必要あがあります。</li>
+</ul>
+
+<p>rake generateを実行するために、パッケージ <code>Terminal-Plus</code> を導入します。（run-command2などでもよいかもしれません）
+これを利用すると画面のしたにTerminal画面が表示されます。</p>
+
+<p><img class="center" src="images/2016/03/screen20160328-22130.png" width="640" height="480" title="'screen'" /></p>
+
+<p>ターミナルを開くとドキュメントと同じディレクトリがPATHに設定されるのでそのまま <code>rake preview</code> などと実行すれば利用できます。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Bluemix-cli]]></title>
@@ -2531,83 +2600,6 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
 
 <p>使い勝手はともかく<code>Source</code>は参考になりそうですね。もう少し重たい原因を見つけておくと良いかもしれません。
 SoftLayerではAPIが色々あり導入出来るOSのリストとか簡単に取得できます。その辺りCLIで出来ると良いのですが。 </p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Github Page で独自ドメインを使う]]></title>
-    <link href="http://stepxstep.org/blog/2014/06/01/useoriginaldomain/"/>
-    <updated>2014-06-01T21:25:00+09:00</updated>
-    <id>http://stepxstep.org/blog/2014/06/01/useoriginaldomain</id>
-    <content type="html"><![CDATA[<ul id="markdown-toc">
-  <li><a href="#goal">Goal</a></li>
-  <li><a href="#github-page">Github page側の設定</a></li>
-  <li><a href="#dns">DNS側の設定</a></li>
-  <li><a href="#section">まとめ</a></li>
-</ul>
-
-<h1 id="goal">Goal</h1>
-
-<ul>
-  <li>Github pageで独自ドメインを使う</li>
-</ul>
-
-<p>このブログのサイトは <code>Github Page</code>で作られています。
-ブログ自体は、<code>Octopress</code>を利用しています。
-Github padeでも独自ドメインが利用可能になっていて簡単に設定をすることが出来ます。</p>
-
-<ul>
-  <li>変更前のドメイン： tokida.github.io</li>
-  <li>変更後のドメイン： stepxstep.org</li>
-</ul>
-
-<p>参考にするドキュメントは、<a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages">Setting up a custom domain with GitHub Pages</a> になります。</p>
-
-<h1 id="github-page">Github page側の設定</h1>
-
-<p>Githubのサイト側で何かをイジる必要はありません。サイトのトップに <code>CNAME</code> というファイルを作成して中に独自ドメイン（これから設定するドメイン）を指定することで利用することが出来ます。</p>
-
-<p>今回は、Octopressを利用してるので <code>source/CNAME</code> ファイルに書き込みます</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">stepxstep.org</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>この状態で <code>rake gen_deploy</code>すると反映されます。実際に反映されるまで <em>10分程度</em> かかるそうです。（実際に10分程度かかっていました）</p>
-
-<h1 id="dns">DNS側の設定</h1>
-
-<p>今回はドメインの設定はRoute53(Amazon Web ServiceのDNSサービス）を利用します。レジストラ（今回はお名前.com側に Route53のDS名の登録）の設定は終えているとします。</p>
-
-<p>今回は、Apex domains （つまり http://stepxstep.org ）でアクセスすることを想定します。もし Subdomain (つまり http://blog.stepxstep.org 等）で実施する場合には、<code>blog.stepxstep.org</code> に対して <code>CNAME</code> で <code>tokida.github.io</code> を割り当てればよいです。</p>
-
-<p>今回は、Aレコードで stepxstep.org に対して以下の2つのIPアドレスを定義します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ dig stepxstep.org +nostats +nocomments +nocmd
-</span><span class="line">
-</span><span class="line">; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; stepxstep.org +nostats +nocomments +nocmd
-</span><span class="line">;; global options: +cmd
-</span><span class="line">;stepxstep.org.			IN	A
-</span><span class="line">stepxstep.org.		300	IN	A	192.30.252.153
-</span><span class="line">stepxstep.org.		300	IN	A	192.30.252.154</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>このIPアドレスは先程のHelpに記載されているものになります。ググったりすると別のIPを書かれている人もいたので以前とは違う値になっているのかもしれません。いずれにしても現時点では上記のIPで問題無いです。</p>
-
-<h1 id="section">まとめ</h1>
-
-<p>最初に時間が立っていないと github のエラーページが表示されます。暫く待てば動くはずです。
-元の <code>tokida.github.io</code> にアクセスすると,一旦お名前.comに飛ばされてしまいますね。これは落ち着くのかな？</p>
-
-<p>それにしても最近は簡単に独自ドメインのサイトが出来てしまって嬉しい限りです、この <code>stepxstep.org</code>も 480円でご購入です。来年度以降はもう少しするんだろうけど。まあそれまでにそのぐらいの額のアフェリエイトでも稼いでくれるようになっていれば元は取れるという。</p>
-
-<p>ほんとに良い世の中になりました。</p>
 
 ]]></content>
   </entry>
