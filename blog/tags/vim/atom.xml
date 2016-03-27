@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: vim | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/vim/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-27T09:02:20+09:00</updated>
+  <updated>2016-03-27T09:03:31+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -71,24 +71,7 @@
 詳細の設定内容は <code>:h startify</code> でヘルプが詳細に書いてあるので見るとわかります。
 参考で記載しているサイトの設定を参考にしています。</p>
 
-<p><div><script src='https://gist.github.com/3a978d48817b98fb4f18.js'></script>
-<noscript><pre><code>&quot; Startify
-&quot; 起動時の画面の設定
-&quot; startifyのヘッダー部分に表示する文字列を設定する(dateコマンドを実行して日付を設定している)
-let g:startify_custom_header =
-  \ map(split(system(&#39;date&#39;), &#39;\n&#39;), &#39;&quot;   &quot;. v:val&#39;) + [&#39;&#39;,&#39;&#39;]
-let g:startify_files_number = 10
-&quot; デフォルトだと、最近使ったファイルの先頭は数字なので、使用するアルファベットを指定
-&quot; let g:startify_custom_indices = [&#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;r&#39;, &#39;i&#39;, &#39;o&#39;, &#39;b&#39;]
-&quot; よく使うファイルをブックマークとして登録しておく
-let g:startify_bookmarks = [
-  \ &#39;~/.vimrc&#39;,
-  \ &#39;~/.gvimrc&#39;,
-  \ &#39;~/.bash_profile&#39;,
-  \ &#39;~/memo/todo.markdown&#39;,
-  \ ]
-</code></pre></noscript></div>
-</p>
+<p>{% gist 3a978d48817b98fb4f18 %}</p>
 
 <h1 id="section-1">まとめ</h1>
 

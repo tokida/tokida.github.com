@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: serf | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/serf/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-27T09:02:20+09:00</updated>
+  <updated>2016-03-27T09:03:31+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -200,24 +200,16 @@ serf1  10.114.16.197:7946  alive
 
 <p>以下の内容で ~/event.sh を作成</p>
 
-<p><figure class='code'><figcaption><span>event.sh </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh &lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;LOG<span class="o">=</span>event.log&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;echo “—–” » <span class="nv">$LOG</span>
-</span><span class='line'>hostname » <span class="nv">$LOG</span>
-</span><span class='line'>date » <span class="nv">$LOG</span>
-</span><span class='line'>env <span class="p">|</span>grep “^SERF” » <span class="nv">$LOG</span>
-</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock event.sh %}
+#!/bin/sh </p>
+
+<p>LOG=event.log</p>
+
+<p>echo “—–” » $LOG
+hostname » $LOG
+date » $LOG
+env |grep “^SERF” » $LOG
+{% endcodeblock %}</p>
 
 <p>次に各serfを起動する。一旦<code>serf leave</code>で抜けておいて各サーバで以下のコマンドを実行する。</p>
 

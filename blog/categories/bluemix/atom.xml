@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Bluemix | なんでもやってみるのが良いと思う]]></title>
+  <link href="http://stepxstep.org/blog/categories/bluemix/atom.xml" rel="self"/>
+  <link href="http://stepxstep.org/"/>
+  <updated>2016-03-27T09:03:31+09:00</updated>
+  <id>http://stepxstep.org/</id>
+  <author>
+    <name><![CDATA[H.Tokida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Bluemix-cli]]></title>
+    <link href="http://stepxstep.org/blog/2016/03/27/bluemix-cli/"/>
+    <updated>2016-03-27T09:01:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2016/03/27/bluemix-cli</id>
+    <content type="html"><![CDATA[
+<p>Bluemix関連はもう色々出すぎていて何が何やらわからないのですが cf コマンドに代わる？bleumix Cliが登場していました。</p>
+
+<ul>
+  <li><a href="http://clis.ng.bluemix.net/ui/home.html">http://clis.ng.bluemix.net/ui/home.html</a></li>
+</ul>
+
+<p>さっそく導入してみたいと思います。私はMACユーザなのでMAC用のバイナリをダウンロードしてみたいと思います。</p>
+
+<ul>
+  <li>Cloud Foundry CLI version 6.11 or later is required for Bluemix CLI. If your system does not already have the correct version of cf CLI, the installer will install it for you. (cfコマンド 6.11以上を導入しておく必要があります。 cf –version で確認します。私は 6.13が導入されていました）</li>
+  <li>　導入後パスが設定されていません。.bashrc に以下のPATHを追加しておきます。bash_autocompleteが有るのが今時なツールですね。bluemix と入力した後に tab をいれるとオプションが自動的に出てきて便利です。</li>
+</ul>
+
+<p><code>
+### Added by the Bluemix CLI
+export PATH=$PATH:/usr/local/bluemix/bin
+source /usr/local/Bluemix/bx/bash_autocomplete
+</code></p>
+
+<p>ヘルプを見てみるとこんな感じです。</p>
+
+<p>&#8220;`
+名前:
+   ./bx - Bluemix と対話するためのコマンド・ライン・ツール</p>
+
+<p>使用法:
+   [environment variables] ./bx [global options] command [arguments…] [command options]</p>
+
+<p>バージョン:
+   0.3.1-5206a18-2016-03-02T03:30:07+00:00</p>
+
+<p>コマンド:
+   api		 ターゲットの API エンドポイントを設定または表示します
+   login	 ユーザーをログインします
+   logout	 ユーザーをログアウトします
+   target	 ターゲット組織またはスペースを設定または表示します
+   info		 Bluemix 情報を表示します
+   list		 ターゲット・スペース内のすべての CF アプリケーション、サービス、コンテナー、コンテナー・グループ、および VM グループをリストします
+   scale	 アプリまたはコンテナー・グループのインスタンス数を変更します
+   curl		 Bluemix への未加工の HTTP 要求を実行します。content-type はデフォルトで「application/json’」に設定されています
+   config	 デフォルト値を構成に書き込みます
+   iam		 組織、スペース、およびユーザーを管理します
+   catalog	 Bluemix カタログを管理します
+   app		 Manage Cloud Foundry applications
+   vm		 Manage virtual servers
+   ic		 Manage IBM containers
+   service	 Manage Bluemix services
+   network	 Manage network settings including region, domain, route and security group
+   security	 セキュリティー設定を管理します
+   plugin	 プラグインおよびプラグイン・リポジトリーを管理します
+   cf		 Bluemix のコンテキストを使用して Cloud Foundry CLI を実行します
+   help</p>
+
+<p>コマンドについて詳しくは、’./bx help [command]’ と入力してください。</p>
+
+<p>環境変数:
+   BLUEMIX_COLOR=false                     出力に色を付けません
+   BLUEMIX_TRACE=true                      API 要求診断を stdout に出力します
+   BLUEMIX_TRACE=path/to/trace.log         API 要求診断をログ・ファイルに付加します</p>
+
+<p>グローバル・オプション:
+   –version, -v                      バージョンを出力します
+   –help, -h                         ヘルプを表示します
+&#8220;`</p>
+
+<p>色々なサブコマンドが利用できてこれは便利になります。</p>
+
+<p>&#8220;`
+$ bx iam
+名前:
+   bx iam - 組織、スペース、およびユーザーを管理します
+使用法:
+   bx iam command [arguments…] [command options]</p>
+
+<p>コマンド:
+   orgs			 すべての組織をリストします
+   org			 指定された組織の情報を表示します
+   org-create		 新しい組織を作成します (管理者のみ)
+   org-replicate	 組織を別の地域に複製します (管理者のみ)
+   org-rename		 組織を名前変更します (組織管理者が必要)
+   org-delete		 組織を削除します (管理者のみ)
+   spaces		 現行組織内のすべてのスペースをリストします
+   space		 指定されたスペースの情報を表示します
+   space-create		 新しいスペースを作成します (組織管理者が必要)
+   space-rename		 現行組織内のスペースを名前変更します (組織管理者が必要)
+   space-delete		 現行組織内のスペースを削除します (組織管理者が必要)
+   user-create		 新しいユーザーを作成します (管理者のみ)
+   user-delete		 ユーザーを削除します (管理者のみ)
+   org-users		 指定された組織内のユーザーを役割別に表示します
+   org-role-set		 ユーザーに組織の役割を割り当てます (組織管理者が必要)
+   org-role-unset	 ユーザーから組織の役割を削除します (組織管理者が必要)
+   space-users		 指定されたスペース内のユーザーを役割別に表示します
+   space-role-set	 ユーザーにスペースの役割を割り当てます (スペース管理者が必要)
+   space-role-unset	 ユーザーからスペースの役割を削除します (スペース管理者が必要)
+   help</p>
+
+<p>コマンドについて詳しくは、’bx iam help [command]’ と入力してください。
+&#8220;`</p>
+
+<p>これまで cf コマンドでアプリケーションを管理していましたがこのbluemixコマンドで Bluemixとして実施することが大分楽になりそうです。</p>
+
+]]></content>
+  </entry>
+  
+</feed>
