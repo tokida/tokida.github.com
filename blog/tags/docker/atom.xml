@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: docker | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/docker/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-27T09:41:05+09:00</updated>
+  <updated>2016-03-27T09:51:10+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -67,28 +67,48 @@
 
 <p>実際のVagrantfileのサンプルを以下に載せておきます。</p>
 
-<p>{% codeblock Vagrantfile lang:docker %}
-# -<em>- mode: ruby -</em>-
-# vi: set ft=ruby :
-# vagrant up –provider=digital_ocean –provision</p>
-
-<p>Vagrant.configure(‘2’) do |config|
-  config.vm.hostname              = ‘docker01’</p>
-
-<p>config.vm.provider :digital_ocean do |provider, override|
-    override.ssh.private_key_path = ‘~/.ssh/admin’
-    override.vm.box               = ‘digital_ocean’
-    override.vm.box_url           = “https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box”
-    provider.token                = ‘TOKEN’
-    provider.image                = ‘Docker 1.1.2 on Ubuntu 14.04’
-    provider.region               = ‘LON1’
-    provider.size                 = ‘512MB’
-    provider.ca_path              = ‘/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt’
-    provider.ssh_key_name         = ‘admin’
-  end</p>
-
-<p>end
-{% endcodeblock %}</p>
+<p><figure class='code'><figcaption><span>Vagrantfile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='docker'><span class='line'><span class="c"># -&lt;em&gt;- mode: ruby -&lt;/em&gt;-</span>
+</span><span class='line'><span class="c"># vi: set ft=ruby :</span>
+</span><span class='line'><span class="c"># vagrant up –provider=digital_ocean –provision&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Vagrant.configure<span class="o">(</span>‘2’<span class="o">)</span> <span class="k">do</span> <span class="p">|</span>config<span class="p">|</span>
+</span><span class='line'>  config.vm.hostname              <span class="o">=</span> ‘docker01’&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;config.vm.provider :digital_ocean <span class="k">do</span> <span class="p">|</span>provider, override<span class="p">|</span>
+</span><span class='line'>    override.ssh.private_key_path <span class="o">=</span> ‘~/.ssh/admin’
+</span><span class='line'>    override.vm.box               <span class="o">=</span> ‘digital_ocean’
+</span><span class='line'>    override.vm.box_url           <span class="o">=</span> “https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box”
+</span><span class='line'>    provider.token                <span class="o">=</span> ‘TOKEN’
+</span><span class='line'>    provider.image                <span class="o">=</span> ‘Docker 1.1.2 on Ubuntu 14.04’
+</span><span class='line'>    provider.region               <span class="o">=</span> ‘LON1’
+</span><span class='line'>    provider.size                 <span class="o">=</span> ‘512MB’
+</span><span class='line'>    provider.ca_path              <span class="o">=</span> ‘/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt’
+</span><span class='line'>    provider.ssh_key_name         <span class="o">=</span> ‘admin’
+</span><span class='line'>  end&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;end
+</span></code></pre></td></tr></table></div></figure></p>
 
 <p>1分で起動が売りなのですが上記の設定で「<code>46秒！</code>」で起動してきます（ポータル上に表示されている時間）
 起動は普段通り、<code>$ vagrant up --provider=digital_ocean --provision</code> で行うことが出来ます。</p>

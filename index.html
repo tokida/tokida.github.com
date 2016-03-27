@@ -132,6 +132,141 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-27T09:01:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月27日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2016/03/27/bluemix-cli/" itemprop="url">Bluemix-cli</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description">
+<p>Bluemix関連はもう色々出すぎていて何が何やらわからないのですが cf コマンドに代わる？bleumix Cliが登場していました。</p>
+
+<ul>
+  <li><a href="http://clis.ng.bluemix.net/ui/home.html">http://clis.ng.bluemix.net/ui/home.html</a></li>
+</ul>
+
+<p>さっそく導入してみたいと思います。私はMACユーザなのでMAC用のバイナリをダウンロードしてみたいと思います。</p>
+
+<ul>
+  <li>Cloud Foundry CLI version 6.11 or later is required for Bluemix CLI. If your system does not already have the correct version of cf CLI, the installer will install it for you. (cfコマンド 6.11以上を導入しておく必要があります。 cf –version で確認します。私は 6.13が導入されていました）</li>
+  <li>　導入後パスが設定されていません。.bashrc に以下のPATHを追加しておきます。bash_autocompleteが有るのが今時なツールですね。bluemix と入力した後に tab をいれるとオプションが自動的に出てきて便利です。</li>
+</ul>
+
+<pre><code>### Added by the Bluemix CLI
+export PATH=$PATH:/usr/local/bluemix/bin
+source /usr/local/Bluemix/bx/bash_autocomplete
+</code></pre>
+
+<p>ヘルプを見てみるとこんな感じです。</p>
+
+<pre><code>名前:
+   ./bx - Bluemix と対話するためのコマンド・ライン・ツール
+
+使用法:
+   [environment variables] ./bx [global options] command [arguments...] [command options]
+
+バージョン:
+   0.3.1-5206a18-2016-03-02T03:30:07+00:00
+
+コマンド:
+   api		 ターゲットの API エンドポイントを設定または表示します
+   login	 ユーザーをログインします
+   logout	 ユーザーをログアウトします
+   target	 ターゲット組織またはスペースを設定または表示します
+   info		 Bluemix 情報を表示します
+   list		 ターゲット・スペース内のすべての CF アプリケーション、サービス、コンテナー、コンテナー・グループ、および VM グループをリストします
+   scale	 アプリまたはコンテナー・グループのインスタンス数を変更します
+   curl		 Bluemix への未加工の HTTP 要求を実行します。content-type はデフォルトで「application/json'」に設定されています
+   config	 デフォルト値を構成に書き込みます
+   iam		 組織、スペース、およびユーザーを管理します
+   catalog	 Bluemix カタログを管理します
+   app		 Manage Cloud Foundry applications
+   vm		 Manage virtual servers
+   ic		 Manage IBM containers
+   service	 Manage Bluemix services
+   network	 Manage network settings including region, domain, route and security group
+   security	 セキュリティー設定を管理します
+   plugin	 プラグインおよびプラグイン・リポジトリーを管理します
+   cf		 Bluemix のコンテキストを使用して Cloud Foundry CLI を実行します
+   help
+
+コマンドについて詳しくは、'./bx help [command]' と入力してください。
+
+環境変数:
+   BLUEMIX_COLOR=false                     出力に色を付けません
+   BLUEMIX_TRACE=true                      API 要求診断を stdout に出力します
+   BLUEMIX_TRACE=path/to/trace.log         API 要求診断をログ・ファイルに付加します
+
+グローバル・オプション:
+   --version, -v                      バージョンを出力します
+   --help, -h                         ヘルプを表示します
+</code></pre>
+
+<p>色々なサブコマンドが利用できてこれは便利になります。</p>
+
+<pre><code>$ bx iam
+名前:
+   bx iam - 組織、スペース、およびユーザーを管理します
+使用法:
+   bx iam command [arguments...] [command options]
+
+コマンド:
+   orgs			 すべての組織をリストします
+   org			 指定された組織の情報を表示します
+   org-create		 新しい組織を作成します (管理者のみ)
+   org-replicate	 組織を別の地域に複製します (管理者のみ)
+   org-rename		 組織を名前変更します (組織管理者が必要)
+   org-delete		 組織を削除します (管理者のみ)
+   spaces		 現行組織内のすべてのスペースをリストします
+   space		 指定されたスペースの情報を表示します
+   space-create		 新しいスペースを作成します (組織管理者が必要)
+   space-rename		 現行組織内のスペースを名前変更します (組織管理者が必要)
+   space-delete		 現行組織内のスペースを削除します (組織管理者が必要)
+   user-create		 新しいユーザーを作成します (管理者のみ)
+   user-delete		 ユーザーを削除します (管理者のみ)
+   org-users		 指定された組織内のユーザーを役割別に表示します
+   org-role-set		 ユーザーに組織の役割を割り当てます (組織管理者が必要)
+   org-role-unset	 ユーザーから組織の役割を削除します (組織管理者が必要)
+   space-users		 指定されたスペース内のユーザーを役割別に表示します
+   space-role-set	 ユーザーにスペースの役割を割り当てます (スペース管理者が必要)
+   space-role-unset	 ユーザーからスペースの役割を削除します (スペース管理者が必要)
+   help
+
+コマンドについて詳しくは、'bx iam help [command]' と入力してください。
+</code></pre>
+
+<p>これまで cf コマンドでアプリケーションを管理していましたがこのbluemixコマンドで Bluemixとして実施することが大分楽になりそうです。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-11-04T02:29:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年11月4日</time>
         
       </p>
@@ -1845,88 +1980,6 @@ Git commit (server): d84a070
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T07:39:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/08/09/softlayerobjectstoragebackup/" itemprop="url">SoftLayerのObjecｔStorageへファイルバックアップを行う slbackup.py を試す</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
-  <li><a href="#section">これは何？</a></li>
-  <li><a href="#section-1">使い方</a></li>
-  <li><a href="#section-2">まとめ</a></li>
-</ul>
-
-<h1 id="section">これは何？</h1>
-
-<p>github上で見つけた ObjectStorageにバックアップをするためのスクリプト。
-メジャーなIaaS環境では結構ObjecｔStorageがサポートされているし、値段的にも非常に安いのでObjecｔStorageにデータバックアップを取る手法を持っていたほうがいいですね。</p>
-
-<ul>
-  <li>Whole file delta backups - only changed/new files are uploaded saving you time/bandwidth.</li>
-  <li>Retention policies - deleted/updated files are kept for any desired length of time. These can also be disabled.</li>
-  <li>Threaded - Copying can always be the longest part, so backups are done in the background as file comparisions are being performed.</li>
-  <li>MD5 support - Swift automatically sets a default hash (md5) for every object. We support file comparisions using this hash instead of time/size variance.</li>
-  <li>Open source - MIT licensed (as is the object storage library).</li>
-</ul>
-
-<h1 id="section-1">使い方</h1>
-
-<p>gitからソースを取得する</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ git cline https://github.com/softlayer/softlayer-object-storage-backup.git
-</span><span class="line">$ sudo pip install softlayer-object-storage
-</span><span class="line">$ sudo pip install slbackup</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>設定の実施</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ ./slbackup.py --example &gt; ~/.slbackup</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>設定ファイルの中に、username, apikey を設定します。またObjectStorageのどのデータセンターを利用するかも指定することが出来ます。</p>
-
-<p>カレントディレクトリ以下を<code>test</code>というコンテナに格納するのは以下のコマンドで実施できます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ ./slbackup.py -s ./ -o test</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h1 id="section-2">まとめ</h1>
-
-<p>機能的に変更分のみ、マルチスレッド対応なのでPerformanceも期待できるのだろうか。実際の運用を想定すると、(a) Restore (b) 履歴（世代）管理 (c) 圧縮 などの機能があると嬉しいですね。日本語のファイルなどはそのまま ObjectStorageに入れると文字コードなど問題ですこし不安です。とは言えこのスクリプトは簡単にバックアップを実現するという意味で現在全く利用していないユーザなどには良いと思います。</p>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1950,6 +2003,8 @@ Git commit (server): d84a070
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
+    
     <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
@@ -1957,8 +2012,6 @@ Git commit (server): d84a070
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
     <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
     
   </div>
 </section>
@@ -1990,7 +2043,7 @@ Git commit (server): d84a070
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">21</span>
+        <span class="badge">22</span>
         review
       </a>
     
@@ -2120,6 +2173,12 @@ Git commit (server): d84a070
     <a class="list-group-item " href="/blog/tags/vyatta/index.html">
         <span class="badge">1</span>
         vyatta
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/bluemix/index.html">
+        <span class="badge">1</span>
+        bluemix
       </a>
     
   </div>

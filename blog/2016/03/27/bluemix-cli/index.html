@@ -2,10 +2,10 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Category: Bluemix - なんでもやってみるのが良いと思う</title>
+  <title>Bluemix-cli - なんでもやってみるのが良いと思う</title>
   <meta name="author" content="H.Tokida">
 
-  <meta name="description" content="Category: bluemix">
+  
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://stepxstep.org/blog/categories/bluemix">
+  <link rel="canonical" href="http://stepxstep.org/blog/2016/03/27/bluemix-cli">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="なんでもやってみるのが良いと思う" type="application/atom+xml">
 
@@ -25,9 +25,9 @@
   <!-- http://opengraphprotocol.org/ -->
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="http://stepxstep.org/blog/categories/bluemix">
-  <meta property="og:title" content="Category: Bluemix - なんでもやってみるのが良いと思う">
-  <meta property="og:description" content="Category: bluemix">
+  <meta property="og:url" content="http://stepxstep.org/blog/2016/03/27/bluemix-cli">
+  <meta property="og:title" content="Bluemix-cli - なんでもやってみるのが良いと思う">
+  
 
   <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
 
@@ -70,10 +70,10 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li >
+                <li class="active">
                     <a href="/">Blog</a>
                 </li>
-                <li class="active">
+                <li >
                     <a href="/blog/archives">Archives</a>
                 </li>
                 <li >
@@ -106,35 +106,16 @@
       <div id="main" role="main" class="container">
         <div id="content">
           <div class="row">
-  <div class="page-content col-md-9">
-    <article role="article">
+  <div class="page-content col-md-9" itemscope itemtype="http://schema.org/Blog">
+    <meta itemprop="name" content="なんでもやってみるのが良いと思う" />
+    <meta itemprop="description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。" />
+    <meta itemprop="url" content="http://stepxstep.org" />
+    <article class="hentry" role="article" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
       
-        <header class="page-header">
-          
-          
-            <h1 class="entry-title">
-              Category: Bluemix
-              
-            </h1>
-          
-        </header>
-      
-      <div class="entry-content">
-        <div id="blog-archives" class="category" itemscope itemtype="http://schema.org/Blog">
-<meta itemprop="name" content="なんでもやってみるのが良いと思う" />
-<meta itemprop="description" content="最近新しい技術がたくさん出ていてさっぱりついて行けないのですが頑張ってついていく記録。" />
-<meta itemprop="url" content="http://stepxstep.org" />
-
-
-
-  
-  <h2 class="year">2016</h2>
-
-<article class="page-header" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-  
-<h2 class="post-title" itemprop="name headline"><a href="/blog/2016/03/27/bluemix-cli/" itemprop="url">Bluemix-cli</a></h2>
-<p class="meta text-muted">
-  
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
 
 
 
@@ -148,17 +129,152 @@
 
 
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-27T09:01:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月27日</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title" itemprop="name headline">
+        Bluemix-cli
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix" itemprop="articleBody description">
+<p>Bluemix関連はもう色々出すぎていて何が何やらわからないのですが cf コマンドに代わる？bleumix Cliが登場していました。</p>
+
+<ul>
+  <li><a href="http://clis.ng.bluemix.net/ui/home.html">http://clis.ng.bluemix.net/ui/home.html</a></li>
+</ul>
+
+<p>さっそく導入してみたいと思います。私はMACユーザなのでMAC用のバイナリをダウンロードしてみたいと思います。</p>
+
+<ul>
+  <li>Cloud Foundry CLI version 6.11 or later is required for Bluemix CLI. If your system does not already have the correct version of cf CLI, the installer will install it for you. (cfコマンド 6.11以上を導入しておく必要があります。 cf –version で確認します。私は 6.13が導入されていました）</li>
+  <li>　導入後パスが設定されていません。.bashrc に以下のPATHを追加しておきます。bash_autocompleteが有るのが今時なツールですね。bluemix と入力した後に tab をいれるとオプションが自動的に出てきて便利です。</li>
+</ul>
+
+<pre><code>### Added by the Bluemix CLI
+export PATH=$PATH:/usr/local/bluemix/bin
+source /usr/local/Bluemix/bx/bash_autocomplete
+</code></pre>
+
+<p>ヘルプを見てみるとこんな感じです。</p>
+
+<pre><code>名前:
+   ./bx - Bluemix と対話するためのコマンド・ライン・ツール
+
+使用法:
+   [environment variables] ./bx [global options] command [arguments...] [command options]
+
+バージョン:
+   0.3.1-5206a18-2016-03-02T03:30:07+00:00
+
+コマンド:
+   api		 ターゲットの API エンドポイントを設定または表示します
+   login	 ユーザーをログインします
+   logout	 ユーザーをログアウトします
+   target	 ターゲット組織またはスペースを設定または表示します
+   info		 Bluemix 情報を表示します
+   list		 ターゲット・スペース内のすべての CF アプリケーション、サービス、コンテナー、コンテナー・グループ、および VM グループをリストします
+   scale	 アプリまたはコンテナー・グループのインスタンス数を変更します
+   curl		 Bluemix への未加工の HTTP 要求を実行します。content-type はデフォルトで「application/json'」に設定されています
+   config	 デフォルト値を構成に書き込みます
+   iam		 組織、スペース、およびユーザーを管理します
+   catalog	 Bluemix カタログを管理します
+   app		 Manage Cloud Foundry applications
+   vm		 Manage virtual servers
+   ic		 Manage IBM containers
+   service	 Manage Bluemix services
+   network	 Manage network settings including region, domain, route and security group
+   security	 セキュリティー設定を管理します
+   plugin	 プラグインおよびプラグイン・リポジトリーを管理します
+   cf		 Bluemix のコンテキストを使用して Cloud Foundry CLI を実行します
+   help
+
+コマンドについて詳しくは、'./bx help [command]' と入力してください。
+
+環境変数:
+   BLUEMIX_COLOR=false                     出力に色を付けません
+   BLUEMIX_TRACE=true                      API 要求診断を stdout に出力します
+   BLUEMIX_TRACE=path/to/trace.log         API 要求診断をログ・ファイルに付加します
+
+グローバル・オプション:
+   --version, -v                      バージョンを出力します
+   --help, -h                         ヘルプを表示します
+</code></pre>
+
+<p>色々なサブコマンドが利用できてこれは便利になります。</p>
+
+<pre><code>$ bx iam
+名前:
+   bx iam - 組織、スペース、およびユーザーを管理します
+使用法:
+   bx iam command [arguments...] [command options]
+
+コマンド:
+   orgs			 すべての組織をリストします
+   org			 指定された組織の情報を表示します
+   org-create		 新しい組織を作成します (管理者のみ)
+   org-replicate	 組織を別の地域に複製します (管理者のみ)
+   org-rename		 組織を名前変更します (組織管理者が必要)
+   org-delete		 組織を削除します (管理者のみ)
+   spaces		 現行組織内のすべてのスペースをリストします
+   space		 指定されたスペースの情報を表示します
+   space-create		 新しいスペースを作成します (組織管理者が必要)
+   space-rename		 現行組織内のスペースを名前変更します (組織管理者が必要)
+   space-delete		 現行組織内のスペースを削除します (組織管理者が必要)
+   user-create		 新しいユーザーを作成します (管理者のみ)
+   user-delete		 ユーザーを削除します (管理者のみ)
+   org-users		 指定された組織内のユーザーを役割別に表示します
+   org-role-set		 ユーザーに組織の役割を割り当てます (組織管理者が必要)
+   org-role-unset	 ユーザーから組織の役割を削除します (組織管理者が必要)
+   space-users		 指定されたスペース内のユーザーを役割別に表示します
+   space-role-set	 ユーザーにスペースの役割を割り当てます (スペース管理者が必要)
+   space-role-unset	 ユーザーからスペースの役割を削除します (スペース管理者が必要)
+   help
+
+コマンドについて詳しくは、'bx iam help [command]' と入力してください。
+</code></pre>
+
+<p>これまで cf コマンドでアプリケーションを管理していましたがこのbluemixコマンドで Bluemixとして実施することが大分楽になりそうです。</p>
+
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
   
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard" itemprop="author" itemscope itemtype="http://schema.org/Person">Posted by <span class="fn" itemprop="name">H.Tokida</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-27T09:01:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月27日</time>
+          
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/bluemix/'>bluemix</a>
+    <a class='category' href='/blog/categories/review/'>review</a>
   
 </span>
 
 
-  
+		  
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="tags">
@@ -169,29 +285,41 @@
 </span>
 
 
-</p>
-
-</article>
-
+        </p>
+        
+          <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stepxstep.org/blog/2016/03/27/bluemix-cli/" data-via="" data-counturl="http://stepxstep.org/blog/2016/03/27/bluemix-cli/" >Tweet</a>
+  
+  
+  
 </div>
 
-      </div>
-      
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/11/04/vyatta2vyos/" title="Previous Post: Vyatta を VyOS にアップデートして vxlan を利用する">&laquo; Vyatta を VyOS にアップデートして vxlan を利用する</a></li>
+            
+            
+          </ul>
+        
+      </footer>
     </article>
     
   </div>
 
   
-    <aside class="sidebar col-md-3">
-      
-        <section class="panel panel-default">
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Recent Posts</h3>
   </div>
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
+    <a class="list-group-item active" href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
     
@@ -231,7 +359,7 @@
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">21</span>
+        <span class="badge">22</span>
         review
       </a>
     
@@ -239,12 +367,6 @@
     <a class="list-group-item " href="/blog/categories/think/index.html">
         <span class="badge">1</span>
         think
-      </a>
-    
-    
-    <a class="list-group-item " href="/blog/categories/bluemix/index.html">
-        <span class="badge">1</span>
-        bluemix
       </a>
     
   </div>
@@ -379,8 +501,8 @@
 </section>
 
 
-      
-    </aside>
+    
+  </aside>
   
 </div>
 
@@ -399,19 +521,6 @@
 </div>
 </footer>
     
-
-<script type="text/javascript">
-      var disqus_shortname = 'roguer';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
 
 

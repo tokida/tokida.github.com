@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: bluemix | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/bluemix/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-27T09:41:05+09:00</updated>
+  <updated>2016-03-27T09:51:10+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -32,25 +32,23 @@
   <li>　導入後パスが設定されていません。.bashrc に以下のPATHを追加しておきます。bash_autocompleteが有るのが今時なツールですね。bluemix と入力した後に tab をいれるとオプションが自動的に出てきて便利です。</li>
 </ul>
 
-<p><code>
-### Added by the Bluemix CLI
+<pre><code>### Added by the Bluemix CLI
 export PATH=$PATH:/usr/local/bluemix/bin
 source /usr/local/Bluemix/bx/bash_autocomplete
-</code></p>
+</code></pre>
 
 <p>ヘルプを見てみるとこんな感じです。</p>
 
-<p>&#8220;`
-名前:
-   ./bx - Bluemix と対話するためのコマンド・ライン・ツール</p>
+<pre><code>名前:
+   ./bx - Bluemix と対話するためのコマンド・ライン・ツール
 
-<p>使用法:
-   [environment variables] ./bx [global options] command [arguments…] [command options]</p>
+使用法:
+   [environment variables] ./bx [global options] command [arguments...] [command options]
 
-<p>バージョン:
-   0.3.1-5206a18-2016-03-02T03:30:07+00:00</p>
+バージョン:
+   0.3.1-5206a18-2016-03-02T03:30:07+00:00
 
-<p>コマンド:
+コマンド:
    api		 ターゲットの API エンドポイントを設定または表示します
    login	 ユーザーをログインします
    logout	 ユーザーをログアウトします
@@ -58,7 +56,7 @@ source /usr/local/Bluemix/bx/bash_autocomplete
    info		 Bluemix 情報を表示します
    list		 ターゲット・スペース内のすべての CF アプリケーション、サービス、コンテナー、コンテナー・グループ、および VM グループをリストします
    scale	 アプリまたはコンテナー・グループのインスタンス数を変更します
-   curl		 Bluemix への未加工の HTTP 要求を実行します。content-type はデフォルトで「application/json’」に設定されています
+   curl		 Bluemix への未加工の HTTP 要求を実行します。content-type はデフォルトで「application/json'」に設定されています
    config	 デフォルト値を構成に書き込みます
    iam		 組織、スペース、およびユーザーを管理します
    catalog	 Bluemix カタログを管理します
@@ -70,30 +68,29 @@ source /usr/local/Bluemix/bx/bash_autocomplete
    security	 セキュリティー設定を管理します
    plugin	 プラグインおよびプラグイン・リポジトリーを管理します
    cf		 Bluemix のコンテキストを使用して Cloud Foundry CLI を実行します
-   help</p>
+   help
 
-<p>コマンドについて詳しくは、’./bx help [command]’ と入力してください。</p>
+コマンドについて詳しくは、'./bx help [command]' と入力してください。
 
-<p>環境変数:
+環境変数:
    BLUEMIX_COLOR=false                     出力に色を付けません
    BLUEMIX_TRACE=true                      API 要求診断を stdout に出力します
-   BLUEMIX_TRACE=path/to/trace.log         API 要求診断をログ・ファイルに付加します</p>
+   BLUEMIX_TRACE=path/to/trace.log         API 要求診断をログ・ファイルに付加します
 
-<p>グローバル・オプション:
-   –version, -v                      バージョンを出力します
-   –help, -h                         ヘルプを表示します
-&#8220;`</p>
+グローバル・オプション:
+   --version, -v                      バージョンを出力します
+   --help, -h                         ヘルプを表示します
+</code></pre>
 
 <p>色々なサブコマンドが利用できてこれは便利になります。</p>
 
-<p>&#8220;`
-$ bx iam
+<pre><code>$ bx iam
 名前:
    bx iam - 組織、スペース、およびユーザーを管理します
 使用法:
-   bx iam command [arguments…] [command options]</p>
+   bx iam command [arguments...] [command options]
 
-<p>コマンド:
+コマンド:
    orgs			 すべての組織をリストします
    org			 指定された組織の情報を表示します
    org-create		 新しい組織を作成します (管理者のみ)
@@ -113,10 +110,10 @@ $ bx iam
    space-users		 指定されたスペース内のユーザーを役割別に表示します
    space-role-set	 ユーザーにスペースの役割を割り当てます (スペース管理者が必要)
    space-role-unset	 ユーザーからスペースの役割を削除します (スペース管理者が必要)
-   help</p>
+   help
 
-<p>コマンドについて詳しくは、’bx iam help [command]’ と入力してください。
-&#8220;`</p>
+コマンドについて詳しくは、'bx iam help [command]' と入力してください。
+</code></pre>
 
 <p>これまで cf コマンドでアプリケーションを管理していましたがこのbluemixコマンドで Bluemixとして実施することが大分楽になりそうです。</p>
 

@@ -132,6 +132,88 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T07:39:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/08/09/softlayerobjectstoragebackup/" itemprop="url">SoftLayerのObjecｔStorageへファイルバックアップを行う slbackup.py を試す</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#section">これは何？</a></li>
+  <li><a href="#section-1">使い方</a></li>
+  <li><a href="#section-2">まとめ</a></li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>github上で見つけた ObjectStorageにバックアップをするためのスクリプト。
+メジャーなIaaS環境では結構ObjecｔStorageがサポートされているし、値段的にも非常に安いのでObjecｔStorageにデータバックアップを取る手法を持っていたほうがいいですね。</p>
+
+<ul>
+  <li>Whole file delta backups - only changed/new files are uploaded saving you time/bandwidth.</li>
+  <li>Retention policies - deleted/updated files are kept for any desired length of time. These can also be disabled.</li>
+  <li>Threaded - Copying can always be the longest part, so backups are done in the background as file comparisions are being performed.</li>
+  <li>MD5 support - Swift automatically sets a default hash (md5) for every object. We support file comparisions using this hash instead of time/size variance.</li>
+  <li>Open source - MIT licensed (as is the object storage library).</li>
+</ul>
+
+<h1 id="section-1">使い方</h1>
+
+<p>gitからソースを取得する</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ git cline https://github.com/softlayer/softlayer-object-storage-backup.git
+</span><span class="line">$ sudo pip install softlayer-object-storage
+</span><span class="line">$ sudo pip install slbackup</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>設定の実施</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./slbackup.py --example &gt; ~/.slbackup</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>設定ファイルの中に、username, apikey を設定します。またObjectStorageのどのデータセンターを利用するかも指定することが出来ます。</p>
+
+<p>カレントディレクトリ以下を<code>test</code>というコンテナに格納するのは以下のコマンドで実施できます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./slbackup.py -s ./ -o test</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="section-2">まとめ</h1>
+
+<p>機能的に変更分のみ、マルチスレッド対応なのでPerformanceも期待できるのだろうか。実際の運用を想定すると、(a) Restore (b) 履歴（世代）管理 (c) 圧縮 などの機能があると嬉しいですね。日本語のファイルなどはそのまま ObjectStorageに入れると文字コードなど問題ですこし不安です。とは言えこのスクリプトは簡単にバックアップを実現するという意味で現在全く利用していないユーザなどには良いと思います。</p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-09T02:17:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月9日</time>
         
       </p>
@@ -1323,122 +1405,6 @@ Github padeでも独自ドメインが利用可能になっていて簡単に設
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T23:02:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/05/31/02/" itemprop="url">Vimの起動画面で履歴を表示できるStartifyを入れてみる</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
-  <li><a href="#startify-">Startify プラグイン</a>    <ul>
-      <li><a href="#install">Install</a></li>
-      <li><a href="#section">設定</a></li>
-    </ul>
-  </li>
-  <li><a href="#section-1">まとめ</a>    <ul>
-      <li><a href="#section-2">参考</a></li>
-    </ul>
-  </li>
-</ul>
-
-<p>最近、MacとWindowsを行き来することもあり共通で使えるVimを利用しています。
-かなり前から使っている割には仕事では素のviを使う機会が多かったこともありVimをカスタマイズして使うということがなかったのですがここのところすっかりプラグイン入れて遊んでいます。</p>
-
-<ul>
-  <li><a href="http://ja.wikipedia.org/wiki/Vim">Vim - Wikipedia</a></li>
-  <li><a href="http://www.kaoriya.net/software/vim/">Vim — KaoriYa</a></li>
-</ul>
-
-<p>日本語で使うために色々パッケージングされたものをKaoriyaさんで公開されていますのでこれから導入される方はオススメです。</p>
-
-<h1 id="startify-">Startify プラグイン</h1>
-
-<p>起動した時の画面が変わります。</p>
-
-<p><img src="/images/2014_06_01_am0_00.png" alt="images" /></p>
-
-<p>こんな感じで起動時に履歴が選択できるようになります。
-また <code>:startify</code>でいつでもこの画面を呼び出す事ができます。</p>
-
-<h2 id="install">Install</h2>
-
-<p>導入はいつもどおり NeoBundle 経由で行います。</p>
-
-<ul>
-  <li><a href="https://github.com/mhinz/vim-startify">mhinz/vim-startify</a></li>
-</ul>
-
-<p>したがって<code>.vimrc</code>の NeoBundleの所に以下のように記述します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">NeoBundle 'mhinz/vim-startify'    "起動時に履歴を表示させる</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>あとは起動後に <code>NeoBundleInstall</code> して導入します。</p>
-
-<h2 id="section">設定</h2>
-
-<p>設定は <code>.vimrc</code> にて行います。
-詳細の設定内容は <code>:h startify</code> でヘルプが詳細に書いてあるので見るとわかります。
-参考で記載しているサイトの設定を参考にしています。</p>
-
-<div><script src="https://gist.github.com/3a978d48817b98fb4f18.js"></script>
-<noscript><pre><code>&quot; Startify
-&quot; 起動時の画面の設定
-&quot; startifyのヘッダー部分に表示する文字列を設定する(dateコマンドを実行して日付を設定している)
-let g:startify_custom_header =
-  \ map(split(system(&#39;date&#39;), &#39;\n&#39;), &#39;&quot;   &quot;. v:val&#39;) + [&#39;&#39;,&#39;&#39;]
-let g:startify_files_number = 10
-&quot; デフォルトだと、最近使ったファイルの先頭は数字なので、使用するアルファベットを指定
-&quot; let g:startify_custom_indices = [&#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;r&#39;, &#39;i&#39;, &#39;o&#39;, &#39;b&#39;]
-&quot; よく使うファイルをブックマークとして登録しておく
-let g:startify_bookmarks = [
-  \ &#39;~/.vimrc&#39;,
-  \ &#39;~/.gvimrc&#39;,
-  \ &#39;~/.bash_profile&#39;,
-  \ &#39;~/memo/todo.markdown&#39;,
-  \ ]
-</code></pre></noscript></div>
-
-<h1 id="section-1">まとめ</h1>
-
-<p>起動画面でさっと履歴が選択できるのはありがたいです。とは言え別のプラグインで同じような事を実装することも出来るようなので珍しいことではないのかもしれませんがプラグイン一つ入れて簡単に出来るのが良かったです。</p>
-
-<h2 id="section-2">参考</h2>
-
-<ul>
-  <li><a href="http://deris.hatenablog.jp/entry/2013/12/15/235606">Vimmerなら2013年中に試しておきたい海外産Vim plugin 8選 - derisの日記</a>  </li>
-</ul>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1462,6 +1428,8 @@ let g:startify_bookmarks = [
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
+    
     <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
@@ -1469,8 +1437,6 @@ let g:startify_bookmarks = [
     <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
     <a class="list-group-item " href="/blog/2014/09/17/consistentstorage/">SoftLayerに性能保証型iSCSI/NASが登場したので試してみた</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/25/xml-rpc-ddos/">XMLRPCに大量にアクセスされている場合の回避策</a>
     
   </div>
 </section>
@@ -1502,7 +1468,7 @@ let g:startify_bookmarks = [
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">21</span>
+        <span class="badge">22</span>
         review
       </a>
     
@@ -1632,6 +1598,12 @@ let g:startify_bookmarks = [
     <a class="list-group-item " href="/blog/tags/vyatta/index.html">
         <span class="badge">1</span>
         vyatta
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/bluemix/index.html">
+        <span class="badge">1</span>
+        bluemix
       </a>
     
   </div>
