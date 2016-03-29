@@ -132,6 +132,161 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-01T22:02:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月1日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/06/01/sldn_configuration_finder/" itemprop="url">[SoftLayer]ベアメタルサーバの構成検索 sl_config_finder.rb を使ってみる</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
+  <li><a href="#section">何が出来るの？</a></li>
+  <li><a href="#install">Install</a></li>
+  <li><a href="#section-1">使ってみる</a></li>
+  <li><a href="#section-2">まとめ</a></li>
+</ul>
+
+<h1 id="section">何が出来るの？</h1>
+
+<p>SoftLayer (IBM社のPublic Cloud Service) では様々なリソースの物理サーバがインスタンスとして利用できる（以下ベアメタルサーバ）のが特徴です。 そんなベアメタルサーバのですが構成が多すぎるので構成を検索してくれるスクリプトが<code>gist</code>に出ていました。</p>
+
+<p>というわけで、ここで紹介するツールはSoftLayerのベアメタルサーバの構成を検索する事が出来ます。</p>
+
+<ul>
+  <li>この記事は <code>SDN SoftLayer Blog</code> で掲載されていた記事の内容をやってみました。
+<a href="http://sldn.softlayer.com/blog/hansKristian/Configuration-Finder-%E2%80%93-Simplify-Your-Server-Search">Configuration Finder – Simplify Your Server Search | SoftLayer Development Network</a></li>
+</ul>
+
+<h1 id="install">Install</h1>
+
+<p>rubyすらはいっていなかったので、Rubyを導入するとともに <code>Softlayer_API</code> も導入します。最近はAWS(Amazon Web Service)もそうですがパッケージレポジトリに登録されているので楽ですね。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install ruby1.9.3
+</span><span class="line">$ sudo gem install softlayer_api
+</span><span class="line">$ git clone https://gist.github.com/7f8ca7027034cecddcc4.git</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>次にダウンロード(git cloneした）ファイルの中にアカウント名/APIキーを記載する項目があるのでSoftLayerの管理コンソールからAPIキーを発行した後に中を書き換えておきましょう。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">require 'rubygems'
+</span><span class="line">require 'softlayer_api'
+</span><span class="line">require 'optparse'
+</span><span class="line">$SL_API_USERNAME = "****"
+</span><span class="line">$SL_API_KEY = "*****"</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="section-1">使ってみる</h1>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./sl_config_finder.rb
+</span><span class="line">Usage: ./sl_config_finder.rb [options]
+</span><span class="line">    -c, --cpu cores                  Amount of CPU cores desired
+</span><span class="line">    -m, --memory amount              Amount of memory desired in GB
+</span><span class="line">    -d, --disk amount                Amount of disk spindels desired
+</span><span class="line">    -p, --priority pri1,pri2[,pri3]  What order to prioritse resources  (cpu, memory, disk) when searching
+</span><span class="line">    -b {higher, lower, nearest},     If exact match for given resource is not found, which way to search
+</span><span class="line">        --bias
+</span><span class="line">    -h, --help                       Displays Help</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>普通に引数漏れだと動きません。
+次に、実際に使ってみます、「CPU(1core),Memory(1G),CPU,Memoryを優先で検索」</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ ./sl_config_finder.rb -c 1 -m 1 -p cpu,memory,disk -b higher
+</span><span class="line">Desired versus selected specs
+</span><span class="line">CPU:            desired - 1   == selected - 2
+</span><span class="line">RAM:            desired - 1   == selected - 2
+</span><span class="line">Disk spindles:  desired -    == selected - 1
+</span><span class="line">=========== Possible packages meeting these requirements ==================
+</span><span class="line">===========================================================================
+</span><span class="line">ID: 20
+</span><span class="line">Name: Express (Dual Core Single Intel and AMD)
+</span><span class="line">CPU options
+</span><span class="line">Name: Single Processor Dual Core Opteron 1216 - 2.40GHz - 2 x 1MB cache
+</span><span class="line">ID: 383 == Cores: 2
+</span><span class="line">--------------------------------------------
+</span><span class="line">Name: Single Processor Quad Core Opteron 1354 - 2.20GHz - 2 x 1MB cache
+</span><span class="line">ID: 674 == Cores: 4
+</span><span class="line">--------------------------------------------
+</span><span class="line">
+</span><span class="line">Ram options:
+</span><span class="line">ID: 104 Name: 2 GB DDR2 667
+</span><span class="line">===========================================================================</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こんな感じで、選択できるものが表示されます。このIDの番号はAPIからCreate（Order）するときに必要な番号です。
+ちなみに表示までに数十〜数分かかります。何がこんなに遅いのだろうか。</p>
+
+<h1 id="section-2">まとめ</h1>
+
+<p>これで価格まで出てくれれば良い見積もりツールだったのですが現在のところ表示は出来なそうです。 </p>
+
+<p>重い、あまりに遅いので管理コンソール（ブラウザ）で探した方が早いのではなかと思うほどです orz</p>
+
+<p>使い勝手はともかく<code>Source</code>は参考になりそうですね。もう少し重たい原因を見つけておくと良いかもしれません。
+SoftLayerではAPIが色々あり導入出来るOSのリストとか簡単に取得できます。その辺りCLIで出来ると良いのですが。 </p>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-01T21:25:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年6月1日</time>
         
       </p>
@@ -608,6 +763,8 @@ let g:startify_bookmarks = [
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2016/03/29/try-ducksh/">CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する</a>
+    
     <a class="list-group-item " href="/blog/2016/03/28/test/">ATOMエディタからOctopressを利用する</a>
     
     <a class="list-group-item " href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
@@ -615,8 +772,6 @@ let g:startify_bookmarks = [
     <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
-    
-    <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
   </div>
 </section>
@@ -648,7 +803,7 @@ let g:startify_bookmarks = [
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">23</span>
+        <span class="badge">24</span>
         review
       </a>
     
@@ -790,6 +945,12 @@ let g:startify_bookmarks = [
     <a class="list-group-item " href="/blog/tags/atom/index.html">
         <span class="badge">1</span>
         atom
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/softlayer/index.html">
+        <span class="badge">1</span>
+        SoftLayer
       </a>
     
   </div>

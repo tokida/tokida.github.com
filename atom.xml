@@ -4,7 +4,7 @@
   <title><![CDATA[なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-28T02:28:03+09:00</updated>
+  <updated>2016-03-29T20:02:26+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -12,6 +12,154 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する]]></title>
+    <link href="http://stepxstep.org/blog/2016/03/29/try-ducksh/"/>
+    <updated>2016-03-29T19:13:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2016/03/29/try-ducksh</id>
+    <content type="html"><![CDATA[
+<p>CyberDuckという有名なクラウドストレージクライアントがあります。最近見たところ duck.sh なるツールが登場していたので試してみました。</p>
+
+<ul>
+  <li><a href="https://duck.sh/">https://duck.sh/</a></li>
+</ul>
+
+<p>今回はMacで実施したので</p>
+
+<pre><code>sudo brew install duck
+</code></pre>
+
+<p>で導入が出来る。</p>
+
+<p>色々接続ができるがニーズがないであろうが SoftLayer のObject Storage (OpenStack Swift) に接続をしてみます。</p>
+
+<pre><code>$ duck --help
+Usage:duck [options...]
+
+
+URLs must be fully qualified. Paths can either denote a remote file (ftps://user@example.net/resource) or folder (ftps://user@example.net/directory/) with a trailing slash. You can reference files
+relative to your home directory with /~ (ftps://user@example.net/~/).
+Supported protocols
+ftp	FTP (File Transfer Protocol)
+	ftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+ftps	FTP-SSL (Explicit AUTH TLS)
+	ftps://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+sftp	SFTP (SSH File Transfer Protocol)
+	sftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+dav	WebDAV (Web-based Distributed Authoring and Versioning)
+	dav://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+davs	WebDAV (HTTP/SSL)
+	davs://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+swift	Swift (OpenStack Object Storage)
+	swift://&lt;container&gt;/&lt;key&gt;
+s3	S3 (Amazon Simple Storage Service)
+	s3://&lt;container&gt;/&lt;key&gt;
+gs	Google Cloud Storage
+	gs://&lt;container&gt;/&lt;key&gt;
+azure	Windows Azure Storage
+	azure://&lt;container&gt;/&lt;key&gt;
+rackspace	Rackspace Cloud Files (US)
+	rackspace://&lt;container&gt;/&lt;key&gt;
+
+You can install additional connection profiles in ~/Library/Application Support/Cyberduck/Profiles
+
+    --application &lt;path&gt;                  External editor application
+    --copy &lt;url&gt; &lt;url&gt;                    Copy between servers
+ -d,--download &lt;url&gt; &lt;[file]&gt;             Download file or folder. Denote a folder with a trailing '/'
+ -D,--delete &lt;url&gt;                        Delete
+ -e,--existing &lt;action&gt;                   Transfer action for existing files
+                                          Options for downloads and uploads:
+                                          	Resume	Append existing files (resume)
+                                          	Overwrite	Overwrite all files (overwrite)
+                                          	Rename	Rename transferred files with a timestamp appended to the filename (similar)
+                                          	Rename existing	Rename existing files with timestamp appended to filename (rename)
+                                          	Skip	Skip transfer of files that already exist (skip)
+                                          	Compare	Skip files that match size, modification date or checksum (compare)
+                                          	Cancel	 (cancel)
+                                          Options for synchronize:
+                                          	Download	Download changed and missing files (download)
+                                          	Upload	Upload changed and missing files (upload)
+                                          	Mirror	Download and Upload (mirror)
+                                          	Cancel	 (cancel)
+
+    --edit &lt;url&gt;                          Edit file in external editor
+ -h,--help                                Print this help
+ -i,--identity &lt;private key file&gt;         Selects a file from which the identity (private key) for public key authentication is read
+ -l,--list &lt;url&gt;                          List files in remote folder
+ -L,--longlist                            Long list format with modification date and permission mask
+ -p,--password &lt;password or secret key&gt;   Password
+ -P,--preserve                            Preserve permissions and modification date for transferred files
+    --parallel &lt;connections&gt;              Number of concurrent connections to use for transfers
+ -q,--quiet                               Suppress progress messages
+ -r,--retry &lt;count&gt;                       Retry failed connection attempts
+    --region &lt;location&gt;                   Location of bucket or container
+    --synchronize &lt;url&gt; &lt;directory&gt;       Synchronize folders
+    --throttle &lt;bytes per second&gt;         Throttle bandwidth
+ -u,--username &lt;username or access key&gt;   Username
+    --udt                                 Use UDT protocol if applicable
+    --upload &lt;url&gt; &lt;file&gt;                 Upload file or folder recursively
+ -v,--verbose                             Print transcript
+ -V,--version                             Show version number and quit
+ -y,--assumeyes                           Assume yes for all prompts
+
+Cyberduck is libre software licenced under the GPL. For general help about using Cyberduck, please refer to https://duck.sh/ and the wiki at http://help.duck.sh/. For bug reports or feature requests
+open a ticket at https://trac.cyberduck.io/newticket?version=4.7.3.
+Not registered. Purchase a donation key to support the development of this software.
+</code></pre>
+
+<p>プロファイルをダウンロード</p>
+
+<ul>
+  <li><a href="http://qiita.com/testnin2/items/1868f9f5775ae06afc26">http://qiita.com/testnin2/items/1868f9f5775ae06afc26</a></li>
+</ul>
+
+<p>ここに記載されているファイルを <code>~/Library/Application Support/Cyberduck/Profiles/SoftLayer_TOK02_public.cyberduckprofile</code> に保存する。これでこのプロファイルを利用できるようになります。</p>
+
+<p>今回接続する SoftLayer 側の情報として以下のようになっているとします。</p>
+
+<ul>
+  <li>TOK2上にObjectStorageを購入</li>
+  <li>tokida というContainerを作成済み</li>
+  <li>SoftLayer Portalからusername,passwordを取得済み</li>
+</ul>
+
+<pre><code>$ duck --list softlayer-tok02_public://tokida/ -u "$usernaem" -p "$password"
+Login successful…
+.file-segments
+Dropbox
+a_M00xxx_2003.nsf
+a_M00xxx_2004.nsf
+a_M00xxx_2005.nsf
+</code></pre>
+
+<p>これだけで接続ができます。duckコマンド経由で利用することで SoftLayer Object Storageの制約である5Gなども正しくマルチパートでアップロードしてくれるので非常に便利に利用できますね。</p>
+
+<pre><code>$ duck -u $username -p $password --upload softlayer-tok02_public://tokida/ hosts
+Upload complete…
+</code></pre>
+
+<pre><code>$ duck -u $username -p $password --delete softlayer-tok02_public://tokida/hosts
+Deleting hosts…
+</code></pre>
+
+<p>同期もでき、download, mirror , upload が選択できる。</p>
+
+<pre><code>duck -u $username -p $password --synchronize softlayer-tok02_public://tokida/dotfiles ./
+Login successful…
+Choose what action to take:
+
+ Cancel	 (cancel)
+ Download	Download changed and missing files (download)
+ Mirror	Download and Upload (mirror)
+ Upload	Upload changed and missing files (upload)
+
+Action [cancel, download, mirror, upload]: upload
+</code></pre>
+
+<p>クラウドストレージは、費用面で非常に便利だが利用については各クラウドでそれぞれ利用方法が違いコマンドラインで利用するためにも際があるので使い勝手が良いとはいえませんでしたがこの <code>duck</code> を経由することで利用のハードルが下がります。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ATOMエディタからOctopressを利用する]]></title>
@@ -2473,133 +2621,6 @@ Workspacesの日本語がらみの問題は「東京リージョン」が出て�
 </pre></td><td class="code"><pre><code class=""><span class="line">$ rake redmine:plugins:migrate  NAME=hogehoge VERSION=0 RAILS_ENV=production</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>その後、実態であるフィアルを <code>rm -rf &lt;REDMINE&gt;/plugin/hogehoge</code> すれば良いです。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[SoftLayer]ベアメタルサーバの構成検索 sl_config_finder.rb を使ってみる]]></title>
-    <link href="http://stepxstep.org/blog/2014/06/01/sldn_configuration_finder/"/>
-    <updated>2014-06-01T22:02:00+09:00</updated>
-    <id>http://stepxstep.org/blog/2014/06/01/sldn_configuration_finder</id>
-    <content type="html"><![CDATA[<ul id="markdown-toc">
-  <li><a href="#section">何が出来るの？</a></li>
-  <li><a href="#install">Install</a></li>
-  <li><a href="#section-1">使ってみる</a></li>
-  <li><a href="#section-2">まとめ</a></li>
-</ul>
-
-<h1 id="section">何が出来るの？</h1>
-
-<p>SoftLayer (IBM社のPublic Cloud Service) では様々なリソースの物理サーバがインスタンスとして利用できる（以下ベアメタルサーバ）のが特徴です。 そんなベアメタルサーバのですが構成が多すぎるので構成を検索してくれるスクリプトが<code>gist</code>に出ていました。</p>
-
-<p>というわけで、ここで紹介するツールはSoftLayerのベアメタルサーバの構成を検索する事が出来ます。</p>
-
-<ul>
-  <li>この記事は <code>SDN SoftLayer Blog</code> で掲載されていた記事の内容をやってみました。
-<a href="http://sldn.softlayer.com/blog/hansKristian/Configuration-Finder-%E2%80%93-Simplify-Your-Server-Search">Configuration Finder – Simplify Your Server Search | SoftLayer Development Network</a></li>
-</ul>
-
-<h1 id="install">Install</h1>
-
-<p>rubyすらはいっていなかったので、Rubyを導入するとともに <code>Softlayer_API</code> も導入します。最近はAWS(Amazon Web Service)もそうですがパッケージレポジトリに登録されているので楽ですね。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install ruby1.9.3
-</span><span class="line">$ sudo gem install softlayer_api
-</span><span class="line">$ git clone https://gist.github.com/7f8ca7027034cecddcc4.git</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>次にダウンロード(git cloneした）ファイルの中にアカウント名/APIキーを記載する項目があるのでSoftLayerの管理コンソールからAPIキーを発行した後に中を書き換えておきましょう。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">require 'rubygems'
-</span><span class="line">require 'softlayer_api'
-</span><span class="line">require 'optparse'
-</span><span class="line">$SL_API_USERNAME = "****"
-</span><span class="line">$SL_API_KEY = "*****"</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h1 id="section-1">使ってみる</h1>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ ./sl_config_finder.rb
-</span><span class="line">Usage: ./sl_config_finder.rb [options]
-</span><span class="line">    -c, --cpu cores                  Amount of CPU cores desired
-</span><span class="line">    -m, --memory amount              Amount of memory desired in GB
-</span><span class="line">    -d, --disk amount                Amount of disk spindels desired
-</span><span class="line">    -p, --priority pri1,pri2[,pri3]  What order to prioritse resources  (cpu, memory, disk) when searching
-</span><span class="line">    -b {higher, lower, nearest},     If exact match for given resource is not found, which way to search
-</span><span class="line">        --bias
-</span><span class="line">    -h, --help                       Displays Help</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>普通に引数漏れだと動きません。
-次に、実際に使ってみます、「CPU(1core),Memory(1G),CPU,Memoryを優先で検索」</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ ./sl_config_finder.rb -c 1 -m 1 -p cpu,memory,disk -b higher
-</span><span class="line">Desired versus selected specs
-</span><span class="line">CPU:            desired - 1   == selected - 2
-</span><span class="line">RAM:            desired - 1   == selected - 2
-</span><span class="line">Disk spindles:  desired -    == selected - 1
-</span><span class="line">=========== Possible packages meeting these requirements ==================
-</span><span class="line">===========================================================================
-</span><span class="line">ID: 20
-</span><span class="line">Name: Express (Dual Core Single Intel and AMD)
-</span><span class="line">CPU options
-</span><span class="line">Name: Single Processor Dual Core Opteron 1216 - 2.40GHz - 2 x 1MB cache
-</span><span class="line">ID: 383 == Cores: 2
-</span><span class="line">--------------------------------------------
-</span><span class="line">Name: Single Processor Quad Core Opteron 1354 - 2.20GHz - 2 x 1MB cache
-</span><span class="line">ID: 674 == Cores: 4
-</span><span class="line">--------------------------------------------
-</span><span class="line">
-</span><span class="line">Ram options:
-</span><span class="line">ID: 104 Name: 2 GB DDR2 667
-</span><span class="line">===========================================================================</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>こんな感じで、選択できるものが表示されます。このIDの番号はAPIからCreate（Order）するときに必要な番号です。
-ちなみに表示までに数十〜数分かかります。何がこんなに遅いのだろうか。</p>
-
-<h1 id="section-2">まとめ</h1>
-
-<p>これで価格まで出てくれれば良い見積もりツールだったのですが現在のところ表示は出来なそうです。 </p>
-
-<p>重い、あまりに遅いので管理コンソール（ブラウザ）で探した方が早いのではなかと思うほどです orz</p>
-
-<p>使い勝手はともかく<code>Source</code>は参考になりそうですね。もう少し重たい原因を見つけておくと良いかもしれません。
-SoftLayerではAPIが色々あり導入出来るOSのリストとか簡単に取得できます。その辺りCLIで出来ると良いのですが。 </p>
 
 ]]></content>
   </entry>

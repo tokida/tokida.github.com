@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Review | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/categories/review/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-28T02:28:03+09:00</updated>
+  <updated>2016-03-29T20:02:26+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -12,6 +12,154 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する]]></title>
+    <link href="http://stepxstep.org/blog/2016/03/29/try-ducksh/"/>
+    <updated>2016-03-29T19:13:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2016/03/29/try-ducksh</id>
+    <content type="html"><![CDATA[
+<p>CyberDuckという有名なクラウドストレージクライアントがあります。最近見たところ duck.sh なるツールが登場していたので試してみました。</p>
+
+<ul>
+  <li><a href="https://duck.sh/">https://duck.sh/</a></li>
+</ul>
+
+<p>今回はMacで実施したので</p>
+
+<pre><code>sudo brew install duck
+</code></pre>
+
+<p>で導入が出来る。</p>
+
+<p>色々接続ができるがニーズがないであろうが SoftLayer のObject Storage (OpenStack Swift) に接続をしてみます。</p>
+
+<pre><code>$ duck --help
+Usage:duck [options...]
+
+
+URLs must be fully qualified. Paths can either denote a remote file (ftps://user@example.net/resource) or folder (ftps://user@example.net/directory/) with a trailing slash. You can reference files
+relative to your home directory with /~ (ftps://user@example.net/~/).
+Supported protocols
+ftp	FTP (File Transfer Protocol)
+	ftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+ftps	FTP-SSL (Explicit AUTH TLS)
+	ftps://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+sftp	SFTP (SSH File Transfer Protocol)
+	sftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+dav	WebDAV (Web-based Distributed Authoring and Versioning)
+	dav://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+davs	WebDAV (HTTP/SSL)
+	davs://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+swift	Swift (OpenStack Object Storage)
+	swift://&lt;container&gt;/&lt;key&gt;
+s3	S3 (Amazon Simple Storage Service)
+	s3://&lt;container&gt;/&lt;key&gt;
+gs	Google Cloud Storage
+	gs://&lt;container&gt;/&lt;key&gt;
+azure	Windows Azure Storage
+	azure://&lt;container&gt;/&lt;key&gt;
+rackspace	Rackspace Cloud Files (US)
+	rackspace://&lt;container&gt;/&lt;key&gt;
+
+You can install additional connection profiles in ~/Library/Application Support/Cyberduck/Profiles
+
+    --application &lt;path&gt;                  External editor application
+    --copy &lt;url&gt; &lt;url&gt;                    Copy between servers
+ -d,--download &lt;url&gt; &lt;[file]&gt;             Download file or folder. Denote a folder with a trailing '/'
+ -D,--delete &lt;url&gt;                        Delete
+ -e,--existing &lt;action&gt;                   Transfer action for existing files
+                                          Options for downloads and uploads:
+                                          	Resume	Append existing files (resume)
+                                          	Overwrite	Overwrite all files (overwrite)
+                                          	Rename	Rename transferred files with a timestamp appended to the filename (similar)
+                                          	Rename existing	Rename existing files with timestamp appended to filename (rename)
+                                          	Skip	Skip transfer of files that already exist (skip)
+                                          	Compare	Skip files that match size, modification date or checksum (compare)
+                                          	Cancel	 (cancel)
+                                          Options for synchronize:
+                                          	Download	Download changed and missing files (download)
+                                          	Upload	Upload changed and missing files (upload)
+                                          	Mirror	Download and Upload (mirror)
+                                          	Cancel	 (cancel)
+
+    --edit &lt;url&gt;                          Edit file in external editor
+ -h,--help                                Print this help
+ -i,--identity &lt;private key file&gt;         Selects a file from which the identity (private key) for public key authentication is read
+ -l,--list &lt;url&gt;                          List files in remote folder
+ -L,--longlist                            Long list format with modification date and permission mask
+ -p,--password &lt;password or secret key&gt;   Password
+ -P,--preserve                            Preserve permissions and modification date for transferred files
+    --parallel &lt;connections&gt;              Number of concurrent connections to use for transfers
+ -q,--quiet                               Suppress progress messages
+ -r,--retry &lt;count&gt;                       Retry failed connection attempts
+    --region &lt;location&gt;                   Location of bucket or container
+    --synchronize &lt;url&gt; &lt;directory&gt;       Synchronize folders
+    --throttle &lt;bytes per second&gt;         Throttle bandwidth
+ -u,--username &lt;username or access key&gt;   Username
+    --udt                                 Use UDT protocol if applicable
+    --upload &lt;url&gt; &lt;file&gt;                 Upload file or folder recursively
+ -v,--verbose                             Print transcript
+ -V,--version                             Show version number and quit
+ -y,--assumeyes                           Assume yes for all prompts
+
+Cyberduck is libre software licenced under the GPL. For general help about using Cyberduck, please refer to https://duck.sh/ and the wiki at http://help.duck.sh/. For bug reports or feature requests
+open a ticket at https://trac.cyberduck.io/newticket?version=4.7.3.
+Not registered. Purchase a donation key to support the development of this software.
+</code></pre>
+
+<p>プロファイルをダウンロード</p>
+
+<ul>
+  <li><a href="http://qiita.com/testnin2/items/1868f9f5775ae06afc26">http://qiita.com/testnin2/items/1868f9f5775ae06afc26</a></li>
+</ul>
+
+<p>ここに記載されているファイルを <code>~/Library/Application Support/Cyberduck/Profiles/SoftLayer_TOK02_public.cyberduckprofile</code> に保存する。これでこのプロファイルを利用できるようになります。</p>
+
+<p>今回接続する SoftLayer 側の情報として以下のようになっているとします。</p>
+
+<ul>
+  <li>TOK2上にObjectStorageを購入</li>
+  <li>tokida というContainerを作成済み</li>
+  <li>SoftLayer Portalからusername,passwordを取得済み</li>
+</ul>
+
+<pre><code>$ duck --list softlayer-tok02_public://tokida/ -u "$usernaem" -p "$password"
+Login successful…
+.file-segments
+Dropbox
+a_M00xxx_2003.nsf
+a_M00xxx_2004.nsf
+a_M00xxx_2005.nsf
+</code></pre>
+
+<p>これだけで接続ができます。duckコマンド経由で利用することで SoftLayer Object Storageの制約である5Gなども正しくマルチパートでアップロードしてくれるので非常に便利に利用できますね。</p>
+
+<pre><code>$ duck -u $username -p $password --upload softlayer-tok02_public://tokida/ hosts
+Upload complete…
+</code></pre>
+
+<pre><code>$ duck -u $username -p $password --delete softlayer-tok02_public://tokida/hosts
+Deleting hosts…
+</code></pre>
+
+<p>同期もでき、download, mirror , upload が選択できる。</p>
+
+<pre><code>duck -u $username -p $password --synchronize softlayer-tok02_public://tokida/dotfiles ./
+Login successful…
+Choose what action to take:
+
+ Cancel	 (cancel)
+ Download	Download changed and missing files (download)
+ Mirror	Download and Upload (mirror)
+ Upload	Upload changed and missing files (upload)
+
+Action [cancel, download, mirror, upload]: upload
+</code></pre>
+
+<p>クラウドストレージは、費用面で非常に便利だが利用については各クラウドでそれぞれ利用方法が違いコマンドラインで利用するためにも際があるので使い勝手が良いとはいえませんでしたがこの <code>duck</code> を経由することで利用のハードルが下がります。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ATOMエディタからOctopressを利用する]]></title>
@@ -368,103 +516,6 @@ rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
 <p><code>$ alias sl="docker run  -ti tokida/softlayer-cli:my"</code></p>
 
 <p>こうしておくと普段通り <code>sl</code> コマンドが利用できます。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Vxlan on Softlayer]]></title>
-    <link href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/"/>
-    <updated>2014-11-01T00:44:00+09:00</updated>
-    <id>http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer</id>
-    <content type="html"><![CDATA[<ul id="markdown-toc">
-  <li><a href="#section">これは何？</a></li>
-  <li><a href="#section-1">環境</a></li>
-  <li><a href="#subnet">同一Subnet内</a></li>
-  <li><a href="#vlan">異なるVLAN間</a></li>
-</ul>
-
-<h1 id="section">これは何？</h1>
-
-<p>SoftLayerのネットワークはマルチキャストが使えるのでvxlanが動くのかを確認。</p>
-
-<ol>
-  <li>同一のSubnet内で利用可能か</li>
-  <li>同一のvlan間で利用可能か（これは今回オーダー出来ず）</li>
-  <li>異なるVLAN間（VLAN Spaning = on )で利用可能か</li>
-</ol>
-
-<p>というところを確認する。</p>
-
-<h1 id="section-1">環境</h1>
-
-<p>今回用意したのはダラスデータセンター内に仮想サーバを2つ起動している状態。プライベートIPで割り当てられているのは同一のSubnet上で登録されている。OSはUbuntu14.04を利用。</p>
-
-<p>仮想サーバは以下のコマンドで作成する。</p>
-
-<pre><code>sl vs create --datacenter=dal01 --cpu=1 --memory=1024 --os=UBUNTU_14_64 --domain=sl.com --hostname=test01 --hourly --san --disk=25,10 --key=mainkey --postinstall=https://gist.githubusercontent.com/tokida/5b58831c0d94ce7b25f2/raw/bootstrap4Ubuntu.sh
-</code></pre>
-
-<p>作成した結果は以下の感じになりました。同じSubnetになっていますね。違うSubnetに付け直したかったら動するのがいいのかな？:</p>
-
-<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
-:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
-:.........:............:...............:.......:........:................:.............:....................:...........:
-: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : *****     :
-: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : *****     :
-:.........:............:...............:.......:........:................:.............:....................:...........:
-</code></pre>
-
-<h1 id="subnet">同一Subnet内</h1>
-
-<p>以下のコマンドによりvxlanを設定する。今回は内部eth0に対して作成する</p>
-
-<pre><code>$ ip link add vxlan0 type vxlan id 42 group 239.1.1.1 dev eth0
-$ ip link set up vxlan0
-$ ip a add 192.168.42.3/24 dev vxlan0
-$ root@test02:~# ip -d link show vxlan0
-4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN mode DEFAULT group default
-    link/ether 2e:eb:95:ed:97:9d brd ff:ff:ff:ff:ff:ff promiscuity 0
-    vxlan id 42 group 239.1.1.1 dev eth0 port 32768 61000 ageing 300
-</code></pre>
-
-<p>test01は、<code>192.168.42.2</code>を付与、test02は、<code>192.168.43.3</code>を付与します。</p>
-
-<p>Pingを実行すると</p>
-
-<pre><code>root@test02:~# ping 192.168.42.2
-PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
-64 bytes from 192.168.42.2: icmp_seq=1 ttl=64 time=0.957 ms
-64 bytes from 192.168.42.2: icmp_seq=2 ttl=64 time=0.377 ms
-</code></pre>
-
-<p>通信ができていることがわかります。マルチキャスト動いているようですね。</p>
-
-<h1 id="vlan">異なるVLAN間</h1>
-
-<p>3台目のサーバをサンノゼに作成します。この場合Subetが違いまたVLANが違う環境となります。VLANスパニングを有効にしているのでこのダラス⇔サンノゼ通信ができるようになっています。</p>
-
-<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
-:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
-:.........:............:...............:.......:........:................:.............:....................:...........:
-: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : ********* :
-: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : ********* :
-: 6816998 :   sjc01    : test03.sl.com :   1   :   1G   : 158.85.***.*** : 10.89.0.170 :                    : ********* :
-:.........:............:...............:.......:........:................:.............:....................:...........:
-</code></pre>
-
-<p>先ほど同様に設定を行い <code>192.168.42.4/24</code>としました。</p>
-
-<pre><code>root@test01:~# ping 192.168.42.4
-PING 192.168.42.4 (192.168.42.4) 56(84) bytes of data.
-From 192.168.42.2 icmp_seq=1 Destination Host Unreachable
-From 192.168.42.2 icmp_seq=2 Destination Host Unreachable
-From 192.168.42.2 icmp_seq=3 Destination Host Unreachable
-From 192.168.42.2 icmp_seq=4 Destination Host Unreachable
-From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
-</code></pre>
-
-<p>あわよくば動けば面白いなと思ったけど残念ながらこちらは通信出来ない模様ですね。さすがにDataCenterをまたいでマルチキャストが許可されていないのでしょうか。</p>
 
 ]]></content>
   </entry>

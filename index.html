@@ -132,6 +132,182 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-29T19:13:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月29日</time>
+        
+      </p>
+    
+    
+      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2016/03/29/try-ducksh/" itemprop="url">CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する</a></h2>
+    
+  </header>
+
+
+  <div class="entry-content clearfix" itemprop="articleBody description">
+<p>CyberDuckという有名なクラウドストレージクライアントがあります。最近見たところ duck.sh なるツールが登場していたので試してみました。</p>
+
+<ul>
+  <li><a href="https://duck.sh/">https://duck.sh/</a></li>
+</ul>
+
+<p>今回はMacで実施したので</p>
+
+<pre><code>sudo brew install duck
+</code></pre>
+
+<p>で導入が出来る。</p>
+
+<p>色々接続ができるがニーズがないであろうが SoftLayer のObject Storage (OpenStack Swift) に接続をしてみます。</p>
+
+<pre><code>$ duck --help
+Usage:duck [options...]
+
+
+URLs must be fully qualified. Paths can either denote a remote file (ftps://user@example.net/resource) or folder (ftps://user@example.net/directory/) with a trailing slash. You can reference files
+relative to your home directory with /~ (ftps://user@example.net/~/).
+Supported protocols
+ftp	FTP (File Transfer Protocol)
+	ftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+ftps	FTP-SSL (Explicit AUTH TLS)
+	ftps://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+sftp	SFTP (SSH File Transfer Protocol)
+	sftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+dav	WebDAV (Web-based Distributed Authoring and Versioning)
+	dav://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+davs	WebDAV (HTTP/SSL)
+	davs://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+swift	Swift (OpenStack Object Storage)
+	swift://&lt;container&gt;/&lt;key&gt;
+s3	S3 (Amazon Simple Storage Service)
+	s3://&lt;container&gt;/&lt;key&gt;
+gs	Google Cloud Storage
+	gs://&lt;container&gt;/&lt;key&gt;
+azure	Windows Azure Storage
+	azure://&lt;container&gt;/&lt;key&gt;
+rackspace	Rackspace Cloud Files (US)
+	rackspace://&lt;container&gt;/&lt;key&gt;
+
+You can install additional connection profiles in ~/Library/Application Support/Cyberduck/Profiles
+
+    --application &lt;path&gt;                  External editor application
+    --copy &lt;url&gt; &lt;url&gt;                    Copy between servers
+ -d,--download &lt;url&gt; &lt;[file]&gt;             Download file or folder. Denote a folder with a trailing '/'
+ -D,--delete &lt;url&gt;                        Delete
+ -e,--existing &lt;action&gt;                   Transfer action for existing files
+                                          Options for downloads and uploads:
+                                          	Resume	Append existing files (resume)
+                                          	Overwrite	Overwrite all files (overwrite)
+                                          	Rename	Rename transferred files with a timestamp appended to the filename (similar)
+                                          	Rename existing	Rename existing files with timestamp appended to filename (rename)
+                                          	Skip	Skip transfer of files that already exist (skip)
+                                          	Compare	Skip files that match size, modification date or checksum (compare)
+                                          	Cancel	 (cancel)
+                                          Options for synchronize:
+                                          	Download	Download changed and missing files (download)
+                                          	Upload	Upload changed and missing files (upload)
+                                          	Mirror	Download and Upload (mirror)
+                                          	Cancel	 (cancel)
+
+    --edit &lt;url&gt;                          Edit file in external editor
+ -h,--help                                Print this help
+ -i,--identity &lt;private key file&gt;         Selects a file from which the identity (private key) for public key authentication is read
+ -l,--list &lt;url&gt;                          List files in remote folder
+ -L,--longlist                            Long list format with modification date and permission mask
+ -p,--password &lt;password or secret key&gt;   Password
+ -P,--preserve                            Preserve permissions and modification date for transferred files
+    --parallel &lt;connections&gt;              Number of concurrent connections to use for transfers
+ -q,--quiet                               Suppress progress messages
+ -r,--retry &lt;count&gt;                       Retry failed connection attempts
+    --region &lt;location&gt;                   Location of bucket or container
+    --synchronize &lt;url&gt; &lt;directory&gt;       Synchronize folders
+    --throttle &lt;bytes per second&gt;         Throttle bandwidth
+ -u,--username &lt;username or access key&gt;   Username
+    --udt                                 Use UDT protocol if applicable
+    --upload &lt;url&gt; &lt;file&gt;                 Upload file or folder recursively
+ -v,--verbose                             Print transcript
+ -V,--version                             Show version number and quit
+ -y,--assumeyes                           Assume yes for all prompts
+
+Cyberduck is libre software licenced under the GPL. For general help about using Cyberduck, please refer to https://duck.sh/ and the wiki at http://help.duck.sh/. For bug reports or feature requests
+open a ticket at https://trac.cyberduck.io/newticket?version=4.7.3.
+Not registered. Purchase a donation key to support the development of this software.
+</code></pre>
+
+<p>プロファイルをダウンロード</p>
+
+<ul>
+  <li><a href="http://qiita.com/testnin2/items/1868f9f5775ae06afc26">http://qiita.com/testnin2/items/1868f9f5775ae06afc26</a></li>
+</ul>
+
+<p>ここに記載されているファイルを <code>~/Library/Application Support/Cyberduck/Profiles/SoftLayer_TOK02_public.cyberduckprofile</code> に保存する。これでこのプロファイルを利用できるようになります。</p>
+
+<p>今回接続する SoftLayer 側の情報として以下のようになっているとします。</p>
+
+<ul>
+  <li>TOK2上にObjectStorageを購入</li>
+  <li>tokida というContainerを作成済み</li>
+  <li>SoftLayer Portalからusername,passwordを取得済み</li>
+</ul>
+
+<pre><code>$ duck --list softlayer-tok02_public://tokida/ -u "$usernaem" -p "$password"
+Login successful…
+.file-segments
+Dropbox
+a_M00xxx_2003.nsf
+a_M00xxx_2004.nsf
+a_M00xxx_2005.nsf
+</code></pre>
+
+<p>これだけで接続ができます。duckコマンド経由で利用することで SoftLayer Object Storageの制約である5Gなども正しくマルチパートでアップロードしてくれるので非常に便利に利用できますね。</p>
+
+<pre><code>$ duck -u $username -p $password --upload softlayer-tok02_public://tokida/ hosts
+Upload complete…
+</code></pre>
+
+<pre><code>$ duck -u $username -p $password --delete softlayer-tok02_public://tokida/hosts
+Deleting hosts…
+</code></pre>
+
+<p>同期もでき、download, mirror , upload が選択できる。</p>
+
+<pre><code>duck -u $username -p $password --synchronize softlayer-tok02_public://tokida/dotfiles ./
+Login successful…
+Choose what action to take:
+
+ Cancel	 (cancel)
+ Download	Download changed and missing files (download)
+ Mirror	Download and Upload (mirror)
+ Upload	Upload changed and missing files (upload)
+
+Action [cancel, download, mirror, upload]: upload
+</code></pre>
+
+<p>クラウドストレージは、費用面で非常に便利だが利用については各クラウドでそれぞれ利用方法が違いコマンドラインで利用するためにも際があるので使い勝手が良いとはいえませんでしたがこの <code>duck</code> を経由することで利用のハードルが下がります。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-28T02:07:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月28日</time>
         
       </p>
@@ -1836,78 +2012,6 @@ SERF_USER_EVENT=TEST
 
         </article>
       
-      
-        <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-08-17T07:50:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年8月17日</time>
-        
-      </p>
-    
-    
-      <h2 class="entry-title" itemprop="name headline"><a href="/blog/2014/08/17/write-first/" itemprop="url">Software Desing 2014年9月号に寄稿しました</a></h2>
-    
-  </header>
-
-
-  <div class="entry-content clearfix" itemprop="articleBody description"><h1 id="section">はじめに</h1>
-
-<p>IT系で仕事をしていて若い時にずっと読んでいた「Software Design」に寄稿する機会を得ました。
-お世話になっているIBMの 北瀬さん(@kkitase)に監修していただきながらのお仕事でした。
-それにしても非常に嬉しいです。 なにせインターネットが始まった頃の1995年頃からお世話になって読んでいた雑誌です。そんな雑誌に自分の書いた文章が載るとは思わなかった。編集長の 池本さん(@XR230) にお会いできたのも感激。</p>
-
-<h1 id="whats-softlayer-">What’s SoftLayer ?</h1>
-
-<p>今回のテーマは、「SoftLayerを使ってみませんか？」という内容で全3回の連載となっています。</p>
-
-<p>「ベアメタルクラウド」勢という括りでいいかは分からないけど物理（ベアメタル）サーバをクラウドで利用できるIBMのパブリッククラウドの使いこなしが話しのテーマです。昨年IBMは自社の持っていた SmaterCloud をやめて米SoftlayerTechnology.Incを買収しました。私自身はそのタイミングから少しつづ触ってきて今年になって本格的に使っているという感じです。</p>
-
-<h1 id="section-1">マニアックなクラウド環境</h1>
-
-<p>実際なんというかアバウトです。</p>
-
-<p>当たり前なんですがベアメタルをオーダーした場合、仮に部品がない場合には仕様を満たす別のハードウェアが搭載されます。まあ変な話32GのSSDを注文したら1TのSSDが来たりします。HDDなんかは別にいいけどCPUとかだとライセンスの問題とかあって結構面倒な話にもなったりしていました。</p>
-
-<p>このベアメタルサーバは、SoftLayerの代表的なサービスです。もちろん一般的なクラウド同様の仮想サーバも用意されています。ベアメタルはかなり自由に使うことが出来ます。その分、色々自分で面倒を見る必要があるのはオンプレで構築した時と同じですがESXiを導入できたり自社のデータセンターの代わりとして十分に使う事が出来る能力が有るのかなと思っています。</p>
-
-<p>SoftLayerを何に使うかと考えた場合、もうここまで来るとすることは一つ(?)です。SoftLayerのクラウド基盤を使ってクラウドを作るのです。それはVMwareでも良いしOpenStackや最近はやりのDockerでも良いかもしれない。SoftLayerは純粋なIaaSをわずか4,5時間で用意してくれ今まで面倒だったストレージの障害対応や電源の問題とか場所の問題とかそういったことを全て解決してくれています。素にちかい環境で物理と仮想が手に入るので色々と何をしてみようかと夢が広がります。</p>
-
-<p>残念なことにサイト全体を見渡しても通読できるマニュアルは見当たりません。情報が断片的に落ちているだけです。この状況で色々触っていくうちに少しづつ理解しつつあるかなというのが現状です。もうこの段階でかなりマニアックな領域になってきていますが。</p>
-
-<h1 id="softlayer--ibm-">SoftLayer + IBM への期待</h1>
-
-<p>インフラエンジニアの立場からSoftLayerが非常に興味深いものではありますがアプリケーション開発の観点からはミドルウェア的に利用できる各種のサービスが整っているほうが開発の効率をあげることにつながります。仮にスケーラブルなMySqlをSoftLayer上で構築するとしたらインフラ的には普通に重労働です。これでは意味が無いです。そういった意味でIBM BluMixの環境（こちらではスケーラブルなDBなどがすでにラインナップされている）とSoftLayerのインフラストラクチャーが上手く融合するとインフラ面でも開発面でも良い成果が出てきそうです。今後、クラウドのサービス展開としてPaaS,SaaS側への拡張が楽しみです。</p>
-
-<p>あ、年内にTokyo DataCenter が出来る予定ですね。海外のJobサイトみるとSoftLayer,IBMでDataCenter Manager／Specialistの募集してますね〜</p>
-
-<h1 id="section-2">まとめ</h1>
-
-<p>どこまでSoftLayerの魅力を伝えるには力及ばずなのですが3回ほど連載の予定ですのでソフトウェアデザインを購入されてる際には一読してもらえると嬉しいです。</p>
-
-<div class="booklink-box"><div class="booklink-image"><a href="http://c.af.moshimo.com/af/c/click?a_id=187314&amp;p_id=170&amp;pc_id=185&amp;pl_id=4062&amp;s_v=b5Rz2P0601xu&amp;url=http%3A%2F%2Fwww.amazon.co.jp%2Fexec%2Fobidos%2FASIN%2FB00M7AWOJQ%2Fref%3Dnosim" rel="nofollow" target="_blank"><img src="http://ecx.images-amazon.com/images/I/51f%2BNfl-h-L._SL160_.jpg" style="border: none;" /></a></div><div class="booklink-info"><div class="booklink-name"><a href="http://c.af.moshimo.com/af/c/click?a_id=187314&amp;p_id=170&amp;pc_id=185&amp;pl_id=4062&amp;s_v=b5Rz2P0601xu&amp;url=http%3A%2F%2Fwww.amazon.co.jp%2Fexec%2Fobidos%2FASIN%2FB00M7AWOJQ%2Fref%3Dnosim" target="_blank">Software Design (ソフトウェア デザイン) 2014年 09月号 [雑誌]</a></div><div class="booklink-powered-date">posted with <a href="http://yomereba.com" rel="nofollow" target="_blank"> ヨメレバ</a></div><div class="booklink-detail"> 技術評論社 2014-08-18</div><div class="booklink-rank">売り上げランキング : <br /></div></div><div class="booklink-footer" style=""></div></div>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -1931,6 +2035,8 @@ SERF_USER_EVENT=TEST
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2016/03/29/try-ducksh/">CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する</a>
+    
     <a class="list-group-item " href="/blog/2016/03/28/test/">ATOMエディタからOctopressを利用する</a>
     
     <a class="list-group-item " href="/blog/2016/03/27/bluemix-cli/">Bluemix-cli</a>
@@ -1938,8 +2044,6 @@ SERF_USER_EVENT=TEST
     <a class="list-group-item " href="/blog/2014/11/04/vyatta2vyos/">Vyatta を VyOS にアップデートして Vxlan を利用する</a>
     
     <a class="list-group-item " href="/blog/2014/11/04/sl-docker/">SoftlayerのslコマンドのDocker化</a>
-    
-    <a class="list-group-item " href="/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer</a>
     
   </div>
 </section>
@@ -1971,7 +2075,7 @@ SERF_USER_EVENT=TEST
     
     
     <a class="list-group-item " href="/blog/categories/review/index.html">
-        <span class="badge">23</span>
+        <span class="badge">24</span>
         review
       </a>
     
@@ -2113,6 +2217,12 @@ SERF_USER_EVENT=TEST
     <a class="list-group-item " href="/blog/tags/atom/index.html">
         <span class="badge">1</span>
         atom
+      </a>
+    
+    
+    <a class="list-group-item " href="/blog/tags/softlayer/index.html">
+        <span class="badge">1</span>
+        SoftLayer
       </a>
     
   </div>

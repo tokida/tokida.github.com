@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Markdownの文章をHTMLに変換する - なんでもやってみるのが良いと思う</title>
+  <title>CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する - なんでもやってみるのが良いと思う</title>
   <meta name="author" content="H.Tokida">
 
   
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B">
+  <link rel="canonical" href="http://stepxstep.org/blog/2016/03/29/try-ducksh">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="なんでもやってみるのが良いと思う" type="application/atom+xml">
 
@@ -25,8 +25,8 @@
   <!-- http://opengraphprotocol.org/ -->
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B">
-  <meta property="og:title" content="Markdownの文章をHTMLに変換する - なんでもやってみるのが良いと思う">
+  <meta property="og:url" content="http://stepxstep.org/blog/2016/03/29/try-ducksh">
+  <meta property="og:title" content="CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する - なんでもやってみるのが良いと思う">
   
 
   <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
@@ -128,138 +128,159 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T05:52:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-29T19:13:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月29日</time>
         
       </p>
     
     
     <h1 class="entry-title" itemprop="name headline">
-        Markdownの文章をHTMLに変換する
+        CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix" itemprop="articleBody description"><ul id="markdown-toc">
-  <li><a href="#section">はじめに</a></li>
-  <li><a href="#pandoc">Pandocを導入する</a>    <ul>
-      <li><a href="#section-1">インストール</a></li>
-      <li><a href="#githubcss">githubのCSSで変換してみる</a>        <ul>
-          <li><a href="#section-2">導入・設定</a></li>
-          <li><a href="#section-3">変換する</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><a href="#section-4">まとめ</a>    <ul>
-      <li><a href="#section-5">参考文献</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h1 id="section">はじめに</h1>
-
-<p>ここの所、文章は全てMakrdownで書くようにしています。仕事でも <a href="http://qiita.com/">Qiita</a> などのサービスを利用しており身の回りで徐々に markdown を使う環境を広げているところです。 まさにこのサイトも makrdown で書かれており色々と捗ります。
-先日、だいぶ長い文章を markdown で書いたのですが最終的に清書して出す必要がありその際にフォーマット変換（HTMLやPDF）に変換したくなりました。
-その際には時間切れだったのですが改めて環境を作ったので書いておきます。</p>
-
-<h1 id="pandoc">Pandocを導入する</h1>
-
-<p>最近ちょっと入れてみたいと言う時にはDockerとかVagrantで簡単に環境を作っています。なのでMacbookで書いているのですが以後の処理はUbuntuで行った場合の対応になります。色々なファイルフォーマットを変換してもらうことの出来る <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> を利用します。</p>
-
-<h2 id="section-1">インストール</h2>
-
-<p>PandcoはHaskellの上で動くのでHaskel Platformの上で導入することも出来ますが今回は簡単にパッケージマネージャーから導入することにします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ sudo apt-get install pandoc</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>導入の確認</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">vagrant@ubuntu1404:/vagrant_data/files$ pandoc -v
-</span><span class="line">pandoc 1.12.2.1
-</span><span class="line">Compiled with texmath 0.6.5.2, highlighting-kate 0.5.5.1.
-</span><span class="line">Syntax highlighting is supported for the following languages:
-</span><span class="line">    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
-</span><span class="line">    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
-</span><span class="line">    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
-</span><span class="line">    fortran, fsharp, gnuassembler, go, haskell, haxe, html, ini, java, javadoc,
-</span><span class="line">    javascript, json, jsp, julia, latex, lex, literatecurry, literatehaskell,
-</span><span class="line">    lua, makefile, mandoc, markdown, matlab, maxima, metafont, mips, modelines,
-</span><span class="line">    modula2, modula3, monobasic, nasm, noweb, objectivec, objectivecpp, ocaml,
-</span><span class="line">    octave, pascal, perl, php, pike, postscript, prolog, python, r,
-</span><span class="line">    relaxngcompact, rhtml, roff, ruby, rust, scala, scheme, sci, sed, sgml, sql,
-</span><span class="line">    sqlmysql, sqlpostgresql, tcl, texinfo, verilog, vhdl, xml, xorg, xslt, xul,
-</span><span class="line">    yacc, yaml
-</span><span class="line">Default user data directory: /home/vagrant/.pandoc
-</span><span class="line">Copyright (C) 2006-2013 John MacFarlane
-</span><span class="line">Web:  http://johnmacfarlane.net/pandoc
-</span><span class="line">This is free software; see the source for copying conditions.  There is no
-</span><span class="line">warranty, not even for merchantability or fitness for a particular purpose.</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>変換してみる</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">% pandoc input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>オプションの説明などは日本語のリファレンスもあるのでそちらを参考にします。</p>
-
-<h2 id="githubcss">githubのCSSで変換してみる</h2>
-
-<p>実際にHTMLにした際にも見た目、Github風に慣れ親しんでいるのでCSSを指定してHTMLに変換することが出来ます。またオプションを指定することにより toc(目次）も入れること出来ます。目次はHTMLの場合にはキチンとHyperlinkになってくれるのでありがたい。</p>
-
-<h3 id="section-2">導入・設定</h3>
-
-<p>markdownファイルがある場所にCSSをダウンロードします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ wget https://gist.github.com/andyferra/2554919</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-3">変換する</h3>
-
-<p>変換には、cssファイルを指定する方法がありますがこの場合には生成されたHTMLファイルがCSSファイルを利用するようになります。
-単体の一つのHTMLにしたい場合にはテンプレートをコピーしてその中にCSSを埋め込んだほうが良いです。テンプレートはubuntuの場合には、<code>/usr/share/pandoc/data/templates</code> に導入されています。
-今回はCSSファイルを個別にしてして見ます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ pandoc --toc --toc-depth=1 -t html -c github.css input.markdown -s -o output.html</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>こうするとmarkdownの書式に合わせて目次を生成してくれます。
-自動でこういう風になってくれるとすごく便利です。</p>
-
-<h1 id="section-4">まとめ</h1>
-
-<p>簡単に変換できるツールなので他にもコンバージョンを試してみたいと思います。PDFの変換も気になるところですがChromeブラウザのPDF出力もある程度代用可能なので暫くはそちらでも良いかなと思っています。それよりも SLIDES 利用したスライド作れる方が興味があります。
-簡単にテキスト(markdown)で書いておいてさっと発表に使えるとなると色々捗りそうです。</p>
-
-<h2 id="section-5">参考文献</h2>
+<div class="entry-content clearfix" itemprop="articleBody description">
+<p>CyberDuckという有名なクラウドストレージクライアントがあります。最近見たところ duck.sh なるツールが登場していたので試してみました。</p>
 
 <ul>
-  <li><a href="http://qiita.com/sky_y/items/80bcd0f353ef5b8980ee">HTML - 多様なフォーマットに対応！ドキュメント変換ツールPandocを知ろう - Qiita</a></li>
-  <li><a href="http://sky-y.github.io/site-pandoc-jp/users-guide/">Pandoc ユーザーズガイド 日本語版 - Japanese Pandoc User&#8217;s Association</a></li>
+  <li><a href="https://duck.sh/">https://duck.sh/</a></li>
 </ul>
 
+<p>今回はMacで実施したので</p>
+
+<pre><code>sudo brew install duck
+</code></pre>
+
+<p>で導入が出来る。</p>
+
+<p>色々接続ができるがニーズがないであろうが SoftLayer のObject Storage (OpenStack Swift) に接続をしてみます。</p>
+
+<pre><code>$ duck --help
+Usage:duck [options...]
+
+
+URLs must be fully qualified. Paths can either denote a remote file (ftps://user@example.net/resource) or folder (ftps://user@example.net/directory/) with a trailing slash. You can reference files
+relative to your home directory with /~ (ftps://user@example.net/~/).
+Supported protocols
+ftp	FTP (File Transfer Protocol)
+	ftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+ftps	FTP-SSL (Explicit AUTH TLS)
+	ftps://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+sftp	SFTP (SSH File Transfer Protocol)
+	sftp://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+dav	WebDAV (Web-based Distributed Authoring and Versioning)
+	dav://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+davs	WebDAV (HTTP/SSL)
+	davs://&lt;hostname&gt;/&lt;folder&gt;/&lt;file&gt;
+swift	Swift (OpenStack Object Storage)
+	swift://&lt;container&gt;/&lt;key&gt;
+s3	S3 (Amazon Simple Storage Service)
+	s3://&lt;container&gt;/&lt;key&gt;
+gs	Google Cloud Storage
+	gs://&lt;container&gt;/&lt;key&gt;
+azure	Windows Azure Storage
+	azure://&lt;container&gt;/&lt;key&gt;
+rackspace	Rackspace Cloud Files (US)
+	rackspace://&lt;container&gt;/&lt;key&gt;
+
+You can install additional connection profiles in ~/Library/Application Support/Cyberduck/Profiles
+
+    --application &lt;path&gt;                  External editor application
+    --copy &lt;url&gt; &lt;url&gt;                    Copy between servers
+ -d,--download &lt;url&gt; &lt;[file]&gt;             Download file or folder. Denote a folder with a trailing '/'
+ -D,--delete &lt;url&gt;                        Delete
+ -e,--existing &lt;action&gt;                   Transfer action for existing files
+                                          Options for downloads and uploads:
+                                          	Resume	Append existing files (resume)
+                                          	Overwrite	Overwrite all files (overwrite)
+                                          	Rename	Rename transferred files with a timestamp appended to the filename (similar)
+                                          	Rename existing	Rename existing files with timestamp appended to filename (rename)
+                                          	Skip	Skip transfer of files that already exist (skip)
+                                          	Compare	Skip files that match size, modification date or checksum (compare)
+                                          	Cancel	 (cancel)
+                                          Options for synchronize:
+                                          	Download	Download changed and missing files (download)
+                                          	Upload	Upload changed and missing files (upload)
+                                          	Mirror	Download and Upload (mirror)
+                                          	Cancel	 (cancel)
+
+    --edit &lt;url&gt;                          Edit file in external editor
+ -h,--help                                Print this help
+ -i,--identity &lt;private key file&gt;         Selects a file from which the identity (private key) for public key authentication is read
+ -l,--list &lt;url&gt;                          List files in remote folder
+ -L,--longlist                            Long list format with modification date and permission mask
+ -p,--password &lt;password or secret key&gt;   Password
+ -P,--preserve                            Preserve permissions and modification date for transferred files
+    --parallel &lt;connections&gt;              Number of concurrent connections to use for transfers
+ -q,--quiet                               Suppress progress messages
+ -r,--retry &lt;count&gt;                       Retry failed connection attempts
+    --region &lt;location&gt;                   Location of bucket or container
+    --synchronize &lt;url&gt; &lt;directory&gt;       Synchronize folders
+    --throttle &lt;bytes per second&gt;         Throttle bandwidth
+ -u,--username &lt;username or access key&gt;   Username
+    --udt                                 Use UDT protocol if applicable
+    --upload &lt;url&gt; &lt;file&gt;                 Upload file or folder recursively
+ -v,--verbose                             Print transcript
+ -V,--version                             Show version number and quit
+ -y,--assumeyes                           Assume yes for all prompts
+
+Cyberduck is libre software licenced under the GPL. For general help about using Cyberduck, please refer to https://duck.sh/ and the wiki at http://help.duck.sh/. For bug reports or feature requests
+open a ticket at https://trac.cyberduck.io/newticket?version=4.7.3.
+Not registered. Purchase a donation key to support the development of this software.
+</code></pre>
+
+<p>プロファイルをダウンロード</p>
+
+<ul>
+  <li><a href="http://qiita.com/testnin2/items/1868f9f5775ae06afc26">http://qiita.com/testnin2/items/1868f9f5775ae06afc26</a></li>
+</ul>
+
+<p>ここに記載されているファイルを <code>~/Library/Application Support/Cyberduck/Profiles/SoftLayer_TOK02_public.cyberduckprofile</code> に保存する。これでこのプロファイルを利用できるようになります。</p>
+
+<p>今回接続する SoftLayer 側の情報として以下のようになっているとします。</p>
+
+<ul>
+  <li>TOK2上にObjectStorageを購入</li>
+  <li>tokida というContainerを作成済み</li>
+  <li>SoftLayer Portalからusername,passwordを取得済み</li>
+</ul>
+
+<pre><code>$ duck --list softlayer-tok02_public://tokida/ -u "$usernaem" -p "$password"
+Login successful…
+.file-segments
+Dropbox
+a_M00xxx_2003.nsf
+a_M00xxx_2004.nsf
+a_M00xxx_2005.nsf
+</code></pre>
+
+<p>これだけで接続ができます。duckコマンド経由で利用することで SoftLayer Object Storageの制約である5Gなども正しくマルチパートでアップロードしてくれるので非常に便利に利用できますね。</p>
+
+<pre><code>$ duck -u $username -p $password --upload softlayer-tok02_public://tokida/ hosts
+Upload complete…
+</code></pre>
+
+<pre><code>$ duck -u $username -p $password --delete softlayer-tok02_public://tokida/hosts
+Deleting hosts…
+</code></pre>
+
+<p>同期もでき、download, mirror , upload が選択できる。</p>
+
+<pre><code>duck -u $username -p $password --synchronize softlayer-tok02_public://tokida/dotfiles ./
+Login successful…
+Choose what action to take:
+
+ Cancel	 (cancel)
+ Download	Download changed and missing files (download)
+ Mirror	Download and Upload (mirror)
+ Upload	Upload changed and missing files (upload)
+
+Action [cancel, download, mirror, upload]: upload
+</code></pre>
+
+<p>クラウドストレージは、費用面で非常に便利だが利用については各クラウドでそれぞれ利用方法が違いコマンドラインで利用するためにも際があるので使い勝手が良いとはいえませんでしたがこの <code>duck</code> を経由することで利用のハードルが下がります。</p>
 </div>
 
 
@@ -283,7 +304,7 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-05-31T05:52:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2014年5月31日</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2016-03-29T19:13:00+09:00"  data-updated="true" itemprop="datePublished dateCreated">2016年3月29日</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
@@ -300,7 +321,7 @@
 <span class="tags">
   Tagged as
   
-    <a class='tag label label-primary' href='/blog/tags/markdown/'>markdown</a>
+    <a class='tag label label-primary' href='/blog/tags/softlayer/'>SoftLayer</a>
   
 </span>
 
@@ -309,7 +330,7 @@
         
           <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/" data-via="" data-counturl="http://stepxstep.org/blog/2014/05/31/markdown%E3%81%AE%E6%96%87%E7%AB%A0%E3%82%92html%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stepxstep.org/blog/2016/03/29/try-ducksh/" data-via="" data-counturl="http://stepxstep.org/blog/2016/03/29/try-ducksh/" >Tweet</a>
   
   
   
@@ -319,10 +340,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2014/05/30/octopress%E3%81%AE%E8%A8%98%E4%BA%8B%E3%81%AE%E6%B6%88%E3%81%97%E6%96%B9/" title="Previous Post: Octopressの記事の消し方">&laquo; Octopressの記事の消し方</a></li>
+            <li class="previous"><a href="/blog/2016/03/28/test/" title="Previous Post: ATOMエディタからOctopressを利用する">&laquo; ATOMエディタからOctopressを利用する</a></li>
             
-            
-            <li class="next"><a href="/blog/2014/05/31/02/" title="Next Post: Vimの起動画面で履歴を表示できるStartifyを入れてみる">Vimの起動画面で履歴を表示できるStartifyを入れてみる &raquo;</a></li>
             
           </ul>
         
@@ -341,7 +360,7 @@
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/03/29/try-ducksh/">CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する</a>
+    <a class="list-group-item active" href="/blog/2016/03/29/try-ducksh/">CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する</a>
     
     <a class="list-group-item " href="/blog/2016/03/28/test/">ATOMエディタからOctopressを利用する</a>
     
