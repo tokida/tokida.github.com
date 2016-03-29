@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Tag: SoftLayer | なんでもやってみるのが良いと思う]]></title>
+  <title><![CDATA[Tag: softlayer | なんでもやってみるのが良いと思う]]></title>
   <link href="http://stepxstep.org/blog/tags/softlayer/atom.xml" rel="self"/>
   <link href="http://stepxstep.org/"/>
-  <updated>2016-03-29T20:02:26+09:00</updated>
+  <updated>2016-03-29T20:04:38+09:00</updated>
   <id>http://stepxstep.org/</id>
   <author>
     <name><![CDATA[H.Tokida]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[CyverduckのCli版duckを利用して簡単にクラウドストレージを利用する]]></title>
+    <title type="html"><![CDATA[CyberduckのCli版duckを利用して簡単にクラウドストレージを利用する]]></title>
     <link href="http://stepxstep.org/blog/2016/03/29/try-ducksh/"/>
     <updated>2016-03-29T19:13:00+09:00</updated>
     <id>http://stepxstep.org/blog/2016/03/29/try-ducksh</id>
@@ -158,6 +158,576 @@ Action [cancel, download, mirror, upload]: upload
 </code></pre>
 
 <p>クラウドストレージは、費用面で非常に便利だが利用については各クラウドでそれぞれ利用方法が違いコマンドラインで利用するためにも際があるので使い勝手が良いとはいえませんでしたがこの <code>duck</code> を経由することで利用のハードルが下がります。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Vyatta を VyOS にアップデートして vxlan を利用する]]></title>
+    <link href="http://stepxstep.org/blog/2014/11/04/vyatta2vyos/"/>
+    <updated>2014-11-04T02:29:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/11/04/vyatta2vyos</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#add-system-images">add system images</a></li>
+  <li><a href="#vxlan-on-vyos-">vxlan on VyOS を試す</a></li>
+</ul>
+
+<p>VyOSを利用してみたかったので一旦Vyattaを導入してアップデート <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> を試みる。
+利用している環境は、SoftLayer上の仮想サーバ(Vyatta6.5導入済み）を利用しています。</p>
+
+<h1 id="add-system-images">add system images</h1>
+
+<p>VyOSへのアップデートの方法は、公式サイトの以下のリンクに記載されています。</p>
+
+<ul>
+  <li><a href="http://wiki.vyos-users.jp/Vyatta%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C">vyos-users.jp</a></li>
+</ul>
+
+<p>今回はVersion1.1を試してみたいと思います。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: Old-non-image-installation (default boot)
+
+vyatta@vyatta-dal01:~$ add system image http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+Trying to fetch ISO file from http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.0/vyos-1.1.0-amd64.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  231M  100  231M    0     0  5687k      0  0:00:41  0:00:41 --:--:-- 8782k
+ISO download succeeded.
+Checking for digital signature file...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   836  100   836    0     0    540      0  0:00:01  0:00:01 --:--:--  2229
+Found it.  Checking digital signature...
+gpg: directory `/root/.gnupg' created
+gpg: new configuration file `/root/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/root/.gnupg/pubring.gpg' created
+gpg: Signature made Thu Oct  9 17:42:59 2014 CDT using RSA key ID A442E6E9
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "SO3 Group Maintainers &lt;maintainers@so3group.net&gt;"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: DD5B B405 35E7 F6E3 4278  1ABF B744 E25A A442 E6E9
+Digital signature is valid.
+Checking MD5 checksums of files on the ISO image...OK.
+Done!
+What would you like to name this image? [1.1.0]:
+OK.  This image will be named: 1.1.0
+Installing "1.1.0" image.
+Copying new release files...
+Would you like to save the current configuration
+directory and config file? (Yes/No) [Yes]:
+Copying current configuration...
+Would you like to save the SSH host keys from your
+current configuration? (Yes/No) [Yes]:
+Copying SSH keys...
+Setting up grub configuration...
+Done.
+vyatta@vyatta-dal01:~$ show system image
+The system currently has the following image(s) installed:
+
+   1: 1.1.0 (default boot)
+   2: Old-non-image-installation
+</code></pre>
+
+<p>この状態で<code>reboot</code>をすると新しいイメージで起動をしてきます。</p>
+
+<pre><code>Welcome to VyOS
+vyatta@67.228.185.132's password:
+Linux vyatta 3.13.11-1-amd64-vyos #1 SMP Wed Sep 3 20:04:22 UTC 2014 x86_64
+Welcome to VyOS.
+This system is open-source software. The exact distribution terms for
+each module comprising the full system are described in the individual
+files in /usr/share/doc/*/copyright.
+</code></pre>
+
+<h1 id="vxlan-on-vyos-">vxlan on VyOS を試す</h1>
+
+<p>少し前に vxlan on Softlayer ということで同一データセンター内ではマルチキャストが通信できるのでvlanが使えたという事を書きました。VyOSの最新版ではvxlanがサポートされているとのことなので試します。</p>
+
+<pre><code>vyatta@vyatta-dal01# configure
+[edit]
+vyatta@vyatta-dal01# set interfaces  vxlan vxlan0
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 group 239.1.1.1
+[edit]
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+
+vyatta@vyatta-dal01# set interfaces vxlan vxlan0 address '192.168.42.254/24'
+[edit]
+vyatta@vyatta-dal01# commit
+[edit]
+vyatta@vyatta-dal01# save
+Saving configuration to '/config/config.boot'...
+Done
+[edit]
+vyatta@vyatta-dal01#   show interfaces vxlan vxlan0
+ address 192.168.42.254/24
+ group 239.1.1.1
+ vni 42
+[edit]
+vyatta@vyatta-dal01# ip a
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN group default
+    link/ether b6:37:f4:fa:30:d0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.42.254/24 brd 192.168.42.255 scope global vxlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b437:f4ff:fefa:30d0/64 scope link
+[edit]	
+</code></pre>
+
+<p>他のサーバの設定は <a href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/">Vxlan on Softlayer - なんでもやってみるのが良いと思う</a> として行います。現状でこの構成に今回の VyOS が追加されている形になります。</p>
+
+<pre><code>vyatta@vyatta-dal01:~$ ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_req=1 ttl=64 time=0.635 ms
+64 bytes from 192.168.42.2: icmp_req=2 ttl=64 time=0.402 ms
+^C
+--- 192.168.42.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.402/0.518/0.635/0.118 ms
+vyatta@vyatta-dal01:~$ ping 192.168.42.3
+PING 192.168.42.3 (192.168.42.3) 56(84) bytes of data.
+64 bytes from 192.168.42.3: icmp_req=1 ttl=64 time=1.52 ms
+64 bytes from 192.168.42.3: icmp_req=2 ttl=64 time=0.303 ms
+^C
+--- 192.168.42.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.303/0.913/1.523/0.610 ms
+</code></pre>
+
+<p>ということで問題なく疎通が出来ています。</p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>SoftLayerでは仮想サーバのOSを独自には導入できないので初期にVyOSが入れられない。 <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftlayerのslコマンドのDocker化]]></title>
+    <link href="http://stepxstep.org/blog/2014/11/04/sl-docker/"/>
+    <updated>2014-11-04T01:46:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/11/04/sl-docker</id>
+    <content type="html"><![CDATA[<p>SoftLayerのSLコマンドをDocker化しました。
+単にDockerhubのAutomated Buildで遊んでみたかっただけなのですが・・</p>
+
+<p>特に理由ないのですが各Linuxサーバに Python + SoftLayer-Cli 入れるのと Docker 入れるのとどっちがいいかなと思った場合にアプリケーションに影響なく利用できそうなのはDockerかなと。</p>
+
+<p>作ってみてローカルのMacbookで利用しているのですが便利です。
+これまでVagrant経由でVM起動してそのなかでゴニョゴニョしていました。今回のDockerにしてもboot2dockerで結局のところ似たような感じなのですが<code>config setup</code>で複数のSoftLayer環境を用意する際や、VersionUpをした際に簡単に分離して管理できるのは楽でした。 (まあ.dotfile切り替えるだけなら別の手段もあるかと思いますが)</p>
+
+<h1 id="section">利用方法</h1>
+
+<h2 id="section-1">想定</h2>
+
+<p>このツールは、IBM社のクラウドサービス「SoftLayer」のCLIコマンドである sl コマンドを利用することが出来ます。
+本番機などであまりslコマンド及び前提であるpythonを導入したくない場合。Dockerを利用うすることでOS側に影響なくコマンドを利用することが出来ます。 このDockerのImageは470MByte前後のサイズに成ります。</p>
+
+<h2 id="section-2">設定</h2>
+
+<p>以下のコマンドで設定ファイルをコンテナ内部に作ります。</p>
+
+<p><code>$ docker run  -ti tokida/softlayer-cli config setup</code></p>
+
+<p>通常のslコマンド同様にUsernameとAPIキーを設定して下さい。
+次に、コンテナを自分用としてローカルにcommitしておきます。</p>
+
+<p><code>$ docker restart 993ae5495011</code></p>
+
+<p>一度コンテナをRestartします。</p>
+
+<p><code>$ docker commit -m "my account" 993ae5495011 tokida/softlayer-cli:my</code></p>
+
+<p>(数字はコンテナIDで <code>docker ps -a</code>で参照すること)
+ここではTagに<code>my</code>をつけています。</p>
+
+<h2 id="section-3">利用方法</h2>
+
+<p><code>$ docker run  -ti tokida/softlayer-cli:my  vs list</code></p>
+
+<p>という形で利用することが出来ます。長いのでシェルでエリアス等をしておくと良いかと思います。</p>
+
+<p><code>$ alias sl="docker run  -ti tokida/softlayer-cli:my"</code></p>
+
+<p>こうしておくと普段通り <code>sl</code> コマンドが利用できます。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[vxlan on Softlayer]]></title>
+    <link href="http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer/"/>
+    <updated>2014-11-01T00:44:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/11/01/vxlan-on-softlayer</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#section">これは何？</a></li>
+  <li><a href="#section-1">環境</a></li>
+  <li><a href="#subnet">同一Subnet内</a></li>
+  <li><a href="#vlan">異なるVLAN間</a></li>
+</ul>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerのネットワークはマルチキャストが使えるのでvxlanが動くのかを確認。</p>
+
+<ol>
+  <li>同一のSubnet内で利用可能か</li>
+  <li>同一のvlan間で利用可能か（これは今回オーダー出来ず）</li>
+  <li>異なるVLAN間（VLAN Spaning = on )で利用可能か</li>
+</ol>
+
+<p>というところを確認する。</p>
+
+<h1 id="section-1">環境</h1>
+
+<p>今回用意したのはダラスデータセンター内に仮想サーバを2つ起動している状態。プライベートIPで割り当てられているのは同一のSubnet上で登録されている。OSはUbuntu14.04を利用。</p>
+
+<p>仮想サーバは以下のコマンドで作成する。</p>
+
+<pre><code>sl vs create --datacenter=dal01 --cpu=1 --memory=1024 --os=UBUNTU_14_64 --domain=sl.com --hostname=test01 --hourly --san --disk=25,10 --key=mainkey --postinstall=https://gist.githubusercontent.com/tokida/5b58831c0d94ce7b25f2/raw/bootstrap4Ubuntu.sh
+</code></pre>
+
+<p>作成した結果は以下の感じになりました。同じSubnetになっていますね。違うSubnetに付け直したかったら動するのがいいのかな？:</p>
+
+<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
+:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : *****     :
+: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : *****     :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+</code></pre>
+
+<h1 id="subnet">同一Subnet内</h1>
+
+<p>以下のコマンドによりvxlanを設定する。今回は内部eth0に対して作成する</p>
+
+<pre><code>$ ip link add vxlan0 type vxlan id 42 group 239.1.1.1 dev eth0
+$ ip link set up vxlan0
+$ ip a add 192.168.42.3/24 dev vxlan0
+$ root@test02:~# ip -d link show vxlan0
+4: vxlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN mode DEFAULT group default
+    link/ether 2e:eb:95:ed:97:9d brd ff:ff:ff:ff:ff:ff promiscuity 0
+    vxlan id 42 group 239.1.1.1 dev eth0 port 32768 61000 ageing 300
+</code></pre>
+
+<p>test01は、<code>192.168.42.2</code>を付与、test02は、<code>192.168.43.3</code>を付与します。</p>
+
+<p>Pingを実行すると</p>
+
+<pre><code>root@test02:~# ping 192.168.42.2
+PING 192.168.42.2 (192.168.42.2) 56(84) bytes of data.
+64 bytes from 192.168.42.2: icmp_seq=1 ttl=64 time=0.957 ms
+64 bytes from 192.168.42.2: icmp_seq=2 ttl=64 time=0.377 ms
+</code></pre>
+
+<p>通信ができていることがわかります。マルチキャスト動いているようですね。</p>
+
+<h1 id="vlan">異なるVLAN間</h1>
+
+<p>3台目のサーバをサンノゼに作成します。この場合Subetが違いまたVLANが違う環境となります。VLANスパニングを有効にしているのでこのダラス⇔サンノゼ通信ができるようになっています。</p>
+
+<pre><code>:.........:............:...............:.......:........:................:.............:....................:...........:
+:    id   : datacenter :      host     : cores : memory :   primary_ip   :  backend_ip : active_transaction :   owner   :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+: 6743772 :   dal01    : test01.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.45 :         -          : ********* :
+: 6816622 :   dal01    : test02.sl.com :   1   :   1G   : 67.228.***.*** : 10.17.93.46 :         -          : ********* :
+: 6816998 :   sjc01    : test03.sl.com :   1   :   1G   : 158.85.***.*** : 10.89.0.170 :                    : ********* :
+:.........:............:...............:.......:........:................:.............:....................:...........:
+</code></pre>
+
+<p>先ほど同様に設定を行い <code>192.168.42.4/24</code>としました。</p>
+
+<pre><code>root@test01:~# ping 192.168.42.4
+PING 192.168.42.4 (192.168.42.4) 56(84) bytes of data.
+From 192.168.42.2 icmp_seq=1 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=2 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=3 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=4 Destination Host Unreachable
+From 192.168.42.2 icmp_seq=5 Destination Host Unreachable
+</code></pre>
+
+<p>あわよくば動けば面白いなと思ったけど残念ながらこちらは通信出来ない模様ですね。さすがにDataCenterをまたいでマルチキャストが許可されていないのでしょうか。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SoftLayerに性能保証型iSCSI/NASが登場したので試してみた]]></title>
+    <link href="http://stepxstep.org/blog/2014/09/17/consistentstorage/"/>
+    <updated>2014-09-17T20:40:00+09:00</updated>
+    <id>http://stepxstep.org/blog/2014/09/17/consistentstorage</id>
+    <content type="html"><![CDATA[
+<pre><code>2014/11/04 追記: [帯域]保証型と書いていましたが、帯域は保証されていないとご指摘を（確かにその通り）受けたので[性能]保証型にしました。さらに言えば性能も保証されていないのですが。
+</code></pre>
+
+<p>SoftLayerでの新機能で「性能保証型ブロックデバイス」が登場しました。
+1月ほど前からAPIには登場していたのですがようやく正式にリリースされた感じですね。</p>
+
+<h1 id="section">これは何？</h1>
+
+<p>SoftLayerの性能保証型のブロックストレージを購入して簡単にfioでパフォーマンス測定してみましょう。
+対象としては普段から利用していることもあり仮想サーバ上からUbuntu14.04を利用したいと思います。</p>
+
+<ul>
+  <li>容量 20Gから12TByteまで</li>
+  <li>性能保証 100IOPS から 6000IOPSまで</li>
+  <li>iSCSI(Block Storage)とNAS(File Storage)の2つのインターフェースで提供</li>
+</ul>
+
+<h1 id="section-1">オーダーから設定まで</h1>
+
+<h2 id="section-2">オーダ方法</h2>
+
+<p>オーダ時のオプションで利用OSを選択するようになっていますね。
+管理ポータルから、<code>Storage</code>→<code>Block Storage</code>→<code>Order Consistent Performance</code>を選択しましょう。</p>
+
+<p><img src="/images/2014-09-17-iscsi.png" alt="iscsi" /></p>
+
+<p>ここでの費用は、「ディスクサイズ」＋「IOPS」となるようです。この画像の場合、<code>20 GB 100 to 1000 IOPS</code>というは20GのiSCSIディスクはIOPS
+として100から1000までが指定可能ということになります。一番安い、20G 100IOPSをオーダしてみたいと思います。</p>
+
+<h2 id="section-3">設定方法</h2>
+
+<p>購入したデバイス（ここでは<code>SL01SL29*****-1 (20 GB)</code>のような名称)の詳細を確認します。
+iSCSIデバイスらしく<code>Authorized Hosts</code>という項目があるので利用したいサーバを指定します、すると「Username」「Password」「Host IQN」「Device Type」が該当のホスト向けに表示されます。</p>
+
+<p>画面を見る限り以前までのSnapshotなどの機能はなさそうです（残念！）</p>
+
+<p>今回のiSCSIはマルチパスで構成されているようなので<code>multipath-tools</code>を導入して利用します。</p>
+
+<p><code>
+apt-get install multipath-tools
+apt-get install open-iscsi
+</code></p>
+
+<p>iSCSIの設定を行います。<code>/etc/iscsi/initiatorname.iscsi</code>のファイルにIQNを設定します。</p>
+
+<p><code>
+InitiatorName= "value-from-the-SL-Portal"
+</code></p>
+
+<p>次に<code>/etc/iscsi/iscsid.conf</code>を以下の内容を記載します。</p>
+
+<p><code>
+node.session.auth.authmethod = CHAP
+node.session.auth.username = "Username-value-from-SL-Portal"
+node.session.auth.password = "Password-value-from-SL-Portal"
+discovery.sendtargets.auth.authmethod = CHAP
+discovery.sendtargets.auth.username = "Username-value-from-SL-Portal"
+discovery.sendtargets.auth.password = "Password-value-from-SL-Portal"
+</code></p>
+
+<p>設定が終わったら <code>/etc/init.d/open-iscsi restart</code>で再起動を行います。</p>
+
+<p><code>
+root@ansibletower:~# iscsiadm -m discovery -t sendtargets -p 10.2.174.111
+10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
+10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
+</code></p>
+
+<p>iSCSIを探してみると2つのIPで見つけることが出来ました。先ほど書いたようにMultipathでの接続が前提のようですね。</p>
+
+<p><code>
+root@ansibletower:~#  iscsiadm -m node --login
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] (multiple)
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] (multiple)
+Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.111,3260] successful.
+Login to [iface: default, target: iqn.1992-08.com.netapp:hkg0201, portal: 10.2.174.102,3260] successful.
+root@ansibletower:~#
+root@ansibletower:~#
+root@ansibletower:~# iscsiadm -m session -o show
+tcp: [1] 10.2.174.111:3260,1036 iqn.1992-08.com.netapp:hkg0201
+tcp: [2] 10.2.174.102:3260,1035 iqn.1992-08.com.netapp:hkg0201
+</code></p>
+
+<p>この作業により<code>/dev/sda</code>と<code>/dev/sdb</code>としてiSCSIが認識されます。また先ほど導入したmultipathを確認すると</p>
+
+<p><code>
+root@ansibletower:~# multipath -l
+3600a0980383030525324464331596470 dm-0 NETAPP,LUN C-Mode
+size=20G features='1 queue_if_no_path' hwhandler='0' wp=rw
+|-+- policy='round-robin 0' prio=-1 status=active
+| `- 0:0:0:186 sdb  8:16   active undef running
+`-+- policy='round-robin 0' prio=-1 status=enabled
+  `- 1:0:0:186 sda  8:0    active undef running
+</code></p>
+
+<p>このようにFailover型でデバイスが登録されているのがわかります。</p>
+
+<p><code>
+root@ansibletower:~#  fdisk -l | grep /dev/mapper
+ディスク /dev/sdb は正常なパーティションテーブルを含んでいません
+ディスク /dev/sda は正常なパーティションテーブルを含んでいません
+ディスク /dev/mapper/3600a0980383030525324464331596470 は正常なパーティションテーブルを含んでいません
+Disk /dev/mapper/3600a0980383030525324464331596470: 21.5 GB, 21474836480 bytes
+</code></p>
+
+<p>device mapper経由では上記のデバイスとして認識されています。これ以降はこのデバイスに対してfdiskが有効なのでパーティションを作成して利用することに成ります。</p>
+
+<p><code>
+root@ansibletower:~# lsblk
+NAME                                       MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                                          8:0    0    20G  0 disk
+└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
+sdb                                          8:16   0    20G  0 disk
+└─3600a0980383030525324464331596470 (dm-0) 252:0    0    20G  0 mpath
+xvda                                       202:0    0   100G  0 disk
+├─xvda1                                    202:1    0   243M  0 part  /boot
+└─xvda2                                    202:2    0  99.8G  0 part  /
+xvdb                                       202:16   0     2G  0 disk
+└─xvdb1                                    202:17   0     2G  0 part  [SWAP]
+</code></p>
+
+<p>fdiskでパーティションを作成し、カーネルにデバイスの変更を通知してxfsformatを行います。</p>
+
+<p>&#8220;`
+root@ansibletower:~# fdisk /dev/mapper/3600a0980383030525324464331596470</p>
+
+<p>root@ansibletower:~# partprobe
+Error: /dev/sda: ディスクラベルが認識できません。
+Error: /dev/sdb: ディスクラベルが認識できません。
+Error: /dev/mapper/3600a0980383030525324464331596470p1: ディスクラベルが認識できません。
+root@ansibletower:~# mkfs.xfs /dev/mapper/3600a0980383030525324464331596470p1
+meta-data=/dev/mapper/3600a0980383030525324464331596470p1 isize=256    agcount=16, agsize=327663 blks
+         =                       sectsz=4096  attr=2, projid32bit=0
+data     =                       bsize=4096   blocks=5242608, imaxpct=25
+         =                       sunit=1      swidth=16 blks
+naming   =version 2              bsize=4096   ascii-ci=0
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+&#8220;`</p>
+
+<p>実際にmountしてみる。恒久的に利用する場合には別途定義を行って下さい。</p>
+
+<p><code>
+root@ansibletower:~# mkdir /mnt/data1
+root@ansibletower:~# mount /dev/mapper/3600a0980383030525324464331596470p1 /mnt/data1
+</code></p>
+
+<h1 id="iops">IOPS試験の実施</h1>
+
+<p>簡単にするためにgistにスクリプトを置いています</p>
+
+<p><code>
+$ apt-get install fio
+$ apt-get install curl
+$ export DISK=/mnt/data1 ; curl -s https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/fio_test.sh | sh
+</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Benchmark</th>
+      <th style="text-align: right">Bandwiddh</th>
+      <th style="text-align: right">IOPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">4k, sequential read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">147</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, sequential write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">165</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">107</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">103</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential read</td>
+      <td style="text-align: right">51.871MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential write</td>
+      <td style="text-align: right">12.221MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>参考までに同じ試験項目でローカルディスク(100G SAN)を実施した場合</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Benchmark</th>
+      <th style="text-align: right">Bandwiddh</th>
+      <th style="text-align: right">IOPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">4k, sequential read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">27362</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, sequential write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">26305</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam read</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">14188</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4k, randam write</td>
+      <td style="text-align: right"> </td>
+      <td style="text-align: right">22233</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential read</td>
+      <td style="text-align: right">114.070MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32m, sequential write</td>
+      <td style="text-align: right">113.188MB/s</td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="section-4">まとめ</h1>
+
+<p>今回オーダしたのは100IOPSのBlock Storageになりますが、確かに100前後で制御されているように見えます。帯域はこれがMaxなのか分かりませんがこのあたりも今後確認していきたいところですね。</p>
+
+<p>良かった点は、iSCSIがMultipathになった点でしょうか、とはいえ手軽さはNFS(FileStorage)での利用ですかね。また帯域が保証されているので6000IOPSを複数束ねてRaid0構成も出来るかもしれませんね。ただし結構費用が高いのが辛いかもしれないですが。12TByte(6000IOPS)の場合 $1,200+$720になるので $0.16/GByte となりますね。</p>
+
+<p><img src="/images/2014-09-17-iscsi02.png" alt="os" /></p>
+
+<p>このパラメータが何を意味しているのか調べていないのですが<code>AIX</code>とかありますね！</p>
+
+<p>悪かった点は、以前のiSCSIが抽象化された利便性の高いデバイスだったのですが今回はかなり素のiSCSIデバイスとしての利用になります。とくにSnapshotが使えないのは残念ですね。今回の場合にはこのiSCSIデバイスのバックアップをなにか考えなければいけません。12Tとか考えるとかなり面倒な感じですね。</p>
+
+<h1 id="section-5">参考</h1>
+
+<ul>
+  <li><a href="http://knowledgelayer.softlayer.com/procedure/accessing-block-storage-consistent-performance-linux">Accessing Block Storage Consistent Performance on Linux</a></li>
+  <li><a href="https://gist.githubusercontent.com/tokida/090eaa6475e58b4368c0/raw/738cec3a3dfa7816d65882c5d45d513e4a8cc160/fio_test.sh">FIO試験スクリプト</a></li>
+</ul>
+
 ]]></content>
   </entry>
   
